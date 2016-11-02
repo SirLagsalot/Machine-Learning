@@ -2,13 +2,15 @@ import java.util.ArrayList;
 
 public class Sanitizer {
 
-    public static ArrayList<String> sanitize(ArrayList<String> data) {
+    //do you have shitty data?
+    //does your data set have a bunch of gaps in it?
+    //don't worry, Sanitizer is here to fudge your data!
 
-        ArrayList<String> sanitizedData = new ArrayList<>();
+    public static ArrayList<Instance> sanitize(ArrayList<String> data) {
 
-        //do you have shitty data?
-        //does your data set have a bunch of gaps in it?
-        //don't worry, Sanitizer is here to fudge your data!
+        ArrayList<Instance> sanitizedData = new ArrayList<>();
+
+        //itterate through data, if values are missing, do something
 
         return sanitizedData;
     }
