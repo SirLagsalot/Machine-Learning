@@ -1,9 +1,12 @@
+import java.util.ArrayList;
 
 public class TAN implements Classifier {
 
-
     @Override
-    public void classify() {
+    public String classify(ArrayList<Instance> data, Instance test) {
 
+        String classification = "";
+
+        return classification;
     }
 }

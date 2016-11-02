@@ -1,5 +1,7 @@
 
+import java.util.ArrayList;
+
 public interface Classifier {
 
-    void classify();
+    String classify(ArrayList<Instance> data, Instance test);
 }
