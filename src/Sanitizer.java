@@ -10,7 +10,7 @@ public class Sanitizer {
 
         ArrayList<Instance> sanitizedData = new ArrayList<>();
 
-        //itterate through data, if values are missing, do something
+        //iterate through data, if values are missing, do something
 
         return sanitizedData;
     }

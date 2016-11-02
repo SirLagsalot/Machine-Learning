@@ -12,6 +12,7 @@ public class Reader {
     public static ArrayList<String> readFile(String fileName) {
 
         ArrayList<String> file = new ArrayList<>();
+
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             stream.forEach(file::add);
         } catch (IOException ex) {

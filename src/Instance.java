@@ -5,6 +5,7 @@ public class Instance implements Iterable {
 
     protected String classification;
     protected ArrayList<String> features;
+    private float distance;
 
     public Instance(String classification, String... features) {
 
@@ -14,8 +15,19 @@ public class Instance implements Iterable {
         }
     }
 
+    public void setDistance(float distance) {
+
+        this.distance = distance;
+    }
+
+    public float getDistance() {
+
+        return distance;
+    }
+
     @Override
     public Iterator iterator() {
         return features.iterator();
     }
+
 }
