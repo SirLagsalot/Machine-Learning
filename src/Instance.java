@@ -4,13 +4,13 @@ import java.util.Iterator;
 public class Instance implements Iterable {
 
     protected String classification;
-    protected ArrayList<Feature> features;
+    protected ArrayList<String> features;
     private float distance;
 
-    public Instance(String classification, Feature... features) {
+    public Instance(String classification, String... features) {
 
         this.classification = classification;
-        for (Feature f : features) {
+        for (String f : features) {
             this.features.add(f);
         }
     }
