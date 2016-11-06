@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class DataSet {
 
-    private ArrayList<DataLine> set;
+    public ArrayList<DataLine> set;
     private HashMap<Integer, Integer> missing;
 
     public DataSet() {
