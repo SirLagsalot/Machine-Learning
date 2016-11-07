@@ -56,20 +56,16 @@ public class NaiveBayes implements Classifier {
         int rowCount;
         int columnCount;
         int[][] table;
+        int attributePosition;
         public FrequencyTable(int[] attributeValues, int[] classifications, int numberOfClassifications, int attributePosition){
             int attributeCount = getDistinctValueCount(attributeValues);
-            table = new int[attributeCount+1][numberOfClassifications+1];
-            table[0][0] = attributePosition;
-            for (int i = 1; i < attributeCount+1; i++) {
-                table[i][0] = i-1;//mark row with it's attribute value(assumed to be in a 'bin'
-            }
-            for (int i = 1; i < numberOfClassifications+1; i++) {
-                table[0][i] = i-1;//mark column with it's classification #
-            }
+            table = new int[attributeCount][numberOfClassifications];
+            this.attributePosition = attributePosition;
+            
             for (int i = 0; i < attributeValues.length; i++) {
                 int attributeValue = attributeValues[i];
                 int classification = classifications[i];
-                table[attributeValue+1][classification+1]++;
+                table[attributeValue][classification]++;
             }
             
             rowCount = table.length;
@@ -77,14 +73,31 @@ public class NaiveBayes implements Classifier {
         }
     }
     public class LiklihoodTable{
+        int attributeId;
         public LiklihoodTable(FrequencyTable fTable){
-            double[][] table = new double[fTable.rowCount+1][fTable.columnCount+1];
+            attributeId = fTable.attributePosition;
+            double[][] table = new double[fTable.rowCount][fTable.columnCount];
             int totalCount = 0;
+            
+            int[] classificationTotals = new int[fTable.columnCount-1];
+            for (int i = 0; i < classificationTotals.length; i++) {
+                for (int j = 0; j < fTable.rowCount; j++) {
+                    classificationTotals[i]+=fTable.table[j][i];
+                }
+            }
+            int[] attributeTotals = new int[fTable.rowCount];
+            for (int i = 0; i < attributeTotals.length; i++) {
+                for (int j = 0; j < fTable.columnCount; j++) {
+                    attributeTotals[j]+=fTable.table[i][j];
+                }
+            }
+            
+            
             for (int i = 0; i < fTable.rowCount; i++) {
                 for (int j = 0; j < fTable.columnCount; j++) {
-                    table[i][j] = fTable.table[i][j];
-                    if(i >= 1 && j >= 1)
-                        totalCount += fTable.table[i][j];
+                    totalCount += fTable.table[i][j];
+                    table[i][j] = fTable.table[i][j] / classificationTotals[j];//the table position at i,j is P(Attribute i | classification j)
+                    
                 }
             }
             
