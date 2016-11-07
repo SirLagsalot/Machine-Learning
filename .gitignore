@@ -12,3 +12,9 @@
 hs_err_pid*
 *.xml
 *.properties
+
+#Untracked files
+/*
+!/src
+/src/*
+!/src
