@@ -100,11 +100,6 @@ public class NaiveBayes implements Classifier {
                     
                 }
             }
-            
-            //calculate chance of any attribute
-            
-            
-            
         }
     }
 }
