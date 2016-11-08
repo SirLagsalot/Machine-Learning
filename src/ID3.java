@@ -11,10 +11,9 @@ public class ID3 implements Classifier {
     }
 
     @Override
-    public String classify() {
+    public int classify() {
 
-        String classification = "";
 
-        return classification;
+        return -1;
     }
 }

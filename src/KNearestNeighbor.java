@@ -12,8 +12,11 @@ public class KNearestNeighbor implements Classifier {
         this.k = k;
     }
 
-    @Override
-    public String classify() {
+    public int classify(){
+        return -1;
+    }
+    
+    public String classify(int lol) {
 
         String classification = "";
         int size = trainingData.size();

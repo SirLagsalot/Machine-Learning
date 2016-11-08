@@ -1,7 +1,7 @@
 
 public interface Classifier {
 
-    default String classify() {
-        return null;
+    default int classify() {
+        return -1;
     }
 }

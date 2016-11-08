@@ -11,10 +11,7 @@ public class TAN implements Classifier {
     }
 
     @Override
-    public String classify() {
-
-        String classification = "";
-
-        return classification;
+    public int classify() {
+        return -1;
     }
 }
