@@ -17,9 +17,10 @@ public class DataSet {
     public Mapper map;
     
     public class Mapper{
+        public String[] classes;
         public String getClassification(int classification){
             
-            return "";
+            return classes[classification];
         }
     }
 }
