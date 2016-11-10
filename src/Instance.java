@@ -5,15 +5,9 @@ import java.util.Iterator;
 public class Instance implements Iterable {
 
     protected int classification;
-    protected ArrayList<String> features;
+    protected ArrayList<Integer> features;
+    protected ArrayList<Double> unbinnedFeatures;
 
-    public Instance(int classification, String... features) {
-
-        this.classification = classification;
-        for (String f : features) {
-            this.features.add(f);
-        }
-    }
 
     @Override
     public Iterator iterator() {

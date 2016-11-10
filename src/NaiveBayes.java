@@ -3,32 +3,43 @@ import java.util.ArrayList;
 
 public class NaiveBayes implements Classifier {
 
-    private DataSet trainingData;
-    private int[][] data;
+    private ArrayList<Instance> trainingData;
     public LiklihoodTable liklihoodTable;
     int numOfClassifications;
     private ArrayList<LiklihoodTable> lTables;
 
-    public NaiveBayes(DataSet trainingData) {
+    public NaiveBayes(ArrayList<Instance> trainingData) {
 
         this.trainingData = trainingData;
-        data = convertTrainingDataToData(trainingData);
-        ArrayList<FrequencyTable> fTables = createFrequencyTables(data);
+        ArrayList<FrequencyTable> fTables = createFrequencyTables(trainingData);
         lTables = createLiklihoodTables(fTables);
     }
 
     //converts the training data into a more usable int array
-    private int[][] convertTrainingDataToData(DataSet trainingData) {
-        return new int[1][1];
+    private int[][] convertTrainingDataToData(ArrayList<Instance> trainingData) {
+        Instance sample = trainingData.get(0);
+        int numberOfFeatures = sample.features.size();
+        int[][] data = new int[trainingData.size()][numberOfFeatures+1];
+        for (int i = 0; i < trainingData.size(); i++) {
+            Instance instance = trainingData.get(i);
+            for (int j = 0; j < numberOfFeatures; j++) {
+                data[i][j] = instance.features.get(j);
+            }
+            //class is last element in the row
+            data[i][numberOfFeatures] = instance.classification;
+        }
+        
+        return data;
     }
 
     //Creates a series of tables for each attribute and maps the frequencys of 
     //each classification to each attribute.
     //We assume that int[][] data is columns then rows, and that the last column is the classifications
-    private ArrayList<FrequencyTable> createFrequencyTables(int[][] data) {
+    private ArrayList<FrequencyTable> createFrequencyTables(ArrayList<Instance> trainingData) {
         ArrayList<FrequencyTable> tables = new ArrayList<>();
-        numOfClassifications = getDistinctValueCount(data[data.length - 1]);
-
+        numOfClassifications = Utilities.getClassificationCount(trainingData);
+        int[][] data = convertTrainingDataToData(trainingData);
+        
         for (int i = 0; i < data.length - 1; i++) {
             tables.add(new FrequencyTable(data[i], data[data.length - 1], numOfClassifications, i));
         }
