@@ -1,28 +1,18 @@
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Instance implements Iterable {
 
-    protected String classification;
+    protected int classification;
     protected ArrayList<String> features;
-    private float distance;
 
-    public Instance(String classification, String... features) {
+    public Instance(int classification, String... features) {
 
         this.classification = classification;
         for (String f : features) {
             this.features.add(f);
         }
-    }
-
-    public void setDistance(float distance) {
-
-        this.distance = distance;
-    }
-
-    public float getDistance() {
-
-        return distance;
     }
 
     @Override

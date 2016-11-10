@@ -1,8 +1,9 @@
+
 import java.util.ArrayList;
 
 public class TAN implements Classifier {
 
-    private  ArrayList<Instance> trainingData, testData;
+    private ArrayList<Instance> trainingData, testData;
 
     public TAN(ArrayList<Instance> trainingData, ArrayList<Instance> testData) {
 
@@ -11,7 +12,12 @@ public class TAN implements Classifier {
     }
 
     @Override
-    public int classify() {
+    public void train(ArrayList<Instance> trainingSet) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int classify(ArrayList<Integer> featureVector) {
         return -1;
     }
 }

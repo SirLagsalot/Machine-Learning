@@ -2,15 +2,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Ryan Brand
- */
 public class DataSet {
 
     public ArrayList<DataLine> set;
@@ -39,8 +30,7 @@ public class DataSet {
             //System.out.println(next.substring(0, next.indexOf(" ")));
             if (!line.substring(0, line.indexOf(" ")).equals("?")) {
                 temp.addData(line.substring(0, line.indexOf(" ")), i);
-            }
-            else{
+            } else {
                 missing.put(i, index);
             }
             line = line.substring(line.indexOf(" ") + 1);
