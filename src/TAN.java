@@ -1,23 +1,21 @@
 
 import java.util.ArrayList;
 
-public class TAN implements Classifier {
+public class TAN extends NaiveBayes {
 
-    private ArrayList<Instance> trainingData, testData;
 
-    public TAN(ArrayList<Instance> trainingData, ArrayList<Instance> testData) {
+    public TAN(ArrayList<Instance> trainingData) {
+        super(trainingData);
+    }
 
-        this.trainingData = trainingData;
-        this.testData = testData;
+
+    @Override
+    public int classify(ArrayList<Integer> featureVector) {
+        return -1;
     }
 
     @Override
     public void train(ArrayList<Instance> trainingSet) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int classify(ArrayList<Integer> featureVector) {
-        return -1;
     }
 }

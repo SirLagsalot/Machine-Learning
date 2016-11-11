@@ -1,7 +1,7 @@
 
 import java.util.ArrayList;
 
-public class NaiveBayes implements Classifier {
+public abstract class NaiveBayes implements Classifier {
 
     private ArrayList<Instance> trainingData;
     public LiklihoodTable liklihoodTable;
@@ -131,12 +131,7 @@ public class NaiveBayes implements Classifier {
 
         return -1;
     }
-
-    @Override
-    public void train(ArrayList<Instance> trainingSet) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
     public class FrequencyTable {
 
         int rowCount;
