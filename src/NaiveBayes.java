@@ -6,6 +6,7 @@ public abstract class NaiveBayes implements Classifier {
     private ArrayList<Instance> trainingData;
     public LiklihoodTable liklihoodTable;
     int numOfClassifications;
+    int numberOfFeatures;
     private ArrayList<LiklihoodTable> lTables;
     public int[][] data;
     
@@ -50,6 +51,10 @@ public abstract class NaiveBayes implements Classifier {
         }
         return match/limitedFeatureColumn.size();
     }
+    
+    public int[] getColumn(int index){
+        return new int[0];//TODO
+    }
     public NaiveBayes(ArrayList<Instance> trainingData) {
 
         this.trainingData = trainingData;
@@ -60,7 +65,7 @@ public abstract class NaiveBayes implements Classifier {
     //converts the training data into a more usable int array
     private int[][] convertTrainingDataToData(ArrayList<Instance> trainingData) {
         Instance sample = trainingData.get(0);
-        int numberOfFeatures = sample.features.size();
+        numberOfFeatures = sample.features.size();
         int[][] data = new int[trainingData.size()][numberOfFeatures+1];
         for (int i = 0; i < trainingData.size(); i++) {
             Instance instance = trainingData.get(i);
@@ -88,9 +93,9 @@ public abstract class NaiveBayes implements Classifier {
         return tables;
     }
 
-    private int getDistinctValueCount(int[] column) {
+    public int getDistinctValueCount(int[] column) {
 
-        return 1;
+        return 1;//TODO
     }
 
     //for each frequencyTable we want to calculate P(x|c), ie the probability of a value 
