@@ -15,6 +15,36 @@ public class TAN extends NaiveBayes {
             Node node = new Node(i);
         }
         connectNodes(nodes);
+        
+        //make maximum spanning tree
+        makeMaximumSpanningTree(nodes);
+        //choose root node and have all edges go away from it ie, go from graph to tree.
+        //TODO
+        directTree(nodes);
+    }
+    
+    private void directTree(ArrayList<Node> nodes){
+        //Always make the first node the root
+        Node root = nodes.get(0);
+        ArrayList<Node> toWork = new ArrayList<>();
+        toWork.add(root);
+        while(!toWork.isEmpty()){
+            Node curNode = toWork.get(0);
+            for (Edge edge : curNode.edges) {
+                removeEdgeWithStart(edge.endNode, edge.startNode);
+                toWork.add(edge.endNode);
+            }
+            toWork.remove(curNode);
+        }
+    }
+    
+    private void removeEdgeWithStart(Node node, Node toRemove){
+        for (Edge edge: node.edges) {
+            if(edge.endNode == toRemove){
+                node.edges.remove(edge);
+                return;
+            }
+        }
     }
     
     public void connectNodes(ArrayList<Node> nodes){
@@ -77,6 +107,36 @@ public class TAN extends NaiveBayes {
                 count++;
         }
         return count/feature1.length;
+    }
+
+    //this will use prims algorithm
+    private void makeMaximumSpanningTree(ArrayList<Node> nodes) {
+        ArrayList<Node> visited = new ArrayList<>();
+        Node startNode = nodes.get(0);
+        ArrayList<Edge> edgesToWorkWith = startNode.edges;
+        while(!edgesToWorkWith.isEmpty()){
+            Edge largestEdge = getLargestEdge(edgesToWorkWith);
+            edgesToWorkWith.remove(largestEdge);
+            if(!visited.contains(largestEdge.endNode)){
+                visited.add(largestEdge.endNode);
+                edgesToWorkWith.addAll(largestEdge.endNode.edges);
+            }
+            else{
+                //remove edge from it's startNode, algo will handle endNode
+                largestEdge.startNode.edges.remove(largestEdge);
+            }
+        }
+        
+        
+    }
+    
+    private Edge getLargestEdge(ArrayList<Edge> edges){
+        Edge largestEdge = edges.get(0);
+        for (Edge edge : edges) {
+            if(edge.weight > largestEdge.weight)
+                largestEdge=edge;
+        }
+        return largestEdge;
     }
     
     private class Node{
