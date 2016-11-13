@@ -5,6 +5,7 @@ public class Instance implements Iterable {
 
     protected String classification;
     protected ArrayList<String> features;
+    protected ArrayList<Double> preProcessed;
     private float distance;
 
     public Instance(String classification, String... features) {

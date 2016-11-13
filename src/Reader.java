@@ -29,7 +29,7 @@ public class Reader {
         DataSet data = new DataSet();
         int i = 0;
         for(String s: lines){
-            data.addLine(s, i);
+            
             i++;
         }
         return data;
