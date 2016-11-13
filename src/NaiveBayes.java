@@ -9,8 +9,17 @@ public abstract class NaiveBayes implements Classifier {
     int numberOfFeatures;
     private ArrayList<LiklihoodTable> lTables;
     public int[][] data;
+    public int[] classColumn;//TODO get this early...
 
-    public double getProbabilityGivenClass(int[] featureColumn, int[] classColumn, int featureValue, int classValue) {
+    public int[] getColumn(int position){
+        //gets column of data at the given position;
+        int[] column = new int[data.length];
+        for (int i = 0; i < data.length; i++) {
+            column[i] = data[i][position];
+        }
+        return column;
+    }
+    public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
 
         //We take the values of the feature column that have a match in the class column for the desired class value
@@ -30,7 +39,7 @@ public abstract class NaiveBayes implements Classifier {
         return match / limitedFeatureColumn.size();
     }
 
-    public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int[] classColumn, int featureValue, int featureValue2, int classValue) {
+    public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
         ArrayList<Integer> limitedFeatureColumn2 = new ArrayList<>();
 
@@ -53,9 +62,13 @@ public abstract class NaiveBayes implements Classifier {
         }
         return match / limitedFeatureColumn.size();
     }
-
-    public int[] getColumn(int index) {
-        return new int[0];//TODO
+    
+    public double probabilityOfAttrValue(int[] attrVector, int attrValue){
+        double probability = 0;
+        for (int i = 0; i < attrVector.length; i++) {
+            probability+=attrVector[i];
+        }
+        return probability/attrVector.length;
     }
 
     public NaiveBayes(ArrayList<Instance> trainingData) {

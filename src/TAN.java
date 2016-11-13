@@ -68,20 +68,20 @@ public class TAN extends NaiveBayes {
     public double getWeight(int firstIndex, int secondIndex) {
         int[] feature1 = getColumn(firstIndex);
         int[] feature2 = getColumn(secondIndex);
-        int[] classValues = getColumn(data[0].length - 1);//assuming class is last column in data
+        //int[] classValues = getColumn(data[0].length - 1);//assuming class is last column in data
         int feature1Range = getDistinctValueCount(feature1);
         int feature2Range = getDistinctValueCount(feature2);
-        int classRange = getDistinctValueCount(classValues);
+        int classRange = numOfClassifications;
 
         double sum = 0;
         //We want sum_(x,y,c) P(x,y,c)*log(P(x,y|c)/(P(x|c)*P(y|c))
         for (int curFeature1 = 0; curFeature1 < feature1Range; curFeature1++) {
             for (int curFeature2 = 0; curFeature2 < feature2Range; curFeature2++) {
                 for (int curClass = 0; curClass < classRange; curClass++) {
-                    double probabilityXYZ = getProbabilityXYZ(feature1, feature2, classValues, curFeature1, curFeature2, curClass);
-                    double probabilityXYGivenZ = getProbabilityGivenClass(feature1, feature2, classValues, curFeature1, curFeature2, curClass);
-                    double probabilityXGivenZ = getProbabilityGivenClass(feature1, classValues, curFeature1, curClass);
-                    double probabilityYGivenZ = getProbabilityGivenClass(feature2, classValues, curFeature2, curClass);
+                    double probabilityXYZ = getProbabilityXYZ(feature1, feature2, curFeature1, curFeature2, curClass);
+                    double probabilityXYGivenZ = getProbabilityGivenClass(feature1, feature2,  curFeature1, curFeature2, curClass);
+                    double probabilityXGivenZ = getProbabilityGivenClass(feature1,  curFeature1, curClass);
+                    double probabilityYGivenZ = getProbabilityGivenClass(feature2,  curFeature2, curClass);
                     sum += probabilityXYZ * Math.log(probabilityXYGivenZ / (probabilityXGivenZ * probabilityYGivenZ));
                 }
             }
@@ -93,27 +93,39 @@ public class TAN extends NaiveBayes {
     @Override
     public int classify(ArrayList<Integer> featureVector) {
         //TODO
-        double probability = 1;
+        int bestClass = -1;
+        double probability = 0;
         //TODO, we need to compare probabilities for each class, and then take the best class.
-        probability *= performClassification(root, featureVector);
+        for (int currentClass = 0; currentClass < numOfClassifications; currentClass++) {
+            double currentProbability = performClassification(root, featureVector, currentClass);
+            if(currentProbability > probability){
+                probability = currentProbability;
+                bestClass = currentClass;
+            }
+        }
         
-        int curFeatureValue = featureVector.get(root.attrPosition);
-        return -1;
+        return bestClass;
     }
     
-    private double performClassification(Node node, ArrayList<Integer> featureVector){
+    private double performClassification(Node node, ArrayList<Integer> featureVector, int currentClass){
         double probability = 1;
         //TODO probability *= classifyCurNode(), probability /= probability of attr value
-        int curFeatureValue = featureVector.get(root.attrPosition);
+        int curFeatureValue = featureVector.get(node.attrPosition);
+        probability *= getProbabilityGivenClass(getColumn(node.attrPosition), curFeatureValue, currentClass);
+        probability /= probabilityOfAttrValue(getColumn(node.attrPosition), curFeatureValue);
         //TODO for each edge probability *= edge.weight, probability *= performClassification(edge.endNode, featureVector)
-        return -1;
+        for(Edge edge : node.edges){
+            probability *= edge.weight;
+            probability *= performClassification(edge.endNode, featureVector, currentClass);
+        }
+        return probability;
     }
 
     //returns the probability of x and y and z from their respective columns. Sum of all matching/whole
-    private double getProbabilityXYZ(int[] feature1, int[] feature2, int[] classValues, int curFeature1, int curFeature2, int curClass) {
+    private double getProbabilityXYZ(int[] feature1, int[] feature2, int curFeature1, int curFeature2, int curClass) {
         int count = 0;
         for (int i = 0; i < feature1.length; i++) {
-            if (feature1[i] == curFeature1 && feature2[i] == curFeature2 && classValues[i] == curClass) {
+            if (feature1[i] == curFeature1 && feature2[i] == curFeature2 && classColumn[i] == curClass) {
                 count++;
             }
         }
