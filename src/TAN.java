@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class TAN extends NaiveBayes {
 
+    private Node root;
     public TAN(ArrayList<Instance> trainingData) {
         super(trainingData);
         createTree();
@@ -20,6 +21,7 @@ public class TAN extends NaiveBayes {
         //choose root node and have all edges go away from it ie, go from graph to tree.
         //TODO
         directTree(nodes);
+        root = nodes.get(0);
     }
 
     private void directTree(ArrayList<Node> nodes) {
@@ -90,7 +92,20 @@ public class TAN extends NaiveBayes {
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
-        //Todo
+        //TODO
+        double probability = 1;
+        //TODO, we need to compare probabilities for each class, and then take the best class.
+        probability *= performClassification(root, featureVector);
+        
+        int curFeatureValue = featureVector.get(root.attrPosition);
+        return -1;
+    }
+    
+    private double performClassification(Node node, ArrayList<Integer> featureVector){
+        double probability = 1;
+        //TODO probability *= classifyCurNode(), probability /= probability of attr value
+        int curFeatureValue = featureVector.get(root.attrPosition);
+        //TODO for each edge probability *= edge.weight, probability *= performClassification(edge.endNode, featureVector)
         return -1;
     }
 
