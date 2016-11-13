@@ -1,8 +1,9 @@
+
 import java.util.ArrayList;
 
 public class ID3 implements Classifier {
 
-    private  ArrayList<Instance> trainingData, testData;
+    private ArrayList<Instance> trainingData, testData;
 
     public ID3(ArrayList<Instance> trainingData, ArrayList<Instance> testData) {
 
@@ -11,8 +12,7 @@ public class ID3 implements Classifier {
     }
 
     @Override
-    public int classify() {
-
+    public int classify(ArrayList<Integer> featureVector) {
 
         return -1;
     }

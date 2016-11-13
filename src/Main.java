@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 
 public class Main {
@@ -11,7 +12,6 @@ public class Main {
         //split into training and test sets
         ArrayList<Instance> trainingData = new ArrayList<>();
         ArrayList<Instance> testData = new ArrayList<>();
-
 
         //run classifiers
 //        Classifier classifier = new KNearestNeighbor(trainingData, testData, 3);

@@ -12,3 +12,5 @@
 hs_err_pid*
 *.xml
 *.properties
+/dist/
+/build/
