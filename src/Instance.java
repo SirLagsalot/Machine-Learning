@@ -7,7 +7,7 @@ public class Instance implements Iterable, Comparator {
 
     protected int classification;
     protected ArrayList<Integer> features;
-    protected ArrayList<Double> unbinnedFeatures;
+    protected ArrayList<Double> unbinnedFeatures = new ArrayList();
     protected double distance;
 
     @Override

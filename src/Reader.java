@@ -29,25 +29,58 @@ public class Reader {
         DataSet data = new DataSet();
         Instance current = new Instance();
         String temp = lines.get(0);
-        
+
         System.out.println(temp);
-        
+
         int attributes = 1;
-        while(temp.contains(",")){
+        while (temp.contains(",")) {
             temp = temp.substring(temp.indexOf(",") + 1);
             attributes++;
         }
-        
+
         System.out.println(attributes);
-        
-        int i = 0;
+
         int classificationIndex = findClassification(lines.get(0), attributes);
         System.out.println(classificationIndex);
         for (String s : lines) {
+            
+            s = s + ", ";
+            
+            current.classification = classificationIndex;
+            int counter = 0;
 
-            i++;
+            while (s.contains(",")) {
+                if(isNumeric(s.substring(0, s.indexOf(",")))){
+                    current.unbinnedFeatures.add(Double.parseDouble(s.substring(0, s.indexOf(","))));
+                }
+                else if(checkClassifications(data, s.substring(0, s.indexOf(","))) == -1){
+                    current.unbinnedFeatures.add((double)counter);
+                    counter++;
+                    data.map.classifications.add(s.substring(0, s.indexOf(",")));
+                }
+                else{
+                    current.unbinnedFeatures.add((double)checkClassifications(data, s.substring(0, s.indexOf(","))));
+                }
+                s = s.substring(s.indexOf(",") + 1);
+            }
+            data.data.add(current);
+            current = new Instance();
         }
+
+        for (Double d : data.data.get(0).unbinnedFeatures) {
+            System.out.print(d + " ");
+        }
+
         return data;
+    }
+    
+    public static int checkClassifications(DataSet d, String s){
+        for(int i = 0; i < d.map.classifications.size(); i++){
+            if(d.map.classifications.get(i).equals(s)){
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static int findClassification(String instance, int max) {
