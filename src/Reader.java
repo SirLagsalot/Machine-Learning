@@ -27,11 +27,40 @@ public class Reader {
 
     public static DataSet process(ArrayList<String> lines) {
         DataSet data = new DataSet();
+        Instance current = new Instance();
+        String temp = lines.get(0);
+        
+        System.out.println(temp);
+        
+        int attributes = 1;
+        while(temp.contains(",")){
+            temp = temp.substring(temp.indexOf(",") + 1);
+            attributes++;
+        }
+        
+        System.out.println(attributes);
+        
         int i = 0;
-            
+        int classificationIndex = findClassification(lines.get(0), attributes);
+        System.out.println(classificationIndex);
         for (String s : lines) {
+
             i++;
         }
         return data;
+    }
+
+    public static int findClassification(String instance, int max) {
+        if (!isNumeric(instance.substring(0, instance.indexOf(",")))) {
+            return 0;
+        } else if (!isNumeric(instance.substring(instance.lastIndexOf(",") + 1, instance.length()))) {
+            return max;
+        } else {
+            return 0;
+        }
+    }
+
+    public static boolean isNumeric(String s) {
+        return s.matches("[-+]?\\d*\\.?\\d+");
     }
 }

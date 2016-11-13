@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        DataSet data = Reader.readFile("./data/breast-cancer-wisconsin.data.txt");
+        DataSet data = Reader.readFile("./data/soybean-small.data.txt");
         //ArrayList<Instance> dataInstances = Sanitizer.sanitize(data);
         //Instance test = new Instance("3", "1", "1", "3");
 

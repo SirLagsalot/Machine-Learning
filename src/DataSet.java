@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class DataSet {
 
-    public ArrayList<Integer> data;
+    public ArrayList<Instance> data;
     public Mapper map;
 
     public class Mapper {
