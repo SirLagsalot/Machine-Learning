@@ -30,36 +30,29 @@ public class Reader {
         Instance current = new Instance();
         String temp = lines.get(0);
 
-        System.out.println(temp);
-
         int attributes = 1;
         while (temp.contains(",")) {
             temp = temp.substring(temp.indexOf(",") + 1);
             attributes++;
         }
 
-        System.out.println(attributes);
-
         int classificationIndex = findClassification(lines.get(0), attributes);
-        System.out.println(classificationIndex);
         for (String s : lines) {
-            
+
             s = s + ", ";
-            
+
             current.classification = classificationIndex;
             int counter = 0;
 
             while (s.contains(",")) {
-                if(isNumeric(s.substring(0, s.indexOf(",")))){
+                if (isNumeric(s.substring(0, s.indexOf(",")))) {
                     current.unbinnedFeatures.add(Double.parseDouble(s.substring(0, s.indexOf(","))));
-                }
-                else if(checkClassifications(data, s.substring(0, s.indexOf(","))) == -1){
-                    current.unbinnedFeatures.add((double)counter);
+                } else if (checkClassifications(data, s.substring(0, s.indexOf(","))) == -1) {
+                    current.unbinnedFeatures.add((double) counter);
                     counter++;
                     data.map.classifications.add(s.substring(0, s.indexOf(",")));
-                }
-                else{
-                    current.unbinnedFeatures.add((double)checkClassifications(data, s.substring(0, s.indexOf(","))));
+                } else {
+                    current.unbinnedFeatures.add((double) checkClassifications(data, s.substring(0, s.indexOf(","))));
                 }
                 s = s.substring(s.indexOf(",") + 1);
             }
@@ -67,16 +60,19 @@ public class Reader {
             current = new Instance();
         }
 
-        for (Double d : data.data.get(0).unbinnedFeatures) {
-            System.out.print(d + " ");
+        for (Instance i : data.data) {
+            for (int j = 0; j < i.unbinnedFeatures.size(); j++){
+                System.out.print(i.unbinnedFeatures.get(j) + " ");
+            }
+            System.out.println("");
         }
 
         return data;
     }
-    
-    public static int checkClassifications(DataSet d, String s){
-        for(int i = 0; i < d.map.classifications.size(); i++){
-            if(d.map.classifications.get(i).equals(s)){
+
+    public static int checkClassifications(DataSet d, String s) {
+        for (int i = 0; i < d.map.classifications.size(); i++) {
+            if (d.map.classifications.get(i).equals(s)) {
                 return i;
             }
         }

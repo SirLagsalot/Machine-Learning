@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) {   
-        DataSet data = Reader.readFile("./data/house-votes-84.data.txt");
+        DataSet data = Reader.readFile("./data/glass.data.txt");
         //ArrayList<Instance> dataInstances = Sanitizer.sanitize(data);
         //Instance test = new Instance("3", "1", "1", "3");
 
