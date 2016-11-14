@@ -3,42 +3,15 @@ import java.util.ArrayList;
 
 public class NaiveBayes implements Classifier {
 
-    private final ArrayList<Instance> trainingData;
-    private final ArrayList<LiklihoodTable> lTables;
-
+    private ArrayList<Instance> trainingData;
+    public LiklihoodTable liklihoodTable;
     int numOfClassifications;
     int numberOfFeatures;
-    LiklihoodTable liklihoodTable;
-
+    private ArrayList<LiklihoodTable> lTables;
     public int[][] data;
     public int[] classColumn;//TODO get this early...
 
-    public NaiveBayes(ArrayList<Instance> trainingData) {
-
-        this.trainingData = trainingData;
-        this.lTables = createLiklihoodTables(createFrequencyTables(trainingData));
-    }
-
-    @Override
-    public int classify(ArrayList<Integer> instance) {
-        return -1;
-    }
-
-    public int classify(int[] line) {
-        double maxProbability = 0;
-        int classification = -1;
-        for (int i = 0; i < numOfClassifications; i++) {
-            double probability = probabilityOfClass(i, line);
-            if (probability > maxProbability) {
-                maxProbability = probability;
-                classification = i;
-            }
-        }
-        return classification;
-    }
-
-    public int[] getColumn(int position) {
-
+    public int[] getColumn(int position){
         //gets column of data at the given position;
         int[] column = new int[data.length];
         for (int i = 0; i < data.length; i++) {
@@ -46,9 +19,16 @@ public class NaiveBayes implements Classifier {
         }
         return column;
     }
-
+    
+    public double probabilityOfClassValue(int value){
+        int count = 0;
+        for (int i = 0; i < classColumn.length; i++) {
+            if(value == classColumn[i])
+                count++;
+        }
+        return count/classColumn.length;
+    }
     public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
-
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
 
         //We take the values of the feature column that have a match in the class column for the desired class value
@@ -69,7 +49,6 @@ public class NaiveBayes implements Classifier {
     }
 
     public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
-
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
         ArrayList<Integer> limitedFeatureColumn2 = new ArrayList<>();
 
@@ -92,19 +71,25 @@ public class NaiveBayes implements Classifier {
         }
         return match / limitedFeatureColumn.size();
     }
-
-    public double probabilityOfAttrValue(int[] attrVector, int attrValue) {
-
+    
+    public double probabilityOfAttrValue(int[] attrVector, int attrValue){
         double probability = 0;
         for (int i = 0; i < attrVector.length; i++) {
-            probability += attrVector[i];
+            probability+=attrVector[i];
         }
-        return probability / attrVector.length;
+        return probability/attrVector.length;
+    }
+
+    public NaiveBayes(ArrayList<Instance> trainingData) {
+
+        this.trainingData = trainingData;
+        classColumn = getColumn(data.length-1);//class column is last column.
+        ArrayList<FrequencyTable> fTables = createFrequencyTables(trainingData);
+        lTables = createLiklihoodTables(fTables);
     }
 
     //converts the training data into a more usable int array
-    public int[][] convertTrainingDataToData(ArrayList<Instance> trainingData) {
-
+    private int[][] convertTrainingDataToData(ArrayList<Instance> trainingData) {
         Instance sample = trainingData.get(0);
         numberOfFeatures = sample.features.size();
         int[][] data = new int[trainingData.size()][numberOfFeatures + 1];
@@ -123,8 +108,7 @@ public class NaiveBayes implements Classifier {
     //Creates a series of tables for each attribute and maps the frequencys of 
     //each classification to each attribute.
     //We assume that int[][] data is columns then rows, and that the last column is the classifications
-    public ArrayList<FrequencyTable> createFrequencyTables(ArrayList<Instance> trainingData) {
-
+    private ArrayList<FrequencyTable> createFrequencyTables(ArrayList<Instance> trainingData) {
         ArrayList<FrequencyTable> tables = new ArrayList<>();
         numOfClassifications = Utilities.getClassificationCount(trainingData);
         data = convertTrainingDataToData(trainingData);
@@ -136,22 +120,39 @@ public class NaiveBayes implements Classifier {
     }
 
     public int getDistinctValueCount(int[] column) {
-
-        return 1;//TODO
+        //should be the max in the array + 1 as we assume valid values are 0+ and we 'should' have each value
+        int max = 0;
+        for (int i = 0; i < column.length; i++) {
+            if(column[i] > max)
+                max = column[i];
+        }
+        return max+1;
     }
 
     //for each frequencyTable we want to calculate P(x|c), ie the probability of a value 
     //given a classification. Beyond that we want the liklihood table to have information on
     //The probability of any classification and the probability of any attribute.
-    public ArrayList<LiklihoodTable> createLiklihoodTables(ArrayList<FrequencyTable> fTables) {
-
+    private ArrayList<LiklihoodTable> createLiklihoodTables(ArrayList<FrequencyTable> fTables) {
         ArrayList<LiklihoodTable> tables = new ArrayList<>();
+
         return tables;
     }
 
     //We assume line is an array of attribute values pre-binned.
-    public double probabilityOfClass(int classValue, int[] line) {
+    public int classify(int[] line) {
+        double maxProbability = 0;
+        int classification = -1;
+        for (int i = 0; i < numOfClassifications; i++) {
+            double probability = probabilityOfClass(i, line);
+            if (probability > maxProbability) {
+                maxProbability = probability;
+                classification = i;
+            }
+        }
+        return classification;
+    }
 
+    public double probabilityOfClass(int classValue, int[] line) {
         double probability = 1;
         for (int i = 0; i < line.length; i++) {
             LiklihoodTable table = lTables.get(i);
@@ -162,17 +163,18 @@ public class NaiveBayes implements Classifier {
             //probability /= table.table[line[i]][]
         }
         //multiply by probability of given class.
+
         return -1;
     }
 
-    class FrequencyTable {
+    public class FrequencyTable {
 
         int rowCount;
         int columnCount;
         int[][] table;
         int attributePosition;
 
-        FrequencyTable(int[] attributeValues, int[] classifications, int numberOfClassifications, int attributePosition) {
+        public FrequencyTable(int[] attributeValues, int[] classifications, int numberOfClassifications, int attributePosition) {
             int attributeCount = getDistinctValueCount(attributeValues);
             table = new int[attributeCount][numberOfClassifications];
             this.attributePosition = attributePosition;
@@ -188,13 +190,12 @@ public class NaiveBayes implements Classifier {
         }
     }
 
-    class LiklihoodTable {
+    public class LiklihoodTable {
 
         int attributeId;
         double[][] table;
 
-        LiklihoodTable(FrequencyTable fTable) {
-
+        public LiklihoodTable(FrequencyTable fTable) {
             attributeId = fTable.attributePosition;
             table = new double[fTable.rowCount][fTable.columnCount];
             int totalCount = 0;

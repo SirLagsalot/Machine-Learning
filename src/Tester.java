@@ -1,6 +1,7 @@
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Tester {
@@ -19,6 +20,112 @@ public class Tester {
         fiveByTwoTest();
     }
 
+    private ArrayList<Instance> normalize(ArrayList<Instance> instances) {
+
+        if (!instances.get(0).discrete) {
+            double[][] features = new double[instances.get(0).unbinnedFeatures.size()][instances.size()];
+            for (int i = 0; i < instances.get(0).features.size(); i++) {
+                for (int j = 0; j < instances.size(); j++) {
+                    features[i][j] = instances.get(j).unbinnedFeatures.get(i);
+                }
+            }
+            double[] binWidth = new double[features.length];
+
+            for (int i = 0; i < binWidth.length; i++) {
+                binWidth[i] = bin(features[i]);
+
+            }
+            //apply bins
+        }
+        return instances;
+
+        //group data by attribute
+//        double[][] features = new double[instances.get(0).unbinnedFeatures.size()][instances.size()];
+//        for (int i = 0; i < instances.get(0).features.size(); i++) {
+//            for (int j = 0; j < instances.size(); j++) {
+//                features[i][j] = instances.get(j).unbinnedFeatures.get(i);
+//            }
+//        }
+        //get min and max value for each data attribute
+//        double min[] = new double[features[0].length];
+//        double max[] = new double[features[0].length];
+//        
+//        for (int i = 0; i < features.length - 1; i++) {
+//            min[i] = 9999;
+//            max[i] = 0;
+//            for (int j = 0; j < features[0].length - 1; j++) {
+//                if (features[i][j] < min[i]) {
+//                    min[i] = features[i][j];
+//                }
+//                if (features[i][j] > max[i]) {
+//                    max[i] = features[i][j];
+//                }
+//            }
+//        }
+        //sort attributes
+//        double[] medians = new double[features.length];
+//        for (int i = 0; i < features.length - 1; i++) {
+//            Arrays.sort(features[i]);
+//            medians[i] = getMedian(features[i]);
+//        }
+//        
+//        
+//
+//        //calculate inter quartile range
+//        int lower = 9999, upper = 0;
+//
+//        //get statistics
+//        for (int i = 0; i < features.length - 1; i++) {
+//
+//        }
+//
+//        return instances;
+    }
+
+    private int bin(double[] values) {
+
+        int numBins = 0;
+
+        //sort values
+        Arrays.sort(values);
+
+        //get median
+        double median = getMedian(values);
+
+        //split into two arrays above and below median
+        double[] lower = new double[values.length / 2 - 1];
+        double[] upper = new double[values.length / 2 - 1];
+        for (int i = 0; i < values.length - 1; i++) {
+            if (values[i] < median) {
+                lower[i] = values[i];
+            }
+            if (values[i] > median) {
+                upper[i] = values[i];
+            }
+        }
+
+        //get meadian of sub arrays
+        double upperMedian = getMedian(upper);
+        double lowerMedian = getMedian(lower);
+
+        //IQR = distance between medians
+        double IQR = upperMedian - lowerMedian;
+
+        //numBins = 2 * IQR * n^(-1/3)
+        numBins = (int) (2.0 * IQR * Math.pow(values.length, -1 / 3));
+
+        return numBins;
+    }
+
+    private double getMedian(double[] m) {
+        int middle = m.length / 2;
+        if (m.length % 2 == 1) {
+            return m[middle];
+        } else {
+            return (m[middle - 1] + m[middle]) / 2.0;
+        }
+    }
+
     //Execute a 5x2 cross fold validation on the dataset using each of the algorithms
     private void fiveByTwoTest() {
 
@@ -30,8 +137,10 @@ public class Tester {
             Collections.shuffle(dataInstances);
             ArrayList<Instance> set1 = new ArrayList<>();
             set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
+            set1 = normalize(set1);
             ArrayList<Instance> set2 = new ArrayList<>();
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
+            set2 = normalize(set2);
 
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
