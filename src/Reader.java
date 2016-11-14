@@ -105,9 +105,22 @@ public class Reader {
             }
         }
 
-        //get statistics
-        for (int i = 0; i < features.length - 1; i++) {
+        //get min and max
+        double max[] = new double[features.length];
+        double min[] = new double[features.length];
 
+        for (int i = 0; i < features[0].length - 1; i++) {
+            min[i] = 999999;
+            max[i] = 0;
+            for (int j = 0; j < features.length - 1; j++) {
+                if (features[j][i] > max[i]) {
+                    max[i] = features[j][i];
+                }
+                if (features[j][i] < min[i]) {
+                    min[i] = features[j][i];
+                }
+            }
         }
+        //how do decide bin size?  would be easy to use a fixed number but seems ineffective. This is probably a fairly critical decision as far as algorithm accuracy goes....   
     }
 }
