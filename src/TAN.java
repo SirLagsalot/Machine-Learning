@@ -19,8 +19,9 @@ public class TAN extends NaiveBayes {
         //make maximum spanning tree
         makeMaximumSpanningTree(nodes);
         //choose root node and have all edges go away from it ie, go from graph to tree.
-        //TODO
+        
         directTree(nodes);
+        //assuming directTree makes 0 the root node.
         root = nodes.get(0);
     }
 
