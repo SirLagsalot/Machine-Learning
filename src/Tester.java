@@ -1,4 +1,5 @@
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -39,8 +40,7 @@ public class Tester {
 
             //call classifiers for each instance in the test set
             for (Instance instance : set2) {
-                //TODO: add statistics tracking by comparing return value to actual classification, tally results and calculate stats after full test
-                ArrayList<Integer> testInstance = instance.features;
+                ArrayList<Integer> testInstance = instance.features;                                                            //TODO: Logging for each classification maybe...
                 if (nb.classify(testInstance) == instance.classification) {
                     nbAccuracy++;
                 }
@@ -85,10 +85,11 @@ public class Tester {
         id3Accuracy /= 5000;
         
         //print results
-        System.out.println("5 x 2 Cross Validation Test on " + origin + " classifier accuracies:");
-        System.out.println("Naive Bayes:\t" + nbAccuracy);
-        System.out.println("TAN:\t\t" + tanAccuracy);
-        System.out.println("k-Nearest Neighbor:\t" + knnAccuracy);
-        System.out.println("Iterative Dichotomiser 3:\t" + id3Accuracy);
+        System.out.println("5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
+        System.out.println("________________________________");
+        System.out.println("Naive Bayes:               " + new DecimalFormat("#.##").format(nbAccuracy));
+        System.out.println("Tree Augmented Naive Bayes:" + new DecimalFormat("#.##").format(tanAccuracy));
+        System.out.println("k-Nearest Neighbor:        " + new DecimalFormat("#.##").format(knnAccuracy));
+        System.out.println("Iterative Dichotomiser 3:  " + new DecimalFormat("#.##").format(id3Accuracy));
     }
 }
