@@ -83,6 +83,7 @@ public class NaiveBayes implements Classifier {
     public NaiveBayes(ArrayList<Instance> trainingData) {
 
         this.trainingData = trainingData;
+        classColumn = getColumn(data.length-1);//class column is last column.
         ArrayList<FrequencyTable> fTables = createFrequencyTables(trainingData);
         lTables = createLiklihoodTables(fTables);
     }
@@ -119,8 +120,13 @@ public class NaiveBayes implements Classifier {
     }
 
     public int getDistinctValueCount(int[] column) {
-
-        return 1;//TODO
+        //should be the max in the array + 1 as we assume valid values are 0+ and we 'should' have each value
+        int max = 0;
+        for (int i = 0; i < column.length; i++) {
+            if(column[i] > max)
+                max = column[i];
+        }
+        return max+1;
     }
 
     //for each frequencyTable we want to calculate P(x|c), ie the probability of a value 

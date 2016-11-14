@@ -147,13 +147,12 @@ public class TAN extends NaiveBayes {
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
-        //TODO
         int bestClass = 0;
         double bestProbability = 0;
         
-        //TODO Algorithm: every node will have 1 parent(we didn't add the class node) except the root. 
+        //Algorithm: every node will have 1 parent(we didn't add the class node) except the root. 
         //Calculate root probability seperately
-        //TODO, we need to compare probabilities for each class, and then take the best class.
+        //compare probabilities for each class, and then take the best class.
         for (int i = 0; i < numOfClassifications; i++) {
             double probability = probabilityOfClass(i, featureVector);
             if(probability > bestProbability){
