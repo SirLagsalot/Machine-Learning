@@ -20,122 +20,48 @@ public class Tester {
         //  fiveByTwoTest();
     }
 
-    public ArrayList<Instance> normalize(ArrayList<Instance> instances) {
+    public void normalize(ArrayList<Instance> instances) {
 
-        System.out.println("Instances.size() = "  + instances.size());
-        System.out.println("Instances.get(0).unbinnedFeatures.size() = " + instances.get(0).unbinnedFeatures.size());
         if (!instances.get(0).discrete) {
+
+            //split data into arrays of columns
             double[][] features = new double[instances.get(0).unbinnedFeatures.size()][instances.size()];
             for (int i = 0; i < instances.get(0).unbinnedFeatures.size(); i++) {
                 for (int j = 0; j < instances.size(); j++) {
                     features[i][j] = instances.get(j).unbinnedFeatures.get(i);
                 }
             }
-            double[] binWidth = new double[features.length];
 
-            for (int i = 0; i < binWidth.length; i++) {
-                binWidth[i] = bin(features[i]);
-                System.out.println("Bin width (" + i +") = " + binWidth[i]);
+            //apply binning
+            int[][] binnedValues = new int[features.length][features[0].length];
+            for (int i = 0; i < features.length; i++) {
+                binnedValues[i] = bin(features[i]);
             }
-            //TODO: apply bins
-
+            
+            //rebuild dataset with binned values
+            for (int i = 0; i < features.length - 1; i++) {
+                for (int j = 0; j < features[0].length - 1; j++) {
+                    instances.get(i).features.add(binnedValues[i][j]);
+                }
+            }
         }
-        return instances;
-
-        //group data by attribute
-//        double[][] features = new double[instances.get(0).unbinnedFeatures.size()][instances.size()];
-//        for (int i = 0; i < instances.get(0).features.size(); i++) {
-//            for (int j = 0; j < instances.size(); j++) {
-//                features[i][j] = instances.get(j).unbinnedFeatures.get(i);
-//            }
-//        }
-        //get min and max value for each data attribute
-//        double min[] = new double[features[0].length];
-//        double max[] = new double[features[0].length];
-//        
-//        for (int i = 0; i < features.length - 1; i++) {
-//            min[i] = 9999;
-//            max[i] = 0;
-//            for (int j = 0; j < features[0].length - 1; j++) {
-//                if (features[i][j] < min[i]) {
-//                    min[i] = features[i][j];
-//                }
-//                if (features[i][j] > max[i]) {
-//                    max[i] = features[i][j];
-//                }
-//            }
-//        }
-        //sort attributes
-//        double[] medians = new double[features.length];
-//        for (int i = 0; i < features.length - 1; i++) {
-//            Arrays.sort(features[i]);
-//            medians[i] = getMedian(features[i]);
-//        }
-//        
-//        
-//
-//        //calculate inter quartile range
-//        int lower = 9999, upper = 0;
-//
-//        //get statistics
-//        for (int i = 0; i < features.length - 1; i++) {
-//
-//        }
-//
-//        return instances;
     }
 
-    private int bin(double[] values) {
+    private int[] bin(double[] values) {
 
-        for (double d : values) {
-            System.out.print(d + ", ");
-        }
-        System.out.println("");
-        //sort values
-        Arrays.sort(values);
+        //use Sturge's Rule to calculate number of bins
+        int numBins = (int) (2 + 3.322 * Math.log10(values.length));
+        double[] sortedValues = Arrays.copyOf(values, values.length);
+        Arrays.sort(sortedValues);
+        double binWidth = sortedValues[sortedValues.length - 1] / numBins;
+        int[] binnedValues = new int[values.length];
 
-        //get median
-        double median = getMedian(values);
-        System.out.println("Median" + median);
-
-        //split into two arrays above and below median
-        double[] lower = new double[values.length / 2 - 1];
-        System.out.println("lower length: " + (values.length / 2 - 1));
-        double[] upper = new double[values.length / 2 - 1];
+        //assign values to bins
         for (int i = 0; i < values.length - 1; i++) {
-            if (values[i] < median - 1) {
-                lower[i] = values[i];
-            }
-            if (values[i] > median + 1) {
-                upper[i] = values[i];
-            }
+            binnedValues[i] = (int) (values[i] / binWidth);
         }
 
-        //get meadian of sub arrays
-        double upperMedian = getMedian(upper);
-        double lowerMedian = getMedian(lower);
-
-        //IQR = distance between medians
-        double IQR = upperMedian - lowerMedian;
-        //System.out.println("iqr: " + IQR);
-
-        //numBins = 2 * IQR * n^(-1/3)
-        double h = (2.0 * IQR * Math.pow(values.length, -1 / 3));
-        // System.out.println(h);
-        return 0;
-    }
-
-    private double getMedian(double[] m) {
-        int middle = m.length / 2;
-//        for (double d : m) {
-//            System.out.print(d + ", ");  
-//        }
-        System.out.println("");
-        if (m.length % 2 == 1) {
-            return m[middle];
-        } else {
-            return (m[middle - 1] + m[middle]) / 2.0;
-        }
+        return binnedValues;
     }
 
     //Execute a 5x2 cross fold validation on the dataset using each of the algorithms
@@ -149,10 +75,10 @@ public class Tester {
             Collections.shuffle(dataInstances);
             ArrayList<Instance> set1 = new ArrayList<>();
             set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
-            set1 = normalize(set1);
+            normalize(set1);
             ArrayList<Instance> set2 = new ArrayList<>();
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
-            set2 = normalize(set2);
+            normalize(set2);
 
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
