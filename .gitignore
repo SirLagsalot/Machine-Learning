@@ -12,9 +12,14 @@
 hs_err_pid*
 *.xml
 *.properties
+<<<<<<< HEAD
 
 #Untracked files
 /*
 !/src
 /src/*
 !/src
+=======
+/dist/
+/build/
+>>>>>>> origin/master
