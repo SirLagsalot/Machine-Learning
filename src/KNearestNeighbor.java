@@ -1,7 +1,7 @@
 
 import java.util.ArrayList;
 
-public final class KNearestNeighbor implements Classifier {
+public class KNearestNeighbor implements Classifier {
 
     private final int length;
     private final int k;

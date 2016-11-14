@@ -9,11 +9,9 @@ public class DataSet {
     public class Mapper {
 
         public ArrayList<String> classifications = new ArrayList();
-        
-        
+
         public String getClassification(int classification) {
             return classifications.get(classification);
         }
     }
-
 }
