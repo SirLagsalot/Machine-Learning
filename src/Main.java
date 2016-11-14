@@ -1,16 +1,14 @@
 
-import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {   
         DataSet data = Reader.readFile("./data/glass.data.txt");
+        
         //ArrayList<Instance> dataInstances = Sanitizer.sanitize(data);
         //Instance test = new Instance("3", "1", "1", "3");
 
         //split into training and test sets
-        ArrayList<Instance> trainingData = new ArrayList<>();
-        ArrayList<Instance> testData = new ArrayList<>();
 
         //run classifiers
 //        Classifier classifier = new KNearestNeighbor(trainingData, testData, 3);

@@ -7,8 +7,6 @@ import java.util.stream.Stream;
 
 public class Reader {
 
-    //do you have a big data file that needs reading?
-    //well do i have a solution for you!
     public static DataSet readFile(String fileName) {
 
         ArrayList<String> file = new ArrayList<>();
