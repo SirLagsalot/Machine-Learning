@@ -78,13 +78,13 @@ public class Tester {
                 }
             }
         }
-        
+
         //calculate accuracy %
         nbAccuracy /= 5000;
         tanAccuracy /= 5000;
         knnAccuracy /= 5000;
         id3Accuracy /= 5000;
-        
+
         //print results
         System.out.println("5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
         System.out.println("________________________________");

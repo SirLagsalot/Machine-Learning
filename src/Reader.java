@@ -103,8 +103,8 @@ public class Reader {
         }
 
         //get statistics
-        for (int i = 0; i < features.length - 1; ) {
-            
+        for (int i = 0; i < features.length - 1;) {
+
         }
     }
 }

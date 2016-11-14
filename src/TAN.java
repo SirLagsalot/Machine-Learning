@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class TAN extends NaiveBayes {
 
     private Node root;
+
     public TAN(ArrayList<Instance> trainingData) {
         super(trainingData);
         createTree();
@@ -19,7 +20,7 @@ public class TAN extends NaiveBayes {
         //make maximum spanning tree
         makeMaximumSpanningTree(nodes);
         //choose root node and have all edges go away from it ie, go from graph to tree.
-        
+
         directTree(nodes);
         //assuming directTree makes 0 the root node.
         root = nodes.get(0);
@@ -80,9 +81,9 @@ public class TAN extends NaiveBayes {
             for (int curFeature2 = 0; curFeature2 < feature2Range; curFeature2++) {
                 for (int curClass = 0; curClass < classRange; curClass++) {
                     double probabilityXYZ = getProbabilityXYZ(feature1, feature2, curFeature1, curFeature2, curClass);
-                    double probabilityXYGivenZ = getProbabilityGivenClass(feature1, feature2,  curFeature1, curFeature2, curClass);
-                    double probabilityXGivenZ = getProbabilityGivenClass(feature1,  curFeature1, curClass);
-                    double probabilityYGivenZ = getProbabilityGivenClass(feature2,  curFeature2, curClass);
+                    double probabilityXYGivenZ = getProbabilityGivenClass(feature1, feature2, curFeature1, curFeature2, curClass);
+                    double probabilityXGivenZ = getProbabilityGivenClass(feature1, curFeature1, curClass);
+                    double probabilityYGivenZ = getProbabilityGivenClass(feature2, curFeature2, curClass);
                     sum += probabilityXYZ * Math.log(probabilityXYGivenZ / (probabilityXGivenZ * probabilityYGivenZ));
                 }
             }
@@ -99,23 +100,23 @@ public class TAN extends NaiveBayes {
         //TODO, we need to compare probabilities for each class, and then take the best class.
         for (int currentClass = 0; currentClass < numOfClassifications; currentClass++) {
             double currentProbability = performClassification(root, featureVector, currentClass);
-            if(currentProbability > probability){
+            if (currentProbability > probability) {
                 probability = currentProbability;
                 bestClass = currentClass;
             }
         }
-        
+
         return bestClass;
     }
-    
-    private double performClassification(Node node, ArrayList<Integer> featureVector, int currentClass){
+
+    private double performClassification(Node node, ArrayList<Integer> featureVector, int currentClass) {
         double probability = 1;
         //TODO probability *= classifyCurNode(), probability /= probability of attr value
         int curFeatureValue = featureVector.get(node.attrPosition);
         probability *= getProbabilityGivenClass(getColumn(node.attrPosition), curFeatureValue, currentClass);
         probability /= probabilityOfAttrValue(getColumn(node.attrPosition), curFeatureValue);
         //TODO for each edge probability *= edge.weight, probability *= performClassification(edge.endNode, featureVector)
-        for(Edge edge : node.edges){
+        for (Edge edge : node.edges) {
             probability *= edge.weight;
             probability *= performClassification(edge.endNode, featureVector, currentClass);
         }
