@@ -69,6 +69,7 @@ public class Reader {
     }
 
     private static int checkClassifications(DataSet d, String s) {
+
         for (int i = 0; i < d.map.classifications.size(); i++) {
             if (d.map.classifications.get(i).equals(s)) {
                 return i;
@@ -78,6 +79,7 @@ public class Reader {
     }
 
     private static int findClassification(String instance, int max) {
+
         if (!isNumeric(instance.substring(0, instance.indexOf(",")))) {
             return 0;
         } else if (!isNumeric(instance.substring(instance.lastIndexOf(",") + 1, instance.length()))) {
@@ -88,6 +90,7 @@ public class Reader {
     }
 
     private static boolean isNumeric(String s) {
+
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
 
@@ -103,7 +106,7 @@ public class Reader {
         }
 
         //get statistics
-        for (int i = 0; i < features.length - 1;) {
+        for (int i = 0; i < features.length - 1; i++) {
 
         }
     }
