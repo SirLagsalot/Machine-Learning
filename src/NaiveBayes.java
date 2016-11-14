@@ -19,6 +19,15 @@ public class NaiveBayes implements Classifier {
         }
         return column;
     }
+    
+    public double probabilityOfClassValue(int value){
+        int count = 0;
+        for (int i = 0; i < classColumn.length; i++) {
+            if(value == classColumn[i])
+                count++;
+        }
+        return count/classColumn.length;
+    }
     public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
 
