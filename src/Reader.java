@@ -17,10 +17,30 @@ public class Reader {
             ex.printStackTrace();
             System.exit(-1);
         }
-        DataSet data = process(file);
-        normalize(data.data);
+        return process(file);
+    }
+    
+    private static DataSet handleInput(ArrayList<String> sample) {
+        
+        DataSet data = new DataSet();
+        //parse through sample, excract classification and featrue vector
+        for (String line : sample) {
+            ArrayList<Double> featureVector = new ArrayList<>();
+            String[] features = line.split(",");
+            for (String feature : features) {
+                featureVector.add(Double.parseDouble(feature));
+            }
+            Instance newInstance = new Instance();
+            newInstance.unbinnedFeatures = featureVector;
+            data.addClassification(featureVector.remove(0).toString());
+            data.data.add(newInstance);
+        }
         return data;
     }
+    
+    
+    
+    
 
     private static DataSet process(ArrayList<String> lines) {
 
@@ -48,7 +68,7 @@ public class Reader {
                 } else if (checkClassifications(data, s.substring(0, s.indexOf(","))) == -1) {
                     current.unbinnedFeatures.add((double) counter);
                     counter++;
-                    data.map.classifications.add(s.substring(0, s.indexOf(",")));
+                    data.addClassification(s.substring(0, s.indexOf(",")));
                 } else {
                     current.unbinnedFeatures.add((double) checkClassifications(data, s.substring(0, s.indexOf(","))));
                 }
@@ -70,8 +90,8 @@ public class Reader {
 
     private static int checkClassifications(DataSet d, String s) {
 
-        for (int i = 0; i < d.map.classifications.size(); i++) {
-            if (d.map.classifications.get(i).equals(s)) {
+        for (int i = 0; i < d.data.size(); i++) {
+            if (d.getClassification(i).equals(s)) {
                 return i;
             }
         }
@@ -92,22 +112,5 @@ public class Reader {
     private static boolean isNumeric(String s) {
 
         return s.matches("[-+]?\\d*\\.?\\d+");
-    }
-
-    //normalize dataset by placing continuous data values into discrete bins
-    private static void normalize(ArrayList<Instance> instances) {
-
-        //extract table of feature values
-        double[][] features = new double[instances.size()][instances.get(0).features.size()];
-        for (int i = 0; i < features.length - 1; i++) {
-            for (int j = 0; j < features[0].length - 1; j++) {
-                features[i][j] = instances.get(i).unbinnedFeatures.get(j);
-            }
-        }
-
-        //get statistics
-        for (int i = 0; i < features.length - 1; i++) {
-
-        }
     }
 }
