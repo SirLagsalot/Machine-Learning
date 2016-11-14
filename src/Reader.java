@@ -17,13 +17,13 @@ public class Reader {
             ex.printStackTrace();
             System.exit(-1);
         }
-
         DataSet data = process(file);
-
+        normalize(data.data);
         return data;
     }
 
-    public static DataSet process(ArrayList<String> lines) {
+    private static DataSet process(ArrayList<String> lines) {
+
         DataSet data = new DataSet();
         Instance current = new Instance();
         String temp = lines.get(0);
@@ -59,7 +59,7 @@ public class Reader {
         }
 
         for (Instance i : data.data) {
-            for (int j = 0; j < i.unbinnedFeatures.size(); j++){
+            for (int j = 0; j < i.unbinnedFeatures.size(); j++) {
                 System.out.print(i.unbinnedFeatures.get(j) + " ");
             }
             System.out.println("");
@@ -68,7 +68,7 @@ public class Reader {
         return data;
     }
 
-    public static int checkClassifications(DataSet d, String s) {
+    private static int checkClassifications(DataSet d, String s) {
         for (int i = 0; i < d.map.classifications.size(); i++) {
             if (d.map.classifications.get(i).equals(s)) {
                 return i;
@@ -77,7 +77,7 @@ public class Reader {
         return -1;
     }
 
-    public static int findClassification(String instance, int max) {
+    private static int findClassification(String instance, int max) {
         if (!isNumeric(instance.substring(0, instance.indexOf(",")))) {
             return 0;
         } else if (!isNumeric(instance.substring(instance.lastIndexOf(",") + 1, instance.length()))) {
@@ -87,7 +87,24 @@ public class Reader {
         }
     }
 
-    public static boolean isNumeric(String s) {
+    private static boolean isNumeric(String s) {
         return s.matches("[-+]?\\d*\\.?\\d+");
+    }
+
+    //normalize dataset by placing continuous data values into discrete bins
+    private static void normalize(ArrayList<Instance> instances) {
+
+        //extract table of feature values
+        double[][] features = new double[instances.size()][instances.get(0).features.size()];
+        for (int i = 0; i < features.length - 1; i++) {
+            for (int j = 0; j < features[0].length - 1; j++) {
+                features[i][j] = instances.get(i).unbinnedFeatures.get(j);
+            }
+        }
+
+        //get statistics
+        for (int i = 0; i < features.length - 1; ) {
+            
+        }
     }
 }

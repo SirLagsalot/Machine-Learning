@@ -78,6 +78,7 @@ public class Tester {
                 }
             }
         }
+        
         //calculate accuracy %
         nbAccuracy /= 5000;
         tanAccuracy /= 5000;
