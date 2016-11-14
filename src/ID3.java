@@ -1,20 +1,18 @@
+
 import java.util.ArrayList;
 
 public class ID3 implements Classifier {
 
-    private  ArrayList<Instance> trainingData, testData;
+    private final ArrayList<Instance> trainingData;
 
-    public ID3(ArrayList<Instance> trainingData, ArrayList<Instance> testData) {
+    public ID3(ArrayList<Instance> trainingData) {
 
         this.trainingData = trainingData;
-        this.testData = testData;
     }
 
     @Override
-    public String classify() {
+    public int classify(ArrayList<Integer> featureVector) {
 
-        String classification = "";
-
-        return classification;
+        return -1;
     }
 }
