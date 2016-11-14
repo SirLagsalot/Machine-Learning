@@ -5,12 +5,20 @@ import java.util.Iterator;
 
 public class Instance implements Iterable, Comparator {
 
-    protected int classification = -1;
+    protected int classification;
     protected ArrayList<Integer> features;
     protected ArrayList<Double> unbinnedFeatures;
-    protected double distance = 0;
+    protected double distance;
     protected boolean discrete;
 
+    public Instance() {
+        this.features = new ArrayList<>();
+        this.unbinnedFeatures = new ArrayList<>();
+        this.discrete = false;
+        this.distance = 0.0f;
+        this.classification = -1;
+    }
+    
     @Override
     public Iterator iterator() {
         return features.iterator();

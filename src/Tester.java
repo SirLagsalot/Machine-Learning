@@ -17,14 +17,14 @@ public class Tester {
         this.dataSet = dataSet;
         this.dataInstances = dataSet.data;
         this.origin = origin;
-        fiveByTwoTest();
+      //  fiveByTwoTest();
     }
 
-    private ArrayList<Instance> normalize(ArrayList<Instance> instances) {
+    public ArrayList<Instance> normalize(ArrayList<Instance> instances) {
 
         if (!instances.get(0).discrete) {
             double[][] features = new double[instances.get(0).unbinnedFeatures.size()][instances.size()];
-            for (int i = 0; i < instances.get(0).features.size(); i++) {
+            for (int i = 0; i < instances.get(0).unbinnedFeatures.size(); i++) {
                 for (int j = 0; j < instances.size(); j++) {
                     features[i][j] = instances.get(j).unbinnedFeatures.get(i);
                 }
@@ -33,7 +33,7 @@ public class Tester {
 
             for (int i = 0; i < binWidth.length; i++) {
                 binWidth[i] = bin(features[i]);
-
+                System.out.println("Bin width = " + binWidth[i]);
             }
             //apply bins
         }
@@ -84,13 +84,16 @@ public class Tester {
 
     private int bin(double[] values) {
 
-        int numBins = 0;
-
+        for (double d: values) {
+            System.out.print(d + ", ");
+        }
+        System.out.println("");
         //sort values
         Arrays.sort(values);
 
         //get median
         double median = getMedian(values);
+        //System.out.println("Median" + median);
 
         //split into two arrays above and below median
         double[] lower = new double[values.length / 2 - 1];
@@ -110,15 +113,20 @@ public class Tester {
 
         //IQR = distance between medians
         double IQR = upperMedian - lowerMedian;
+        //System.out.println("iqr: " + IQR);
 
         //numBins = 2 * IQR * n^(-1/3)
-        numBins = (int) (2.0 * IQR * Math.pow(values.length, -1 / 3));
-
-        return numBins;
+        double h = (2.0 * IQR * Math.pow(values.length, -1 / 3));
+       // System.out.println(h);
+        return 0;
     }
 
     private double getMedian(double[] m) {
         int middle = m.length / 2;
+//        for (double d : m) {
+//            System.out.print(d + ", ");  
+//        }
+        System.out.println("");
         if (m.length % 2 == 1) {
             return m[middle];
         } else {

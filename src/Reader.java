@@ -14,11 +14,10 @@ public class Reader {
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             stream.forEach(file::add);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("IOException: " + ex);
             System.exit(-1);
         }
         DataSet data = process(file);
-        normalize(data.data);
         return data;
     }
 
@@ -44,11 +43,14 @@ public class Reader {
 
             while (s.contains(",")) {
                 if (isNumeric(s.substring(0, s.indexOf(",")))) {
+                   // System.out.println(s);
+                   // System.out.println("");
+                    current.unbinnedFeatures.add(4.5);
                     current.unbinnedFeatures.add(Double.parseDouble(s.substring(0, s.indexOf(","))));
                 } else if (checkClassifications(data, s.substring(0, s.indexOf(","))) == -1) {
                     current.unbinnedFeatures.add((double) counter);
                     counter++;
-                    data.map.classifications.add(s.substring(0, s.indexOf(",")));
+                    data.addClassification(s.substring(0, s.indexOf(",")));
                 } else {
                     current.unbinnedFeatures.add((double) checkClassifications(data, s.substring(0, s.indexOf(","))));
                 }
@@ -58,20 +60,19 @@ public class Reader {
             current = new Instance();
         }
 
-        for (Instance i : data.data) {
-            for (int j = 0; j < i.unbinnedFeatures.size(); j++) {
-                System.out.print(i.unbinnedFeatures.get(j) + " ");
-            }
-            System.out.println("");
-        }
-
+//        for (Instance i : data.data) {
+//            for (int j = 0; j < i.unbinnedFeatures.size(); j++) {
+//                System.out.print(i.unbinnedFeatures.get(j) + " ");
+//            }
+//            System.out.println("");
+//        }
         return data;
     }
 
     private static int checkClassifications(DataSet d, String s) {
 
-        for (int i = 0; i < d.map.classifications.size(); i++) {
-            if (d.map.classifications.get(i).equals(s)) {
+        for (int i = 0; i < d.data.size(); i++) {
+            if (d.getClassification(i).equals(s)) {
                 return i;
             }
         }
@@ -90,37 +91,6 @@ public class Reader {
     }
 
     private static boolean isNumeric(String s) {
-
         return s.matches("[-+]?\\d*\\.?\\d+");
-    }
-
-    //normalize dataset by placing continuous data values into discrete bins
-    private static void normalize(ArrayList<Instance> instances) {
-
-        //extract table of feature values
-        double[][] features = new double[instances.size()][instances.get(0).features.size()];
-        for (int i = 0; i < features.length - 1; i++) {
-            for (int j = 0; j < features[0].length - 1; j++) {
-                features[i][j] = instances.get(i).unbinnedFeatures.get(j);
-            }
-        }
-
-        //get min and max
-        double max[] = new double[features.length];
-        double min[] = new double[features.length];
-
-        for (int i = 0; i < features[0].length - 1; i++) {
-            min[i] = 999999;
-            max[i] = 0;
-            for (int j = 0; j < features.length - 1; j++) {
-                if (features[j][i] > max[i]) {
-                    max[i] = features[j][i];
-                }
-                if (features[j][i] < min[i]) {
-                    min[i] = features[j][i];
-                }
-            }
-        }
-        //how do decide bin size?  would be easy to use a fixed number but seems ineffective. This is probably a fairly critical decision as far as algorithm accuracy goes....   
     }
 }
