@@ -17,11 +17,13 @@ public class Tester {
         this.dataSet = dataSet;
         this.dataInstances = dataSet.data;
         this.origin = origin;
-      //  fiveByTwoTest();
+        //  fiveByTwoTest();
     }
 
     public ArrayList<Instance> normalize(ArrayList<Instance> instances) {
 
+        System.out.println("Instances.size() = "  + instances.size());
+        System.out.println("Instances.get(0).unbinnedFeatures.size() = " + instances.get(0).unbinnedFeatures.size());
         if (!instances.get(0).discrete) {
             double[][] features = new double[instances.get(0).unbinnedFeatures.size()][instances.size()];
             for (int i = 0; i < instances.get(0).unbinnedFeatures.size(); i++) {
@@ -33,9 +35,10 @@ public class Tester {
 
             for (int i = 0; i < binWidth.length; i++) {
                 binWidth[i] = bin(features[i]);
-                System.out.println("Bin width = " + binWidth[i]);
+                System.out.println("Bin width (" + i +") = " + binWidth[i]);
             }
-            //apply bins
+            //TODO: apply bins
+
         }
         return instances;
 
@@ -84,7 +87,7 @@ public class Tester {
 
     private int bin(double[] values) {
 
-        for (double d: values) {
+        for (double d : values) {
             System.out.print(d + ", ");
         }
         System.out.println("");
@@ -93,16 +96,17 @@ public class Tester {
 
         //get median
         double median = getMedian(values);
-        //System.out.println("Median" + median);
+        System.out.println("Median" + median);
 
         //split into two arrays above and below median
         double[] lower = new double[values.length / 2 - 1];
+        System.out.println("lower length: " + (values.length / 2 - 1));
         double[] upper = new double[values.length / 2 - 1];
         for (int i = 0; i < values.length - 1; i++) {
-            if (values[i] < median) {
+            if (values[i] < median - 1) {
                 lower[i] = values[i];
             }
-            if (values[i] > median) {
+            if (values[i] > median + 1) {
                 upper[i] = values[i];
             }
         }
@@ -117,7 +121,7 @@ public class Tester {
 
         //numBins = 2 * IQR * n^(-1/3)
         double h = (2.0 * IQR * Math.pow(values.length, -1 / 3));
-       // System.out.println(h);
+        // System.out.println(h);
         return 0;
     }
 

@@ -45,7 +45,6 @@ public class Reader {
                 if (isNumeric(s.substring(0, s.indexOf(",")))) {
                    // System.out.println(s);
                    // System.out.println("");
-                    current.unbinnedFeatures.add(4.5);
                     current.unbinnedFeatures.add(Double.parseDouble(s.substring(0, s.indexOf(","))));
                 } else if (checkClassifications(data, s.substring(0, s.indexOf(","))) == -1) {
                     current.unbinnedFeatures.add((double) counter);
