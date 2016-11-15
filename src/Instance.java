@@ -5,11 +5,11 @@ import java.util.Comparator;
 public class Instance implements Comparator {
 
     public int classification;
-    protected String className;
-    protected ArrayList<Integer> features;
-    protected ArrayList<Double> unbinnedFeatures;
-    protected double distance;
-    protected boolean discrete;
+    public String className;
+    public ArrayList<Integer> features;
+    public ArrayList<Double> unbinnedFeatures;
+    public double distance;
+    public boolean discrete;
 
     public Instance(ArrayList<Integer> features, String className, boolean discrete) {
 

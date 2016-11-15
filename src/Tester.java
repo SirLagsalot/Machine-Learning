@@ -21,6 +21,8 @@ public class Tester {
     }
 
     private void normalize(ArrayList<Instance> instances) {
+        
+        System.out.println("length: " + instances.size());
 
         if (!instances.get(0).discrete) {
 
@@ -33,14 +35,16 @@ public class Tester {
             }
 
             //apply binning
-            int[][] binnedValues = new int[features.length][features[0].length];
+            int[][] binnedValues = new int[features[0].length][features.length];
             for (int i = 0; i < features.length; i++) {
                 binnedValues[i] = bin(features[i]);
             }
 
             //rebuild dataset with binned values
-            for (int i = 0; i < features.length - 1; i++) {
-                for (int j = 0; j < features[0].length - 1; j++) {
+        //    System.out.println("features length: " + features[0].length);
+            for (int i = 0; i < features[0].length - 1; i++) {
+                for (int j = 0; j < features.length - 1; j++) {
+                    System.out.println("i: " + i + " j: " + j);
                     instances.get(i).features.add(binnedValues[i][j]);
                 }
             }

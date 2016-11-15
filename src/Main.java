@@ -4,10 +4,9 @@ public class Main {
     public static void main(String[] args) {
 
         DataSet dataSet;
-        
-        dataSet = Reader.readFile("./data/glass.data.txt");
-        Tester tester = new Tester(dataSet, "glass");
-        
+
+        //  dataSet = Reader.readFile("./data/glass.data.txt");
+        //  Tester tester = new Tester(dataSet, "glass");
 //        dataSet = Reader.readFile("./data/breast-cancer-wisconsin.data.txt");
 //        tester = new Tester(dataSet, "breast-cancer-wisconsin");
 //
@@ -17,7 +16,7 @@ public class Main {
 //        dataSet = Reader.readFile("./data/iris.data.txt");
 //        tester = new Tester(dataSet, "iris");
 //
-//        dataSet = Reader.readFile("./data/soybean-small.data.txt");
-//        Tester tester = new Tester(dataSet, "soybean-small");
+        dataSet = Reader.readFile("./data/soybean-small.data.txt");
+        Tester tester = new Tester(dataSet, "soybean-small");
     }
 }
