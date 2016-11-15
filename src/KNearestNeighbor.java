@@ -1,5 +1,7 @@
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class KNearestNeighbor implements Classifier {
 
@@ -68,7 +70,13 @@ public class KNearestNeighbor implements Classifier {
 //            }
 //            instance.distance = Math.sqrt(distance);
         //get the k smallest distances
-        trainingData.sort((instance1, instance2) -> instance1.distance > instance2.distance ? 1 : -1);
+        Collections.sort(trainingData, new Comparator<Instance>() {
+            @Override
+            public int compare(Instance a, Instance b) {
+                return a.compareTo(b);
+            }
+        });
+       // trainingData.sort(c);.sort((instance1, instance2) -> instance1.distance > instance2.distance ? 1 : -1);
         int[] kNearest = new int[k];
         for (int i = 0; i < k; i++) {
             kNearest[i] = trainingData.get(i).getClassification();

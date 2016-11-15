@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Instance implements Comparator {
+public class Instance implements Comparable {
 
     public int classification;
     public String className;
@@ -16,7 +16,7 @@ public class Instance implements Comparator {
         this.features = features;
         this.className = className;
         this.discrete = true;
-        this.distance = 0.0f;
+        this.distance = 0.0;
     }
 
     public Instance(ArrayList<Double> unbinnedFeatures, String className) {
@@ -37,9 +37,14 @@ public class Instance implements Comparator {
     }
 
     @Override
-    public int compare(Object o1, Object o2) {
-        Instance i1 = (Instance) o1;
-        Instance i2 = (Instance) o2;
-        return i1.distance < i2.distance ? 1 : -1;
+    public int compareTo(Object instance) {
+        
+        Instance in = (Instance) instance;
+        if (in.distance == this.distance) {
+            return 0;
+        }
+        assert (int) (in.distance - this.distance) != 0;
+        return (int) (in.distance - this.distance);
+        //return this.distance < ((Instance) instance).distance ? 1 : -1;
     }
 }
