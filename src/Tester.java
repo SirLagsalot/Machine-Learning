@@ -23,6 +23,7 @@ public class Tester {
 
     private void normalize(ArrayList<Instance> instances) {
 
+        //  printDataSet(instances, false);
         if (!instances.get(0).discrete) {
 
             //split data into arrays of columns
@@ -32,7 +33,7 @@ public class Tester {
                     features[i][j] = instances.get(j).unbinnedFeatures.get(i);
                 }
             }
-            
+
             //bin data
             int[][] binnedValues = new int[features[0].length][features.length];
             for (int i = 0; i < features.length; i++) {
@@ -43,10 +44,11 @@ public class Tester {
             for (int i = 0; i < features[0].length - 1; i++) {
                 for (int j = 0; j < features.length - 1; j++) {
                     //System.out.println("i: " + i + " j: " + j);
-                    instances.get(i).features.add(binnedValues[i][j]);
+                    instances.get(i).features.add(binnedValues[j][i]);
                 }
             }
         }
+        // printDataSet(instances, true);
     }
 
     private int[] bin(double[] values) {
@@ -59,6 +61,7 @@ public class Tester {
         Arrays.sort(sortedValues);
 
         double binWidth = (sortedValues[sortedValues.length - 1] - sortedValues[0]) / numBins + 0.00001;
+        // System.out.println("bin width: " + binWidth);
         int[] binnedValues = new int[values.length];
 
         for (int i = 0; i < values.length - 1; i++) {
@@ -109,8 +112,7 @@ public class Tester {
             ArrayList<Instance> set1 = new ArrayList<>();
             set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
             normalize(set1);
-            printDataSet(set1);
-            System.exit(0);
+            // printDataSet(set1);
             ArrayList<Instance> set2 = new ArrayList<>();
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
             normalize(set2);
@@ -175,16 +177,29 @@ public class Tester {
         System.out.println("k-Nearest Neighbor:        " + new DecimalFormat("#.##").format(knnAccuracy));
         System.out.println("Iterative Dichotomiser 3:  " + new DecimalFormat("#.##").format(id3Accuracy));
     }
-    
-    private static void printDataSet(ArrayList<Instance> data) {
-        
-        for (Instance in : data) {
-            ArrayList<Integer> binnedData = in.features;
-            for (Integer i : binnedData) {
-                System.out.print(i + " ");
+
+    private static void printDataSet(ArrayList<Instance> data, boolean binned) {
+
+        if (binned) {
+
+            for (Instance in : data) {
+                ArrayList<Integer> binnedData = in.features;
+                for (Integer i : binnedData) {
+                    System.out.print(i + " ");
+                }
+                System.out.println("");
             }
-            System.out.println("");
+        } else {
+
+            for (Instance in : data) {
+                ArrayList<Double> binnedData = in.unbinnedFeatures;
+                for (Double i : binnedData) {
+                    // System.out.print(i + " ");
+                    System.out.print(new DecimalFormat("#.##").format(i) + " ");
+                }
+                System.out.println("");
+            }
         }
-        
+
     }
 }
