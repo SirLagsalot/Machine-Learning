@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class Instance implements Comparator {
+public class Instance implements Iterable, Comparator {
 
     protected int classification;
     protected ArrayList<Integer> features;
@@ -17,6 +17,11 @@ public class Instance implements Comparator {
         this.discrete = false;
         this.distance = 0.0f;
         this.classification = -1;
+    }
+    
+    @Override
+    public Iterator iterator() {
+        return features.iterator();
     }
 
     @Override
