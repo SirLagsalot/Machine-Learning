@@ -99,74 +99,90 @@ public class Tester {
     private void fiveByTwoTest() {
 
         double nbAccuracy = 0, tanAccuracy = 0, knnAccuracy = 0, id3Accuracy = 0;
+        int trials = 0;
         //run 5 times, 2 trails each time
-        // for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
 
-        //randomly split dataSet into a test set and a trainging set
-        Collections.shuffle(dataInstances);
-        ArrayList<Instance> set1 = new ArrayList<>();
-        set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
-        normalize(set1);
-        //printDataSet(set1, true);
-        ArrayList<Instance> set2 = new ArrayList<>();
-        set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
-        normalize(set2);
-       //printDataSet(set2, true);
+            //randomly split dataSet into a test set and a trainging set
+            Collections.shuffle(dataInstances);
+            ArrayList<Instance> set1 = new ArrayList<>();
+            set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
+            normalize(set1);
+            //printDataSet(set1, true);
+            ArrayList<Instance> set2 = new ArrayList<>();
+            set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
+            normalize(set2);
+            //printDataSet(set2, true);
 
-        //NaiveBayes nb = new NaiveBayes(set1);
-        //TAN tan = new TAN(set1);
-        KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
-        //ID3 id3 = new ID3(set1);
+            //NaiveBayes nb = new NaiveBayes(set1);
+            //TAN tan = new TAN(set1);
+            KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
+            //ID3 id3 = new ID3(set1);
 
-        //call classifiers for each instance in the test set
-        for (Instance instance : set2) {
-            ArrayList<Integer> testInstance = instance.features;                                                            //TODO: Logging for each classification maybe...
+            //call classifiers for each instance in the test set
+            for (Instance instance : set2) {
+                trials++;
+                ArrayList<Integer> testInstance = instance.features;                                                            //TODO: Logging for each classification maybe...
+                int result = kNN.classify(testInstance);
+                System.out.print("kNN Classified as: " + kNN.classify(testInstance) + " -- actual class: " + instance.getClassification());
+                if (result == instance.classification) {
+                    System.out.println(" correct!");
+                    knnAccuracy++;
+                } else {
+                    System.out.println(" fuck!");
+                }
 //                if (nb.classify(testInstance) == instance.classification) {
 //                    nbAccuracy++;
 //                }
 //                if (tan.classify(testInstance) == instance.classification) {
 //                    tanAccuracy++;
 //                }
-            if (kNN.classify(testInstance) == instance.getClassification()) {
-                knnAccuracy++;
-            }
+//                if (kNN.classify(testInstance) == instance.getClassification()) {
+//                    knnAccuracy++;
+//                }
 //                if (id3.classify(testInstance) == instance.classification) {
 //                    id3Accuracy++;
 //                }
-        }
+            }
 
-        //swap training and test sets, repeat trial
-        // nb = new NaiveBayes(set2);
-        // tan = new TAN(set2);
-        kNN = new KNearestNeighbor(set2, k);
-        //  id3 = new ID3(set2);
+            //swap training and test sets, repeat trial
+            // nb = new NaiveBayes(set2);
+            // tan = new TAN(set2);
+            kNN = new KNearestNeighbor(set2, k);
+            //  id3 = new ID3(set2);
 
-        //call classifiers for each instance in the test set
-        for (Instance instance : set1) {
-            ArrayList<Integer> testInstance = instance.features;
+            //call classifiers for each instance in the test set
+            for (Instance instance : set1) {
+                trials++;
+                ArrayList<Integer> testInstance = instance.features;
+                int result = kNN.classify(testInstance);
+                System.out.print("kNN Classified as: " + kNN.classify(testInstance) + " -- actual class: " + instance.getClassification());
+                if (result == instance.classification) {
+                    System.out.println(" correct!");
+                    knnAccuracy++;
+                } else {
+                    System.out.println(" fuck!");
+                }
 //                if (nb.classify(testInstance) == instance.classification) {
 //                    nbAccuracy++;
 //                }
 //                if (tan.classify(testInstance) == instance.classification) {
 //                    tanAccuracy++;
-//              }
-            //System.out.println("knnresult: " + kNN.classify(testInstance));
-            if (kNN.classify(testInstance) == instance.getClassification()) {
-                //System.out.println(instance.getClassification());
-
-                knnAccuracy++;
-            }
+//                }
+//                if (kNN.classify(testInstance) == instance.getClassification()) {
+//                    knnAccuracy++;
+//                }
 //                if (id3.classify(testInstance) == instance.classification) {
 //                    id3Accuracy++;
 //                }
+            }
         }
-        // }
         //System.out.println("knnacc" + knnAccuracy);
         //calculate accuracy %
-        nbAccuracy /= 5000;
-        tanAccuracy /= 5000;
-        knnAccuracy /= 5000;
-        id3Accuracy /= 5000;
+        nbAccuracy /= trials;
+        tanAccuracy /= trials;
+        knnAccuracy /= trials;
+        id3Accuracy /= trials;
 
         //print results
         System.out.println("5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
