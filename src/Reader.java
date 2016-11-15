@@ -42,7 +42,9 @@ public class Reader {
             ArrayList<String> attributes = new ArrayList<>(Arrays.asList(line.split(",")));
             String classification = classAtStart ? attributes.remove(0) : attributes.remove(attributes.size() - 1);
 
-            //this is really crude and expense, will changes to a set but this works for now
+            //This is a bit awkward since we dont want duplicates here, using .contains is really expensive and ideally this would be a set (not an arraylist)
+            //however that causes problems when assigning a class id because the index in the arraylist works as a nice conversion to class id
+            //could potentially use a set and then convert it by set.toArray() and create a custom itterator to create indicies.. idk just thoughts
             if (!classifications.contains(classification)) {
                 classifications.add(classification);
             }

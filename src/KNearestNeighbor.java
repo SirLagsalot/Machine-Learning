@@ -26,9 +26,9 @@ public class KNearestNeighbor implements Classifier {
             double distance = 0.0f;
             for (int j = 0; j < trainingFeatures.size(); j++) {
                 int test = testFeatures.get(j);
-                System.out.println(test);
+           //     System.out.println(test);
                 int train = trainingFeatures.get(j);
-                System.out.println(train);
+             //   System.out.println(train);
                 distance += Math.pow(testFeatures.get(j) - trainingFeatures.get(j), 2);
             }
             trainingData.get(i).distance = Math.sqrt(distance);
