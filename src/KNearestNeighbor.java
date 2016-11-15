@@ -71,7 +71,7 @@ public class KNearestNeighbor implements Classifier {
         trainingData.sort((instance1, instance2) -> instance1.distance > instance2.distance ? 1 : -1);
         int[] kNearest = new int[k];
         for (int i = 0; i < k; i++) {
-            kNearest[i] = trainingData.get(i).classification;
+            kNearest[i] = trainingData.get(i).getClassification();
         }
 
         //get frequency of the k closest classifications

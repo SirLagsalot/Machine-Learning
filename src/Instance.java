@@ -4,18 +4,36 @@ import java.util.Comparator;
 
 public class Instance implements Comparator {
 
-    protected int classification;
+    public int classification;
+    protected String className;
     protected ArrayList<Integer> features;
     protected ArrayList<Double> unbinnedFeatures;
     protected double distance;
     protected boolean discrete;
 
-    public Instance() {
+    public Instance(ArrayList<Integer> features, String className, boolean discrete) {
+
+        this.features = features;
+        this.className = className;
+        this.discrete = true;
+        this.distance = 0.0f;
+    }
+
+    public Instance(ArrayList<Double> unbinnedFeatures, String className) {
+
+        this.unbinnedFeatures = unbinnedFeatures;
         this.features = new ArrayList<>();
-        this.unbinnedFeatures = new ArrayList<>();
+        this.className = className;
         this.discrete = false;
         this.distance = 0.0f;
-        this.classification = -1;
+    }
+
+    public void setClassification(int classID) {
+        classification = classID;
+    }
+
+    public int getClassification() {
+        return classification;
     }
 
     @Override

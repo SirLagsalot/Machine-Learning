@@ -37,7 +37,7 @@ public class Tester {
             for (int i = 0; i < features.length; i++) {
                 binnedValues[i] = bin(features[i]);
             }
-            
+
             //rebuild dataset with binned values
             for (int i = 0; i < features.length - 1; i++) {
                 for (int j = 0; j < features[0].length - 1; j++) {
@@ -80,10 +80,10 @@ public class Tester {
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
             normalize(set2);
 
-           // NaiveBayes nb = new NaiveBayes(set1);
-           // TAN tan = new TAN(set1);
+            // NaiveBayes nb = new NaiveBayes(set1);
+            // TAN tan = new TAN(set1);
             KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
-           // ID3 id3 = new ID3(set1);
+            // ID3 id3 = new ID3(set1);
 
             //call classifiers for each instance in the test set
             for (Instance instance : set2) {
@@ -94,7 +94,7 @@ public class Tester {
 //                if (tan.classify(testInstance) == instance.classification) {
 //                    tanAccuracy++;
 //                }
-                if (kNN.classify(testInstance) == instance.classification) {
+                if (kNN.classify(testInstance) == instance.getClassification()) {
                     knnAccuracy++;
                 }
 //                if (id3.classify(testInstance) == instance.classification) {
@@ -103,10 +103,10 @@ public class Tester {
             }
 
             //swap training and test sets, repeat trial
-           // nb = new NaiveBayes(set2);
-           // tan = new TAN(set2);
+            // nb = new NaiveBayes(set2);
+            // tan = new TAN(set2);
             kNN = new KNearestNeighbor(set2, k);
-          //  id3 = new ID3(set2);
+            //  id3 = new ID3(set2);
 
             //call classifiers for each instance in the test set
             for (Instance instance : set1) {
@@ -117,7 +117,7 @@ public class Tester {
 //                if (tan.classify(testInstance) == instance.classification) {
 //                    tanAccuracy++;
 //                }
-                if (kNN.classify(testInstance) == instance.classification) {
+                if (kNN.classify(testInstance) == instance.getClassification()) {
                     knnAccuracy++;
                 }
 //                if (id3.classify(testInstance) == instance.classification) {

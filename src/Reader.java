@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class Reader {
-
+    
     public static DataSet readFile(String fileName) {
-
+        
         ArrayList<String> file = new ArrayList<>();
-
+        
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             stream.forEach(file::add);
         } catch (IOException ex) {
@@ -19,12 +19,14 @@ public class Reader {
             System.exit(-1);
         }
         DataSet data = parseData(file);
+        
+        for (Instance in : data.data) {
+            System.out.println("Class: " + in.className + " --> " + in.classification);
+        }
         return data;
     }
-
+    
     private static DataSet parseData(ArrayList<String> lines) {
-
-        DataSet data = new DataSet();
 
         //determine data type
         boolean classAtStart = false, numeric = false;
@@ -36,25 +38,29 @@ public class Reader {
             classAtStart = true;
         }
         //parse each line
+        ArrayList<String> classifications = new ArrayList<>();
+        ArrayList<Instance> instances = new ArrayList<>();
         for (String line : lines) {
-
+            
             ArrayList<String> attributes = new ArrayList<>(Arrays.asList(line.split(",")));
             String classification;
-            Instance instance = new Instance();
-
+            
             if (classAtStart) {
                 classification = attributes.remove(0);
             } else {
                 classification = attributes.remove(attributes.size() - 1);
             }
-
+            //this is really crude and expense, will changes to collection but this works for now
+            if (!classifications.contains(classification)) {
+                classifications.add(classification);
+            }
+            
             if (numeric) {
                 ArrayList<Double> features = new ArrayList<>();
                 for (String attribute : attributes) {
                     features.add(Double.parseDouble(attribute));
                 }
-                instance.discrete = false;
-                instance.unbinnedFeatures = features;
+                instances.add(new Instance(features, classification));
             } else {
                 //assuming domain size = 3 (known from file being used)
                 //this is specific to the house votes data, might want to generify if feeling fancy
@@ -75,16 +81,17 @@ public class Reader {
                             System.exit(-1);
                     }
                 }
-                instance.discrete = true;
-                instance.features = features;
+                instances.add(new Instance(features, classification, true));
             }
-            System.out.println("class: " + classification);
-            data.addLine(instance, classification);
         }
-        return data;
+        System.out.println("Num classes: " + classifications.size());
+        for (Instance instance : instances) {
+            instance.setClassification(classifications.indexOf(instance.className));
+        }
+        
+        return new DataSet(instances);
     }
 }
-
 
 //    private static DataSet process(ArrayList<String> lines) {
 //
