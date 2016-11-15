@@ -6,15 +6,13 @@ import java.util.Collections;
 
 public class Tester {
 
-    //k value for k-nearest neighbors algorithm
     private final int k = 5;
 
     private final ArrayList<Instance> dataInstances;
-    private final DataSet dataSet;
     private final String origin;
 
     public Tester(DataSet dataSet, String origin) {
-        this.dataSet = dataSet;
+
         this.dataInstances = dataSet.data;
         this.origin = origin;
         fiveByTwoTest();
@@ -23,7 +21,6 @@ public class Tester {
 
     private void normalize(ArrayList<Instance> instances) {
 
-        //  printDataSet(instances, false);
         if (!instances.get(0).discrete) {
 
             //split data into arrays of columns
@@ -36,35 +33,33 @@ public class Tester {
 
             //bin data
             int[][] binnedValues = new int[features[0].length][features.length];
-            for (int i = 0; i < features.length; i++) {
+            for (int i = 0; i < instances.get(0).unbinnedFeatures.size(); i++) {
                 binnedValues[i] = bin(features[i]);
             }
 
             //add binned data to each data instance
-            for (int i = 0; i < features[0].length - 1; i++) {
-                for (int j = 0; j < features.length - 1; j++) {
-                    //System.out.println("i: " + i + " j: " + j);
+            for (int i = 0; i < instances.size(); i++) {
+                for (int j = 0; j < instances.get(0).unbinnedFeatures.size(); j++) {
                     instances.get(i).features.add(binnedValues[j][i]);
                 }
             }
         }
-        // printDataSet(instances, true);
     }
 
     private int[] bin(double[] values) {
 
-        //use Sturge's Rule to calculate number of bins -- Modification to be multiple of 3 to make binning more consistent
+        //use Sturge's Rule to calculate number of bins
         int numBins = (int) (1 + 3.322 * Math.log10(values.length));
-        //System.out.println("Num Bins: " + numBins);
 
         double[] sortedValues = Arrays.copyOf(values, values.length);
         Arrays.sort(sortedValues);
 
+        //calculate bin width
         double binWidth = (sortedValues[sortedValues.length - 1] - sortedValues[0]) / numBins + 0.00001;
-        // System.out.println("bin width: " + binWidth);
         int[] binnedValues = new int[values.length];
 
-        for (int i = 0; i < values.length - 1; i++) {
+        //assign values to bins
+        for (int i = 0; i < values.length; i++) {
             double val = values[i];
             binnedValues[i] = (int) (val / binWidth) % numBins;
         }
@@ -105,75 +100,77 @@ public class Tester {
 
         double nbAccuracy = 0, tanAccuracy = 0, knnAccuracy = 0, id3Accuracy = 0;
         //run 5 times, 2 trails each time
-        for (int i = 0; i < 5; i++) {
+        // for (int i = 0; i < 5; i++) {
 
-            //randomly split dataSet into a test set and a trainging set
-            Collections.shuffle(dataInstances);
-            ArrayList<Instance> set1 = new ArrayList<>();
-            set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
-            normalize(set1);
-            // printDataSet(set1);
-            ArrayList<Instance> set2 = new ArrayList<>();
-            set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
-            normalize(set2);
+        //randomly split dataSet into a test set and a trainging set
+        Collections.shuffle(dataInstances);
+        ArrayList<Instance> set1 = new ArrayList<>();
+        set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
+        normalize(set1);
+        //printDataSet(set1, true);
+        ArrayList<Instance> set2 = new ArrayList<>();
+        set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
+        normalize(set2);
+       //printDataSet(set2, true);
 
-            // NaiveBayes nb = new NaiveBayes(set1);
-            // TAN tan = new TAN(set1);
-            KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
-            // ID3 id3 = new ID3(set1);
+        //NaiveBayes nb = new NaiveBayes(set1);
+        //TAN tan = new TAN(set1);
+        KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
+        //ID3 id3 = new ID3(set1);
 
-            //call classifiers for each instance in the test set
-            for (Instance instance : set2) {
-                ArrayList<Integer> testInstance = instance.features;                                                            //TODO: Logging for each classification maybe...
+        //call classifiers for each instance in the test set
+        for (Instance instance : set2) {
+            ArrayList<Integer> testInstance = instance.features;                                                            //TODO: Logging for each classification maybe...
 //                if (nb.classify(testInstance) == instance.classification) {
 //                    nbAccuracy++;
 //                }
 //                if (tan.classify(testInstance) == instance.classification) {
 //                    tanAccuracy++;
 //                }
-                if (kNN.classify(testInstance) == instance.getClassification()) {
-                    knnAccuracy++;
-                }
+            if (kNN.classify(testInstance) == instance.getClassification()) {
+                knnAccuracy++;
+            }
 //                if (id3.classify(testInstance) == instance.classification) {
 //                    id3Accuracy++;
 //                }
-            }
-
-            //swap training and test sets, repeat trial
-            // nb = new NaiveBayes(set2);
-            // tan = new TAN(set2);
-            kNN = new KNearestNeighbor(set2, k);
-            //  id3 = new ID3(set2);
-
-            //call classifiers for each instance in the test set
-            for (Instance instance : set1) {
-                ArrayList<Integer> testInstance = instance.features;
-//                if (nb.classify(testInstance) == instance.classification) {
-//                    nbAccuracy++;
-//                }
-//                if (tan.classify(testInstance) == instance.classification) {
-//                    tanAccuracy++;
-//                }
-                if (kNN.classify(testInstance) == instance.getClassification()) {
-                    System.out.println(instance.getClassification());
-                    knnAccuracy++;
-                }
-//                if (id3.classify(testInstance) == instance.classification) {
-//                    id3Accuracy++;
-//                }
-            }
         }
-System.out.println("knnacc" + knnAccuracy);
+
+        //swap training and test sets, repeat trial
+        // nb = new NaiveBayes(set2);
+        // tan = new TAN(set2);
+        kNN = new KNearestNeighbor(set2, k);
+        //  id3 = new ID3(set2);
+
+        //call classifiers for each instance in the test set
+        for (Instance instance : set1) {
+            ArrayList<Integer> testInstance = instance.features;
+//                if (nb.classify(testInstance) == instance.classification) {
+//                    nbAccuracy++;
+//                }
+//                if (tan.classify(testInstance) == instance.classification) {
+//                    tanAccuracy++;
+//              }
+            //System.out.println("knnresult: " + kNN.classify(testInstance));
+            if (kNN.classify(testInstance) == instance.getClassification()) {
+                //System.out.println(instance.getClassification());
+
+                knnAccuracy++;
+            }
+//                if (id3.classify(testInstance) == instance.classification) {
+//                    id3Accuracy++;
+//                }
+        }
+        // }
+        //System.out.println("knnacc" + knnAccuracy);
         //calculate accuracy %
         nbAccuracy /= 5000;
         tanAccuracy /= 5000;
         knnAccuracy /= 5000;
         id3Accuracy /= 5000;
 
-        
         //print results
         System.out.println("5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
-        System.out.println("________________________________");
+        System.out.println("____________________________________");
         System.out.println("Naive Bayes:               " + new DecimalFormat("#.##").format(nbAccuracy));
         System.out.println("Tree Augmented Naive Bayes:" + new DecimalFormat("#.##").format(tanAccuracy));
         System.out.println("k-Nearest Neighbor:        " + new DecimalFormat("#.##").format(knnAccuracy));
