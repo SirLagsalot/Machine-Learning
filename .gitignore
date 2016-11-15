@@ -23,3 +23,4 @@ hs_err_pid*
 /dist/
 /build/
 >>>>>>> origin/master
+nbproject/private/private.properties
