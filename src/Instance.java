@@ -1,8 +1,7 @@
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
-public class Instance implements Comparable {
+public class Instance {
 
     public int classification;
     public String className;
@@ -34,17 +33,5 @@ public class Instance implements Comparable {
 
     public int getClassification() {
         return classification;
-    }
-
-    @Override
-    public int compareTo(Object instance) {
-        
-        Instance in = (Instance) instance;
-        if (in.distance == this.distance) {
-            return 0;
-        }
-        assert (int) (in.distance - this.distance) != 0;
-        return (int) (in.distance - this.distance);
-        //return this.distance < ((Instance) instance).distance ? 1 : -1;
     }
 }
