@@ -155,6 +155,7 @@ public class Tester {
 //                    tanAccuracy++;
 //                }
                 if (kNN.classify(testInstance) == instance.getClassification()) {
+                    System.out.println(instance.getClassification());
                     knnAccuracy++;
                 }
 //                if (id3.classify(testInstance) == instance.classification) {
@@ -162,13 +163,14 @@ public class Tester {
 //                }
             }
         }
-
+System.out.println("knnacc" + knnAccuracy);
         //calculate accuracy %
         nbAccuracy /= 5000;
         tanAccuracy /= 5000;
         knnAccuracy /= 5000;
         id3Accuracy /= 5000;
 
+        
         //print results
         System.out.println("5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
         System.out.println("________________________________");

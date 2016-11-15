@@ -1,75 +1,46 @@
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class KNearestNeighbor implements Classifier {
-    
+
     private final int length;
     private final int k;
     private final ArrayList<Instance> trainingData;
-    
+
     public KNearestNeighbor(ArrayList<Instance> trainingData, int k) {
-        
+
         this.trainingData = trainingData;
         this.k = k;
         this.length = trainingData.get(0).features.size();
     }
-    
+
+    private double calcDistance(ArrayList<Integer> testFeatures, ArrayList<Integer> trainingFeatures) {
+
+        double distance = 0.0;
+        // System.out.println("test length= " + testFeatures.size());
+        //System.out.println("train");
+        assert testFeatures.size() == trainingFeatures.size();
+        //go through all features and sum distance
+        for (int i = 0; i < testFeatures.size() - 1; i++) {
+            //   System.out.println(testFeatures.get(i));
+            //   System.out.println(trainingFeatures.get(i));
+            //   distance += Math.pow((testFeatures.get(i) - trainingFeatures.get(i)), 2);
+        }
+        return Math.sqrt(distance);
+    }
+
     @Override
     public int classify(ArrayList<Integer> testFeatures) {
-        
+
         int classification = -1;
-        
-        for (int i = 0; i < trainingData.size(); i++) {
-            
-            ArrayList<Integer> trainingFeatures = trainingData.get(i).features;
-            assert trainingFeatures.size() == testFeatures.size();
-            double distance = 0.0f;
-            for (int j = 0; j < trainingFeatures.size(); j++) {
-                int test = testFeatures.get(j);
-                //     System.out.println(test);
-                int train = trainingFeatures.get(j);
-                //   System.out.println(train);
-                distance += Math.pow(testFeatures.get(j) - trainingFeatures.get(j), 2);
-            }
-            trainingData.get(i).distance = Math.sqrt(distance);
+
+        for (Instance trainingInstance : trainingData) {
+
+            trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
         }
 
-//
-//        for (Integer in : trainingData.get(0).features) {
-//            System.out.print(in + " ");
-//        }
-//        System.out.println("");
-//        for (Integer in : featureVector) {
-//            System.out.print(in + " ");
-//        }
-        //  System.out.println("");
-//        //calculate distance to each instance in the training set
-//        for (int i = 0; i < featureVector.size(); i++) {
-//             int test = featureVector.get(i);
-//             for (Instance trainInstance : trainingData) {
-//                 int train = trainInstance.features
-//             }
-//       //     System.out.println("Instance: " + instance.features.size() + featureVector.size());
-//            double distance = 0;
-//            for (int j = 0; j < featureVector.size() - 1; j++) {
-//                
-//                    int testFeature = featureVector.get(j);
-//                    System.out.print("testfeat: " + testFeature);
-//                    int trainFeature = instance.features.get(0);
-//                    System.out.println("    trainfeat: " + trainFeature);
-//             //      System.out.println("instance.features.get(" + i + ") : " + instance.features.get(i));
-//              //      System.out.println("i: " + i);
-//                    distance += Math.pow(testFeature - trainFeature, 2);
-////                } catch (Exception e) {
-////                    System.out.println(e);
-////                    System.exit(-1);
-////                }
-//
-//            }
-//            instance.distance = Math.sqrt(distance);
-        //get the k smallest distances
+        //sort by distance
         Collections.sort(trainingData, (Instance instance1, Instance instance2) -> {
             if (instance1.distance > instance2.distance) {
                 return 1;
@@ -79,6 +50,7 @@ public class KNearestNeighbor implements Classifier {
                 return 0;
             }
         });
+
         int[] kNearest = new int[k];
         for (int i = 0; i < k; i++) {
             kNearest[i] = trainingData.get(i).getClassification();
