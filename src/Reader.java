@@ -7,63 +7,48 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class Reader {
-    
+
     public static DataSet readFile(String fileName) {
-        
+
         ArrayList<String> file = new ArrayList<>();
-        
+
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             stream.forEach(file::add);
         } catch (IOException ex) {
             System.out.println("IOException: " + ex);
             System.exit(-1);
         }
-        DataSet data = parseData(file);
-        
-        for (Instance in : data.data) {
-            System.out.println("Class: " + in.className + " --> " + in.classification);
-        }
-        return data;
+        return parseData(file);
     }
-    
+
     private static DataSet parseData(ArrayList<String> lines) {
 
-        //determine data type
+        ArrayList<String> classifications = new ArrayList<>();
+        ArrayList<Instance> instances = new ArrayList<>();
         boolean classAtStart = false, numeric = false;
         String[] header = lines.remove(0).split(",");
+
+        //determine data type
         if ("numeric".equalsIgnoreCase(header[0])) {
             numeric = true;
         }
         if ("first".equalsIgnoreCase(header[1])) {
             classAtStart = true;
         }
-        //parse each line
-        ArrayList<String> classifications = new ArrayList<>();
-        ArrayList<Instance> instances = new ArrayList<>();
+
+        //parse each line as one instance
         for (String line : lines) {
-            
+
             ArrayList<String> attributes = new ArrayList<>(Arrays.asList(line.split(",")));
-            String classification;
-            
-            if (classAtStart) {
-                classification = attributes.remove(0);
-            } else {
-                classification = attributes.remove(attributes.size() - 1);
-            }
-            //this is really crude and expense, will changes to collection but this works for now
+            String classification = classAtStart ? attributes.remove(0) : attributes.remove(attributes.size() - 1);
+
+            //this is really crude and expense, will changes to a set but this works for now
             if (!classifications.contains(classification)) {
                 classifications.add(classification);
             }
-            
-            if (numeric) {
-                ArrayList<Double> features = new ArrayList<>();
-                for (String attribute : attributes) {
-                    features.add(Double.parseDouble(attribute));
-                }
-                instances.add(new Instance(features, classification));
-            } else {
-                //assuming domain size = 3 (known from file being used)
-                //this is specific to the house votes data, might want to generify if feeling fancy
+
+            if (!numeric) {
+
                 ArrayList<Integer> features = new ArrayList<>();
                 for (String attribute : attributes) {
                     switch (attribute) {
@@ -82,13 +67,19 @@ public class Reader {
                     }
                 }
                 instances.add(new Instance(features, classification, true));
+            } else {
+
+                ArrayList<Double> features = new ArrayList<>();
+                for (String attribute : attributes) {
+                    features.add(Double.parseDouble(attribute));
+                }
+                instances.add(new Instance(features, classification));
             }
         }
-        System.out.println("Num classes: " + classifications.size());
+        //again really crude, might find faster way to do this but is functional
         for (Instance instance : instances) {
             instance.setClassification(classifications.indexOf(instance.className));
         }
-        
         return new DataSet(instances);
     }
 }
