@@ -1,9 +1,12 @@
 
+import java.util.ArrayList;
+
+
 public class Main {
 
     public static void main(String[] args) {
 
-        DataSet dataSet = Reader.readFile("./data/glass.data.txt");
+//        DataSet dataSet = Reader.readFile("./data/glass.data.txt");
        // Tester tester = new Tester(dataSet, "glass");
         //tester.normalize(dataSet.data);
 //        dataSet = Reader.readFile("./data/breast-cancer-wisconsin.data.txt");
@@ -15,7 +18,8 @@ public class Main {
 //        dataSet = Reader.readFile("./data/iris.data.txt");
 //        tester = new Tester(dataSet, "iris");
 //
-        dataSet = Reader.readFile("./data/soybean-small.data.txt");
-        Tester tester = new Tester(dataSet, "soybean-small");
+//        DataSet dataSet = Reader.readFile("./data/soybean-small.data.txt");
+//        Tester tester = new Tester(dataSet, "soybean-small");
+        ID3 id3 = new ID3(new ArrayList());
     }
 }

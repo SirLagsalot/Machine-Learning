@@ -35,7 +35,7 @@ public class Reader {
 
         int classificationIndex = findClassification(lines.get(0), attributes);
         
-        System.out.println(classificationIndex);
+        //System.out.println(classificationIndex);
         
         for (String s : lines) {
 
