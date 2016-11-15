@@ -34,6 +34,9 @@ public class Reader {
         }
 
         int classificationIndex = findClassification(lines.get(0), attributes);
+        
+        System.out.println(classificationIndex);
+        
         for (String s : lines) {
 
             s = s + ", ";
@@ -70,14 +73,15 @@ public class Reader {
 
     private static int checkClassifications(DataSet d, String s) {
 
-        for (int i = 0; i < d.data.size(); i++) {
+        //System.out.println(s);
+        for (int i = 0; i < d.getClassifications().size(); i++) {
             if (d.getClassification(i).equals(s)) {
                 return i;
             }
         }
         return -1;
     }
-
+    
     private static int findClassification(String instance, int max) {
 
         if (!isNumeric(instance.substring(0, instance.indexOf(",")))) {
@@ -85,7 +89,7 @@ public class Reader {
         } else if (!isNumeric(instance.substring(instance.lastIndexOf(",") + 1, instance.length()))) {
             return max;
         } else {
-            return 0;
+            return max;
         }
     }
 

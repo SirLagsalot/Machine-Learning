@@ -3,7 +3,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        DataSet dataSet = Reader.readFile("./data/glass.data.txt");
+        DataSet dataSet = Reader.readFile("./data/soybean-small.data.txt");
         Tester tester = new Tester(dataSet, "glass");
         tester.normalize(dataSet.data);
 //        dataSet = Reader.readFile("./data/breast-cancer-wisconsin.data.txt");
