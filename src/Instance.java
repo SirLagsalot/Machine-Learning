@@ -1,33 +1,37 @@
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
 
-public class Instance implements Iterable, Comparator {
+public class Instance {
 
-    protected int classification;
-    protected ArrayList<Integer> features;
-    protected ArrayList<Double> unbinnedFeatures;
-    protected double distance;
-    protected boolean discrete;
+    public int classification;
+    public String className;
+    public ArrayList<Integer> features;
+    public ArrayList<Double> unbinnedFeatures;
+    public double distance;
+    public boolean discrete;
 
-    public Instance() {
+    public Instance(ArrayList<Integer> features, String className, boolean discrete) {
+
+        this.features = features;
+        this.className = className;
+        this.discrete = true;
+        this.distance = 0.0;
+    }
+
+    public Instance(ArrayList<Double> unbinnedFeatures, String className) {
+
+        this.unbinnedFeatures = unbinnedFeatures;
         this.features = new ArrayList<>();
-        this.unbinnedFeatures = new ArrayList<>();
+        this.className = className;
         this.discrete = false;
         this.distance = 0.0f;
-        this.classification = -1;
-    }
-    
-    @Override
-    public Iterator iterator() {
-        return features.iterator();
     }
 
-    @Override
-    public int compare(Object o1, Object o2) {
-        Instance i1 = (Instance) o1;
-        Instance i2 = (Instance) o2;
-        return i1.distance < i2.distance ? 1 : -1;
+    public void setClassification(int classID) {
+        classification = classID;
+    }
+
+    public int getClassification() {
+        return classification;
     }
 }
