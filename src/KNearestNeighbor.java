@@ -18,9 +18,9 @@ public class KNearestNeighbor implements Classifier {
     public int classify(ArrayList<Integer> testFeatures) {
 
         int classification = -1;
-        
+
         for (int i = 0; i < trainingData.size(); i++) {
-            
+
             ArrayList<Integer> trainingFeatures = trainingData.get(i).features;
             assert trainingFeatures.size() == testFeatures.size();
             double distance = 0.0f;
@@ -33,14 +33,7 @@ public class KNearestNeighbor implements Classifier {
             }
             trainingData.get(i).distance = Math.sqrt(distance);
         }
-        
-        
-        
-        
-        
-        
-        
-        
+
 //
 //        for (Integer in : trainingData.get(0).features) {
 //            System.out.print(in + " ");
@@ -49,7 +42,7 @@ public class KNearestNeighbor implements Classifier {
 //        for (Integer in : featureVector) {
 //            System.out.print(in + " ");
 //        }
-      //  System.out.println("");
+        //  System.out.println("");
 //        //calculate distance to each instance in the training set
 //        for (int i = 0; i < featureVector.size(); i++) {
 //             int test = featureVector.get(i);
@@ -74,8 +67,6 @@ public class KNearestNeighbor implements Classifier {
 //
 //            }
 //            instance.distance = Math.sqrt(distance);
-        
-
         //get the k smallest distances
         trainingData.sort((instance1, instance2) -> instance1.distance > instance2.distance ? 1 : -1);
         int[] kNearest = new int[k];
