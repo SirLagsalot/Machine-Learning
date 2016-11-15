@@ -19,10 +19,10 @@ public class KNearestNeighbor implements Classifier {
 
         double distance = 0.0;
         assert testFeatures.size() == trainingFeatures.size();
-        
+
         //go through all features and sum distance
         for (int i = 0; i < testFeatures.size() - 1; i++) {
-               distance += Math.pow((testFeatures.get(i) - trainingFeatures.get(i)), 2);
+            distance += Math.pow((testFeatures.get(i) - trainingFeatures.get(i)), 2);
         }
         return Math.sqrt(distance);
     }
