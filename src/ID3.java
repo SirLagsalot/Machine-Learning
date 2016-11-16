@@ -86,7 +86,7 @@ public class ID3 implements Classifier {
     }
 
     public void id3(Node root) {
-
+        
         for (Node i : root.children) {
             fillNode(i.dataSet, i);
         }
@@ -140,34 +140,8 @@ public class ID3 implements Classifier {
 
     //Calculate information gain to set root node
     public void findRootNode() {
-        ArrayList<Integer[]> vals = new ArrayList();
-        ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
-        ArrayList<Integer> unique = new ArrayList();
-        for (int j = 0; j < trainingData.get(0).features.size() - 1; j++) {
-
-            for (Instance i : trainingData) {
-                Integer[] temp = {i.features.get(j), i.features.get(i.classification)};
-                vals.add(temp);
-                unique.add(temp[0]);
-            }
-            gains.add(gain(vals));
-            vals.clear();
-        }
-
-        //For old test set
-//        for(int i = 0; i < test.get(0).length - 1; i++){
-//            for(Integer[] j: test){
-//                Integer[] tmp = {j[i], j[test.get(0).length - 1]};
-//                vals.add(tmp);
-//                unique.add(j[0]);
-//            }
-//            gains.add(gain(vals));
-//            vals.clear();
-//        }
-//        for (Double d : gains) {
-//            System.out.println(d);
-//        }
-        decisionTree = new Tree(new Node(false, max(gains), getUniqueAttrValues(unique), trainingData));
+        decisionTree = new Tree(new Node(trainingData));
+        fillNode(trainingData, decisionTree.root);
         for (Integer i : decisionTree.root.pathVals) {
             System.out.println(i);
         }
