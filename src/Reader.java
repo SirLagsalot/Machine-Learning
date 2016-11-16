@@ -25,21 +25,12 @@ public class Reader {
 
         ArrayList<String> classifications = new ArrayList<>();
         ArrayList<Instance> instances = new ArrayList<>();
-        boolean classAtStart = false, numeric = false;
-        String[] header = lines.remove(0).split(",");
-
-        //determine data type
-        if ("numeric".equalsIgnoreCase(header[0])) {
-            numeric = true;
-        }
-        if ("first".equalsIgnoreCase(header[1])) {
-            classAtStart = true;
-        }
 
         //parse each line as one instance
         for (String line : lines) {
 
             ArrayList<String> attributes = new ArrayList<>(Arrays.asList(line.split(",")));
+            boolean classAtStart = !attributes.get(0).matches("[-+]?\\d*\\.?\\d+");
             String classification = classAtStart ? attributes.remove(0) : attributes.remove(attributes.size() - 1);
 
             //This is a bit awkward since we dont want duplicates here, using .contains is really expensive and ideally this would be a set (not an arraylist)
@@ -49,7 +40,7 @@ public class Reader {
                 classifications.add(classification);
             }
 
-            if (!numeric) {
+            if (classAtStart) {
 
                 ArrayList<Integer> features = new ArrayList<>();
                 for (String attribute : attributes) {

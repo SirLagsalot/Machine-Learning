@@ -100,7 +100,7 @@ public class Tester {
         double nbAccuracy = 0, tanAccuracy = 0, knnAccuracy = 0, id3Accuracy = 0;
 
         //run 5 times, 2 trails each time
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 5; i++) {
 
             //randomly split dataSet into a test set and a trainging set
             Collections.shuffle(dataInstances);
@@ -176,7 +176,7 @@ public class Tester {
         }
         //System.out.println("knnacc" + knnAccuracy);
         //calculate accuracy %
-        int trials = dataInstances.size() * 20;
+        int trials = dataInstances.size() * 5;
         nbAccuracy /= trials;
         tanAccuracy /= trials;
         knnAccuracy /= trials;
