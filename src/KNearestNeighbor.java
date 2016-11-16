@@ -8,6 +8,7 @@ public class KNearestNeighbor implements Classifier {
 
     private final int k;
     private final ArrayList<Instance> trainingData;
+    private double[] stdDevs;
     private final int numClasses;
 
     public KNearestNeighbor(ArrayList<Instance> trainingData, int k, int numClasses) {
@@ -15,6 +16,43 @@ public class KNearestNeighbor implements Classifier {
         this.trainingData = trainingData;
         this.numClasses = numClasses;
         this.k = k;
+        getStdDev(trainingData);
+        for (int i = 0; i < stdDevs.length - 1; i++) {
+            System.out.print(stdDevs[i] + " ");
+        }
+        System.out.println("");
+    }
+
+    private void getStdDev(ArrayList<Instance> trainingData) {
+
+        int size = trainingData.get(0).features.size();
+        stdDevs = new double[size];
+        int[] values = new int[trainingData.size()];
+        for (int j = 0; j < size; j++) {
+            for (int i = 0; i < trainingData.size(); i++) {
+                values[i] = trainingData.get(i).features.get(j);
+            }
+            stdDevs[j] = getStdDev(values);
+        }
+    }
+
+    private double getStdDev(int[] values) {
+
+        double mean = getMean(values);
+        double temp = 0;
+        for (double val : values) {
+            temp += (val - mean) * (val - mean);
+        }
+        return Math.sqrt(temp / values.length);
+    }
+
+    private double getMean(int[] values) {
+
+        double sum = 0.0;
+        for (double val : values) {
+            sum += val;
+        }
+        return sum / values.length;
     }
 
     private double calcDistance(ArrayList<Integer> testFeatures, ArrayList<Integer> trainingFeatures) {
@@ -30,31 +68,33 @@ public class KNearestNeighbor implements Classifier {
     }
 
     //well fk me mate valuedifferencemetric is kinda hard...
-    private double valueDifferenceMetric(ArrayList<Integer> trainingFeatures) {
+  //  private double valueDifferenceMetric(ArrayList<Integer> trainingFeatures) {
 
-        double distance = 0.0;
-        int q = 1;
-        int C = numClasses;
-
-        //for one feature..
-        //
-        double pAXC[] = new double[C];
-        int nAX = 0;     //P(c|xa)
-        int[] nAXC = new int[C];
-        //get num istance in t that have val x for attribute a and output class c
-        for (int c = 0; c < numClasses; c++) {
-            for (Instance in : trainingData) {
-                if (in.classification == c && Objects.equals(in.features.get(c), trainingFeatures.get(c))) {
-                    nAXC[c]++;
-                }
-            }
-            nAX += nAXC[c];
-        }
-        for (int c = 0; c < C; c++) {
-            pAXC[c] = (nAXC[c] / nAX);
-        }
-        System.out.println("pAXC" + Arrays.toString(pAXC));
-
+//        double distance = 0.0;
+//        int q = 1;
+//        int C = numClasses;
+//
+//        //for one feature..
+//        //
+//        double pAXC[] = new double[C];
+//        int nAX = 0;     //P(c|xa)
+//        int[] nAXC = new int[C];
+//        //get num istance in t that have val x for attribute a and output class c
+//        for (int c = 0; c < numClasses; c++) {
+//            for (Instance in : trainingData) {
+//                if (in.classification == c && Objects.equals(in.features.get(c), trainingFeatures.get(c))) {
+//                    nAXC[c]++;
+//                }
+//            }
+//            nAX += nAXC[c];
+//        }
+//        for (int c = 0; c < C; c++) {
+//            pAXC[c] = (nAXC[c] / nAX);
+//        }
+//        System.out.println("pAXC" + Arrays.toString(pAXC));
+        //HVDM(x,y) = sqrt(sum over features (da^2(xa,ya)))
+        //da(xa, ya) = |x - y| / 4 sigma a
+        //for each attribute in feature vector, get stdDev
         //get P(a,x,c)= N(a,x,c) / N(a,x)
         //N(a,x) = sum over C N(a,x,c)
         //N(a,x,c) = num instances in training set with val x for attribute a and output class c
@@ -66,8 +106,8 @@ public class KNearestNeighbor implements Classifier {
         //P(a,x,c) is the conditional probability that the output class is c given that attribute a has the value x : P(c|Xa)
         //P(a,x,c) = N(a,x,c) / N (a,x)
         //N(a,x) = sum over C of N(a,x,c)
-        return distance;
-    }
+       // return distance;
+  //  }
 
     @Override
     public int classify(ArrayList<Integer> testFeatures) {
@@ -75,7 +115,7 @@ public class KNearestNeighbor implements Classifier {
         //calculate distance to each instance in training set
         for (Instance trainingInstance : trainingData) {
             trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
-            valueDifferenceMetric(testFeatures);
+           // valueDifferenceMetric(testFeatures);
         }
 
         //sort by distance

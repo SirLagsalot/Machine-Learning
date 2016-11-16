@@ -24,6 +24,9 @@ public class Tester {
 
         if (!instances.get(0).discrete) {
 
+            for (Instance in : instances) {
+                in.features = new ArrayList<>();
+            }
             //split data into arrays of columns
             double[][] features = new double[instances.get(0).unbinnedFeatures.size()][instances.size()];
             for (int i = 0; i < instances.get(0).unbinnedFeatures.size(); i++) {
@@ -88,8 +91,8 @@ public class Tester {
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
             normalize(set2);
 
-           // NaiveBayes nb = new NaiveBayes(set1);
-           // TAN tan = new TAN(set1);
+            // NaiveBayes nb = new NaiveBayes(set1);
+            // TAN tan = new TAN(set1);
             KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
             //ID3 id3 = new ID3(set1);
 
