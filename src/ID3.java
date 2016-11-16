@@ -13,62 +13,87 @@ public class ID3 implements Classifier {
     public ID3(ArrayList<Instance> trainingData) {
 
         this.trainingData = trainingData;
-//        ArrayList<Integer[]> testSet = new ArrayList();
-//
-//        Integer[] test2 = {0, 0};
-//        Integer[] test3 = {0, 0};
-//        Integer[] test4 = {1, 1};
-//        Integer[] test5 = {2, 1};
-//        Integer[] test6 = {2, 1};
-//        Integer[] test7 = {2, 0};
-//        Integer[] test8 = {1, 1};
-//        Integer[] test9 = {0, 0};
-//        Integer[] test10 = {0, 1};
-//        Integer[] test11 = {2, 1};
-//        Integer[] test12 = {0, 1};
-//        Integer[] test13 = {1, 1};
-//        Integer[] test14 = {1, 1};
-//        Integer[] test15 = {2, 0};
-//
-//        testSet.add(test2);
-//        testSet.add(test3);
-//        testSet.add(test4);
-//        testSet.add(test5);
-//        testSet.add(test6);
-//        testSet.add(test7);
-//        testSet.add(test8);
-//        testSet.add(test9);
-//        testSet.add(test10);
-//        testSet.add(test11);
-//        testSet.add(test12);
-//        testSet.add(test13);
-//        testSet.add(test14);
-//        testSet.add(test15);
+        ArrayList<Integer[]> testSet = new ArrayList();
+
+        Integer[] test2 = {0,0,0,0, 0};
+        Integer[] test3 = {0,0,0,1, 0};
+        Integer[] test4 = {1,0,0,0, 1};
+        Integer[] test5 = {2,1,0,0, 1};
+        Integer[] test6 = {2,2,1,0, 1};
+        Integer[] test7 = {2,2,1,1, 0};
+        Integer[] test8 = {1,2,1,1, 1};
+        Integer[] test9 = {0,1,0,0, 0};
+        Integer[] test10 = {0,2,1,0, 1};
+        Integer[] test11 = {2,1,1,0, 1};
+        Integer[] test12 = {0,1,1,1, 1};
+        Integer[] test13 = {1,1,0,1, 1};
+        Integer[] test14 = {1,0,1,0, 1};
+        Integer[] test15 = {2,1,0,1, 0};
+
+        testSet.add(test2);
+        testSet.add(test3);
+        testSet.add(test4);
+        testSet.add(test5);
+        testSet.add(test6);
+        testSet.add(test7);
+        testSet.add(test8);
+        testSet.add(test9);
+        testSet.add(test10);
+        testSet.add(test11);
+        testSet.add(test12);
+        testSet.add(test13);
+        testSet.add(test14);
+        testSet.add(test15);
+        test = testSet;
+        classify(new ArrayList<Integer>());
 //        System.out.println(gain(testSet));
     }
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
         findRootNode();
-        System.out.println("");
+        
         return -1;
+    }
+    
+    public void makeTree(){
+        
     }
 
     //Calculate information gain to set root node
     public void findRootNode() {
         ArrayList<Integer[]> vals = new ArrayList();
         ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
-        for (int j = 0; j < trainingData.get(0).features.size(); j++) {
-
-            for (Instance i : trainingData) {
-                Integer[] temp = {i.features.get(j), i.features.get(i.classification)};
-                vals.add(temp);
+        ArrayList<Integer> unique = new ArrayList();
+//        for (int j = 0; j < trainingData.get(0).features.size() - 1; j++) {
+//
+//            for (Instance i : trainingData) {
+//                Integer[] temp = {i.features.get(j), i.features.get(i.classification)};
+//                vals.add(temp);
+//            }
+//            gains.add(gain(vals));
+//            vals.clear();
+//        }
+        
+        for(int i = 0; i < test.get(0).length - 1; i++){
+            for(Integer[] j: test){
+                Integer[] tmp = {j[i], j[test.get(0).length - 1]};
+                vals.add(tmp);
+                unique.add(j[0]);
             }
             gains.add(gain(vals));
             vals.clear();
         }
       
-        decisionTree = new Tree(new Node(false, max(gains)));
+//        for(Double d: gains){
+//            System.out.println(d);
+//        }
+        
+        decisionTree = new Tree(new Node(false, max(gains), getUniqueAttrValues(unique)));
+        for(Integer i: decisionTree.root.pathVals){
+            System.out.println(i);
+        }
+        //System.out.println(decisionTree.root.attributeNum);
     }
 
     public int max(ArrayList<Double> gains) {
@@ -218,10 +243,12 @@ public class ID3 implements Classifier {
         boolean isLeaf;
         int attributeNum;
         ArrayList<Node> children;
+        ArrayList<Integer> pathVals;
 
-        public Node(boolean isLeaf, int attributeNum) {
+        public Node(boolean isLeaf, int attributeNum, ArrayList<Integer> pathVals) {
             this.isLeaf = isLeaf;
             this.attributeNum = attributeNum;
+            this.pathVals = pathVals;
         }
     }
 }
