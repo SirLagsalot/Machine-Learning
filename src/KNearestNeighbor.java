@@ -28,8 +28,6 @@ public class KNearestNeighbor implements Classifier {
     @Override
     public int classify(ArrayList<Integer> testFeatures) {
 
-        int classification = -1;
-
         //calculate distance to each instance in training set
         for (Instance trainingInstance : trainingData) {
             trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
@@ -62,7 +60,7 @@ public class KNearestNeighbor implements Classifier {
         }
 
         //determine most frequent
-        int mostFreq = -1;
+        int classification = -1, mostFreq = -1;
         for (int i = 0; i < k; i++) {
             if (freq[i] > mostFreq) {
                 classification = kNearestClasses[i];

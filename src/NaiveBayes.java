@@ -141,6 +141,7 @@ public class NaiveBayes implements Classifier {
         return tables;
     }
 
+    @Override
     public int classify(ArrayList<Integer> featureVector) {
         int[] intArray = new int[featureVector.size()];
         for (int i = 0; i < intArray.length; i++) {

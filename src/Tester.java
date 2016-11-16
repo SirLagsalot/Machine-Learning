@@ -6,7 +6,7 @@ import java.util.Collections;
 
 public class Tester {
 
-    private final int k = 5;
+    private final int k = 3;
 
     private final ArrayList<Instance> dataInstances;
     private final String origin;
@@ -63,35 +63,6 @@ public class Tester {
             binnedValues[i] = (int) (val / binWidth) % numBins;
         }
         return binnedValues;
-    }
-
-    private double getMedian(double[] values) {
-
-        int middle = values.length / 2;
-        if (values.length % 2 == 1) {
-            return values[middle];
-        } else {
-            return (values[middle - 1] + values[middle]) / 2.0;
-        }
-    }
-
-    private double getStdDev(double[] values) {
-
-        double mean = getMean(values);
-        double temp = 0;
-        for (double val : values) {
-            temp += (val - mean) * (val - mean);
-        }
-        return Math.sqrt(temp / values.length);
-    }
-
-    private double getMean(double[] values) {
-
-        double sum = 0.0;
-        for (double val : values) {
-            sum += val;
-        }
-        return sum / values.length;
     }
 
     //Execute a 5x2 cross fold validation on the dataset using each of the algorithms

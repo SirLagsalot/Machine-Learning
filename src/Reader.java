@@ -11,7 +11,6 @@ public class Reader {
     public static DataSet readFile(String fileName) {
 
         ArrayList<String> file = new ArrayList<>();
-
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             stream.forEach(file::add);
         } catch (IOException ex) {
@@ -31,37 +30,26 @@ public class Reader {
 
             ArrayList<String> attributes = new ArrayList<>(Arrays.asList(line.split(",")));
             boolean classAtStart = !attributes.get(0).matches("[-+]?\\d*\\.?\\d+");
-            String classification = classAtStart ? attributes.remove(0) : attributes.remove(attributes.size() - 1);
 
-            //This is a bit awkward since we dont want duplicates here, using .contains is really expensive and ideally this would be a set (not an arraylist)
-            //however that causes problems when assigning a class id because the index in the arraylist works as a nice conversion to class id
-            //could potentially use a set and then convert it by set.toArray() and create a custom itterator to create indicies.. idk just thoughts
+            String classification = classAtStart ? attributes.remove(0) : attributes.remove(attributes.size() - 1);
             if (!classifications.contains(classification)) {
                 classifications.add(classification);
             }
 
             if (classAtStart) {
-
                 ArrayList<Integer> features = new ArrayList<>();
                 for (String attribute : attributes) {
-                    switch (attribute) {
-                        case "y":
-                            features.add(0);
-                            break;
-                        case "n":
-                            features.add(1);
-                            break;
-                        case "?":
-                            features.add(2);
-                            break;
-                        default:
-                            System.out.println("Error in data parsing");
-                            System.exit(-1);
+                    assert attribute != null;
+                    if ("y".equals(attribute)) {
+                        features.add(0);
+                    } else if ("n".equals(attribute)) {
+                        features.add(1);
+                    } else {
+                        features.add(2);
                     }
                 }
                 instances.add(new Instance(features, classification, true));
             } else {
-
                 ArrayList<Double> features = new ArrayList<>();
                 for (String attribute : attributes) {
                     features.add(Double.parseDouble(attribute));
@@ -69,83 +57,9 @@ public class Reader {
                 instances.add(new Instance(features, classification));
             }
         }
-        //again really crude, might find faster way to do this but is functional
         for (Instance instance : instances) {
             instance.setClassification(classifications.indexOf(instance.className));
         }
         return new DataSet(instances);
     }
 }
-
-//    private static DataSet process(ArrayList<String> lines) {
-//
-//        DataSet data = new DataSet();
-//        Instance current = new Instance();
-//        String temp = lines.get(0);
-//
-//        int attributes = 1;
-//        while (temp.contains(",")) {
-//            temp = temp.substring(temp.indexOf(",") + 1);
-//            attributes++;
-//        }
-//
-//        int classificationIndex = findClassification(lines.get(0), attributes);
-//        for (String s : lines) {
-//
-//            s = s + ", ";
-//
-//            current.classification = classificationIndex;
-//            int counter = 0;
-//
-//            while (s.contains(",")) {
-//                if (isNumeric(s.substring(0, s.indexOf(",")))) {
-//                   // System.out.println(s);
-//                   // System.out.println("");
-//                    current.unbinnedFeatures.add(Double.parseDouble(s.substring(0, s.indexOf(","))));
-//                } else if (checkClassifications(data, s.substring(0, s.indexOf(","))) == -1) {
-//                    current.unbinnedFeatures.add((double) counter);
-//                    counter++;
-//                    data.addClassification(s.substring(0, s.indexOf(",")));
-//                } else {
-//                    current.unbinnedFeatures.add((double) checkClassifications(data, s.substring(0, s.indexOf(","))));
-//                }
-//                s = s.substring(s.indexOf(",") + 1);
-//            }
-//            data.data.add(current);
-//            current = new Instance();
-//        }
-//
-////        for (Instance i : data.data) {
-////            for (int j = 0; j < i.unbinnedFeatures.size(); j++) {
-////                System.out.print(i.unbinnedFeatures.get(j) + " ");
-////            }
-////            System.out.println("");
-////        }
-//        return data;
-//    }
-//
-//    private static int checkClassifications(DataSet d, String s) {
-//
-//        for (int i = 0; i < d.data.size(); i++) {
-//            if (d.getClassification(i).equals(s)) {
-//                return i;
-//            }
-//        }
-//        return -1;
-//    }
-//
-//    private static int findClassification(String instance, int max) {
-//
-//        if (!isNumeric(instance.substring(0, instance.indexOf(",")))) {
-//            return 0;
-//        } else if (!isNumeric(instance.substring(instance.lastIndexOf(",") + 1, instance.length()))) {
-//            return max;
-//        } else {
-//            return 0;
-//        }
-//    }
-//
-//    private static boolean isNumeric(String s) {
-//        return s.matches("[-+]?\\d*\\.?\\d+");
-//    }
-//}
