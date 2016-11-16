@@ -15,19 +15,19 @@ public class ID3 implements Classifier {
         ArrayList<Integer[]> testSet = new ArrayList();
 
         Integer[] test2 = {0, 0};
-        Integer[] test3 = {0, 0};
-        Integer[] test4 = {1, 1};
-        Integer[] test5 = {2, 1};
-        Integer[] test6 = {2, 1};
-        Integer[] test7 = {2, 0};
+        Integer[] test3 = {1, 0};
+        Integer[] test4 = {0, 1};
+        Integer[] test5 = {0, 1};
+        Integer[] test6 = {0, 1};
+        Integer[] test7 = {1, 0};
         Integer[] test8 = {1, 1};
         Integer[] test9 = {0, 0};
         Integer[] test10 = {0, 1};
-        Integer[] test11 = {2, 1};
-        Integer[] test12 = {0, 1};
+        Integer[] test11 = {0, 1};
+        Integer[] test12 = {1, 1};
         Integer[] test13 = {1, 1};
-        Integer[] test14 = {1, 1};
-        Integer[] test15 = {2, 0};
+        Integer[] test14 = {0, 1};
+        Integer[] test15 = {1, 0};
 
         testSet.add(test2);
         testSet.add(test3);
@@ -55,13 +55,46 @@ public class ID3 implements Classifier {
     public double gain(ArrayList<Integer[]> vals) {
         ArrayList<Integer> classVals = new ArrayList();
         ArrayList<Integer> attrVals = new ArrayList();
+        ArrayList<Integer> unique;
         for (Integer[] i : vals) {
             attrVals.add(i[0]);
             classVals.add(i[1]);
         }
+
+        unique = getUniqueAttrValues(attrVals);
+        int sum = vals.size();
+
         double gain = entropy(countClass(classVals));
+        ArrayList<Integer> tempClasses;
+
+        for (Integer i : unique) {
+            tempClasses = getClassCountForIndAttr(i, vals);
+            gain -= (((double) countAttr(i, vals) / sum) * entropy(tempClasses));
+        }
 
         return gain;
+    }
+
+    public ArrayList<Integer> getClassCountForIndAttr(Integer attr, ArrayList<Integer[]> vals) {
+        HashMap<Integer, Integer> tempCount = new HashMap();
+        for (Integer[] i : vals) {
+            if (attr.equals(i[0])) {
+                if (tempCount.containsKey(i[1])) {
+                    tempCount.put(i[1], tempCount.get(i[1]) + 1);
+                } else {
+                    tempCount.put(i[1], 1);
+                }
+            }
+        }
+
+        Iterator it = tempCount.entrySet().iterator();
+        ArrayList<Integer> count = new ArrayList();
+        while (it.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry) it.next();
+            count.add((Integer) pair.getValue());
+            it.remove();
+        }
+        return count;
     }
 
     public double entropy(ArrayList<Integer> portions) {
@@ -73,25 +106,21 @@ public class ID3 implements Classifier {
         return entropy;
     }
 
-    public HashMap<Integer, Integer> countAttr(ArrayList<Integer> vals) {
-        HashMap<Integer, Integer> count = new HashMap();
+    public ArrayList<Integer> getUniqueAttrValues(ArrayList<Integer> vals) {
+        ArrayList<Integer> unique = new ArrayList();
         for (Integer i : vals) {
-            if (count.containsKey(i)) {
-                count.put(i, count.get(i) + 1);
-            } else {
-                count.put(i, 1);
+            if (!unique.contains(i)) {
+                unique.add(i);
             }
         }
-        return count;
+        return unique;
     }
 
-    public HashMap<Integer, ArrayList<Integer>> countClassForAttr(ArrayList<Integer> attr, ArrayList<Integer[]> vals) {
-        HashMap<Integer, ArrayList<Integer>> count = new HashMap();
-        for(Integer i: attr){
-            ArrayList<Integer> counts = new ArrayList();
-            int counter = 0;
-            for(Integer[] j: vals){
-
+    public Integer countAttr(Integer val, ArrayList<Integer[]> vals) {
+        Integer count = 0;
+        for (Integer[] i : vals) {
+            if (val.equals(i[0])) {
+                count++;
             }
         }
         return count;
