@@ -25,6 +25,22 @@ public class KNearestNeighbor implements Classifier {
         return Math.sqrt(distance);
     }
 
+    //well fk me mate valuedifferencemetric is kinda hard...
+    private double valueDifferenceMetric(ArrayList<Integer> testFeatures, ArrayList<Integer> trainingFeatures) {
+
+        double distance = 0.0;
+        //vdm(x,y) = sum over classes (p(a,x,c) -p(a,y,c))^q 
+        //N(a,x) = num instances in training set with value x for attribute a
+        //N(a,x,c) num instances in training set with value x for attribute a and output class c
+        //C is the number of output classes in domain
+        //q is constantant (1 or 2)?
+        //P(a,x,c) is the conditional probability that the output class is c given that attribute a has the value x : P(c|Xa)
+        //P(a,x,c) = N(a,x,c) / N (a,x)
+        //N(a,x) = sum over C of N(a,x,c)
+
+        return distance;
+    }
+
     @Override
     public int classify(ArrayList<Integer> testFeatures) {
 
