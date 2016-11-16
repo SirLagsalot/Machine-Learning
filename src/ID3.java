@@ -68,21 +68,54 @@ public class ID3 implements Classifier {
     public int classify(ArrayList<Integer> featureVector) {
         makeTree();
 
-        printData(decisionTree.root.children.get(2).dataSet);
+        printData(decisionTree.root.children.get(0).dataSet);
+        System.out.println(decisionTree.root.children.get(2).attributeNum);
 
         return -1;
     }
 
     public void makeTree() {
         findRootNode();
-        placeChildren();
+        placeChildren(decisionTree.root);
+        id3(decisionTree.root);
+
+    }
+
+    public void placeNextAttr(Node place) {
         
     }
-    
-    public void placeChildren(){
-        for(int i = 0; i < decisionTree.root.pathVals.size(); i++){
-            Node node = new Node(splitData(decisionTree.root.attributeNum, i, decisionTree.root.dataSet));
-            decisionTree.root.children.add(node);
+
+    public void id3(Node root) {
+
+        for (Node i : root.children) {
+            fillNode(i.dataSet, i);
+        }
+    }
+
+    public void fillNode(ArrayList<Instance> data, Node node) {
+        ArrayList<Integer[]> vals = new ArrayList();
+        ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
+        ArrayList<Integer> unique = new ArrayList();
+        for (int j = 0; j < data.get(0).features.size() - 1; j++) {
+
+            for (Instance i : data) {
+                Integer[] temp = {i.features.get(j), i.features.get(i.classification)};
+                vals.add(temp);
+                unique.add(temp[0]);
+            }
+            gains.add(gain(vals));
+            vals.clear();
+        }
+        
+        node.attributeNum = max(gains);
+        node.isLeaf = false;
+        node.pathVals = getUniqueAttrValues(unique);
+    }
+
+    public void placeChildren(Node parent) {
+        for (int i = 0; i < parent.pathVals.size(); i++) {
+            Node node = new Node(splitData(parent.attributeNum, i, parent.dataSet));
+            parent.children.add(node);
         }
     }
 
@@ -93,13 +126,6 @@ public class ID3 implements Classifier {
             }
             System.out.println("");
         }
-    }
-
-    public int id3(ArrayList<Instance> trainingData) {
-        if (trainingData.isEmpty()) {
-            return -1;
-        }
-        return -1;
     }
 
     public ArrayList<Instance> splitData(int attr, int attrVal, ArrayList<Instance> data) {
@@ -297,18 +323,17 @@ public class ID3 implements Classifier {
     //Node with varying number of children
     private class Node {
 
-        boolean isLeaf;
+        boolean isLeaf = false;
         int attributeNum;
         double gain;
         ArrayList<Node> children = new ArrayList();
         ArrayList<Integer> pathVals;
         ArrayList<Instance> dataSet;
 
-        
-        public Node(ArrayList<Instance> dataSet){
+        public Node(ArrayList<Instance> dataSet) {
             this.dataSet = dataSet;
         }
-        
+
         public Node(boolean isLeaf, int attributeNum, ArrayList<Integer> pathVals, ArrayList<Instance> dataSet) {
             this.isLeaf = isLeaf;
             this.attributeNum = attributeNum;
