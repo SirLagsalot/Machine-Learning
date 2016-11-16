@@ -15,20 +15,20 @@ public class ID3 implements Classifier {
         this.trainingData = trainingData;
         ArrayList<Integer[]> testSet = new ArrayList();
 
-        Integer[] test2 = {0,0,0,0, 0};
-        Integer[] test3 = {0,0,0,1, 0};
-        Integer[] test4 = {1,0,0,0, 1};
-        Integer[] test5 = {2,1,0,0, 1};
-        Integer[] test6 = {2,2,1,0, 1};
-        Integer[] test7 = {2,2,1,1, 0};
-        Integer[] test8 = {1,2,1,1, 1};
-        Integer[] test9 = {0,1,0,0, 0};
-        Integer[] test10 = {0,2,1,0, 1};
-        Integer[] test11 = {2,1,1,0, 1};
-        Integer[] test12 = {0,1,1,1, 1};
-        Integer[] test13 = {1,1,0,1, 1};
-        Integer[] test14 = {1,0,1,0, 1};
-        Integer[] test15 = {2,1,0,1, 0};
+        Integer[] test2 = {0, 0, 0, 0, 0};
+        Integer[] test3 = {0, 0, 0, 1, 0};
+        Integer[] test4 = {1, 0, 0, 0, 1};
+        Integer[] test5 = {2, 1, 0, 0, 1};
+        Integer[] test6 = {2, 2, 1, 0, 1};
+        Integer[] test7 = {2, 2, 1, 1, 0};
+        Integer[] test8 = {1, 2, 1, 1, 1};
+        Integer[] test9 = {0, 1, 0, 0, 0};
+        Integer[] test10 = {0, 2, 1, 0, 1};
+        Integer[] test11 = {2, 1, 1, 0, 1};
+        Integer[] test12 = {0, 1, 1, 1, 1};
+        Integer[] test13 = {1, 1, 0, 1, 1};
+        Integer[] test14 = {1, 0, 1, 0, 1};
+        Integer[] test15 = {2, 1, 0, 1, 0};
 
         testSet.add(test2);
         testSet.add(test3);
@@ -66,17 +66,29 @@ public class ID3 implements Classifier {
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
-        findRootNode();
-        
-        ArrayList<Instance> temp = splitData(0, 1, trainingData);
-        printData(temp);
+        makeTree();
+
+        printData(decisionTree.root.children.get(2).dataSet);
 
         return -1;
     }
+
+    public void makeTree() {
+        findRootNode();
+        placeChildren();
+        
+    }
     
-    public void printData(ArrayList<Instance> data){
-        for(Instance i: data){
-            for(Integer j: i.features){
+    public void placeChildren(){
+        for(int i = 0; i < decisionTree.root.pathVals.size(); i++){
+            Node node = new Node(splitData(decisionTree.root.attributeNum, i, decisionTree.root.dataSet));
+            decisionTree.root.children.add(node);
+        }
+    }
+
+    public void printData(ArrayList<Instance> data) {
+        for (Instance i : data) {
+            for (Integer j : i.features) {
                 System.out.print(j + " ");
             }
             System.out.println("");
@@ -90,14 +102,10 @@ public class ID3 implements Classifier {
         return -1;
     }
 
-    public void makeTree() {
-        
-    }
-    
-    public ArrayList<Instance> splitData(int attr, int attrVal, ArrayList<Instance> data){
+    public ArrayList<Instance> splitData(int attr, int attrVal, ArrayList<Instance> data) {
         ArrayList<Instance> tempData = new ArrayList();
-        for(Instance i: data){
-            if(i.features.get(attr).equals(attrVal)){
+        for (Instance i : data) {
+            if (i.features.get(attr).equals(attrVal)) {
                 tempData.add(i);
             }
         }
@@ -133,7 +141,6 @@ public class ID3 implements Classifier {
 //        for (Double d : gains) {
 //            System.out.println(d);
 //        }
-
         decisionTree = new Tree(new Node(false, max(gains), getUniqueAttrValues(unique), trainingData));
         for (Integer i : decisionTree.root.pathVals) {
             System.out.println(i);
@@ -152,9 +159,9 @@ public class ID3 implements Classifier {
         }
         return ind;
     }
-    
-    public boolean checkForPureSet(ArrayList<Integer[]> vals){
-        
+
+    public boolean checkForPureSet(ArrayList<Integer[]> vals) {
+
         return false;
     }
 
@@ -293,10 +300,15 @@ public class ID3 implements Classifier {
         boolean isLeaf;
         int attributeNum;
         double gain;
-        ArrayList<Node> children;
+        ArrayList<Node> children = new ArrayList();
         ArrayList<Integer> pathVals;
         ArrayList<Instance> dataSet;
 
+        
+        public Node(ArrayList<Instance> dataSet){
+            this.dataSet = dataSet;
+        }
+        
         public Node(boolean isLeaf, int attributeNum, ArrayList<Integer> pathVals, ArrayList<Instance> dataSet) {
             this.isLeaf = isLeaf;
             this.attributeNum = attributeNum;
