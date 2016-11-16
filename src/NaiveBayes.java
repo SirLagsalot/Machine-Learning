@@ -186,7 +186,7 @@ public class NaiveBayes implements Classifier {
             //Probability of class classValue given value of attribute at position i
             //System.out.println("line[i]:"+line[i]);
             probability *= probabilityOfAttrGivenClass(i,line[i],classValue);
-            //TODO
+           
             //divide by probability of the given attribute
             probability /= probabilityOfAttrValue(getColumn(i), line[i]);
             //probability /= table.table[line[i]][]
