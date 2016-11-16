@@ -179,12 +179,19 @@ public class TAN extends NaiveBayes {
         double probability = 1;
         for (Edge edge : node.edges) {
             //System.out.println("class value: "+classValue+"\n node attrPos: "+node.attrPosition+"\n endNode.attrPos"+edge.endNode.attrPosition);
-            probability*= edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
+            probability*= getNodeProbability(edge.endNode,classValue,featureVector.get(node.attrPosition),featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
             probability *= getChildrenProbabilities(edge.endNode, classValue, featureVector);
         }
         return probability;
     }
     
+    private double getNodeProbability(Node node, int classValue, int parentValue, int value){
+        double probability = 1;
+        //Stay at 1 if there isn't an entry for the given value, it'll ignore the impact of that attribute as no other chart should have that value, thus we're using 1 across the board regardless of which class we try
+        if(parentValue < node.probabilityChart[0].length && value < node.probabilityChart[0][0].length)
+            probability = node.probabilityChart[classValue][parentValue][value];
+        return probability;
+    }
 
     //returns the probability of x and y and z from their respective columns. Sum of all matching/whole
     private double getProbabilityXYZ(int[] feature1, int[] feature2, int curFeature1, int curFeature2, int curClass) {
