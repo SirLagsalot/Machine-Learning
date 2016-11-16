@@ -171,6 +171,8 @@ public class TAN extends NaiveBayes {
         probability*=probabilityOfClassValue(classValue);
         probability*=getProbabilityGivenClass(getColumn(root.attrPosition), featureVector.get(root.attrPosition), classValue);
         probability*=getChildrenProbabilities(root, classValue, featureVector);
+        //TODO check this
+        probability/=probabilityOfAttrValue(getColumn(root.attrPosition), featureVector.get(root.attrPosition));
         return probability;
     }
     
@@ -181,6 +183,8 @@ public class TAN extends NaiveBayes {
             //System.out.println("class value: "+classValue+"\n node attrPos: "+node.attrPosition+"\n endNode.attrPos"+edge.endNode.attrPosition);
             probability*= getNodeProbability(edge.endNode,classValue,featureVector.get(node.attrPosition),featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
             probability *= getChildrenProbabilities(edge.endNode, classValue, featureVector);
+            //TODO check this
+            probability /= probabilityOfAttrValue(getColumn(edge.endNode.attrPosition), featureVector.get(edge.endNode.attrPosition));
         }
         return probability;
     }
