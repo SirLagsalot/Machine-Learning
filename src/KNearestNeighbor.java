@@ -4,7 +4,6 @@ import java.util.Collections;
 
 public class KNearestNeighbor implements Classifier {
 
-    private final int length;
     private final int k;
     private final ArrayList<Instance> trainingData;
 
@@ -12,7 +11,6 @@ public class KNearestNeighbor implements Classifier {
 
         this.trainingData = trainingData;
         this.k = k;
-        this.length = trainingData.get(0).features.size();
     }
 
     private double calcDistance(ArrayList<Integer> testFeatures, ArrayList<Integer> trainingFeatures) {

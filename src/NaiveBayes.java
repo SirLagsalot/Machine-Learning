@@ -12,6 +12,7 @@ public class NaiveBayes implements Classifier {
     public int[] classColumn;//TODO get this early...
 
     public int[] getColumn(int position){
+        System.out.println("Position: "+position);
         //gets column of data at the given position;
         int[] column = new int[data.length];
         for (int i = 0; i < data.length; i++) {
@@ -83,7 +84,8 @@ public class NaiveBayes implements Classifier {
     public NaiveBayes(ArrayList<Instance> trainingData) {
 
         this.trainingData = trainingData;
-        classColumn = getColumn(data.length-1);//class column is last column.
+        data = convertTrainingDataToData(trainingData);
+        classColumn = getColumn(data[0].length-1);//class column is last column.
         ArrayList<FrequencyTable> fTables = createFrequencyTables(trainingData);
         lTables = createLiklihoodTables(fTables);
     }
@@ -111,10 +113,8 @@ public class NaiveBayes implements Classifier {
     private ArrayList<FrequencyTable> createFrequencyTables(ArrayList<Instance> trainingData) {
         ArrayList<FrequencyTable> tables = new ArrayList<>();
         numOfClassifications = Utilities.getClassificationCount(trainingData);
-        data = convertTrainingDataToData(trainingData);
-
         for (int i = 0; i < data.length - 1; i++) {
-            tables.add(new FrequencyTable(data[i], data[data.length - 1], numOfClassifications, i));
+            tables.add(new FrequencyTable(data[i], numOfClassifications, i));
         }
         return tables;
     }
@@ -134,10 +134,20 @@ public class NaiveBayes implements Classifier {
     //The probability of any classification and the probability of any attribute.
     private ArrayList<LiklihoodTable> createLiklihoodTables(ArrayList<FrequencyTable> fTables) {
         ArrayList<LiklihoodTable> tables = new ArrayList<>();
-
+        //Todo
+        for (FrequencyTable table : fTables) {
+            tables.add(new LiklihoodTable(table));
+        }
         return tables;
     }
 
+    public int classify(ArrayList<Integer> featureVector) {
+        int[] intArray = new int[featureVector.size()];
+        for (int i = 0; i < intArray.length; i++) {
+            intArray[i]=featureVector.get(i);
+        }
+        return classify(intArray);
+    }
     //We assume line is an array of attribute values pre-binned.
     public int classify(int[] line) {
         double maxProbability = 0;
@@ -174,14 +184,15 @@ public class NaiveBayes implements Classifier {
         int[][] table;
         int attributePosition;
 
-        public FrequencyTable(int[] attributeValues, int[] classifications, int numberOfClassifications, int attributePosition) {
+        public FrequencyTable(int[] attributeValues, int numberOfClassifications, int attributePosition) {
             int attributeCount = getDistinctValueCount(attributeValues);
             table = new int[attributeCount][numberOfClassifications];
             this.attributePosition = attributePosition;
 
             for (int i = 0; i < attributeValues.length; i++) {
                 int attributeValue = attributeValues[i];
-                int classification = classifications[i];
+                int classification = classColumn[i];
+                //System.out.println("AttributeValue: "+attributeValue+"\n classification: "+classification);
                 table[attributeValue][classification]++;
             }
 
