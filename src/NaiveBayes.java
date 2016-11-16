@@ -80,7 +80,8 @@ public class NaiveBayes implements Classifier {
     public double probabilityOfAttrValue(int[] attrVector, int attrValue){
         double probability = 0;
         for (int i = 0; i < attrVector.length; i++) {
-            probability+=attrVector[i];
+            if(attrVector[i] == attrValue)
+                probability++;
         }
         return probability/attrVector.length;
     }
@@ -187,7 +188,7 @@ public class NaiveBayes implements Classifier {
             probability *= probabilityOfAttrGivenClass(i,line[i],classValue);
             //TODO
             //divide by probability of the given attribute
-            //probability /= probabilityOfAttrValue(getColumn(i), line[i]);
+            probability /= probabilityOfAttrValue(getColumn(i), line[i]);
             //probability /= table.table[line[i]][]
         }
         //multiply by probability of given class.
@@ -230,7 +231,7 @@ public class NaiveBayes implements Classifier {
             table = new double[fTable.rowCount][fTable.columnCount];
             int totalCount = 0;
 
-            int[] classificationTotals = new int[fTable.columnCount - 1];
+            int[] classificationTotals = new int[fTable.columnCount];
             for (int i = 0; i < classificationTotals.length; i++) {
                 for (int j = 0; j < fTable.rowCount; j++) {
                     classificationTotals[i] += fTable.table[j][i];
@@ -238,13 +239,13 @@ public class NaiveBayes implements Classifier {
             }
             int[] attributeTotals = new int[fTable.columnCount];
             for (int i = 0; i < fTable.rowCount; i++) {
-                for (int j = 0; j < fTable.columnCount-1; j++) {
+                for (int j = 0; j < fTable.columnCount; j++) {
                     attributeTotals[j] += fTable.table[i][j];
                 }
             }
 
             for (int i = 0; i < fTable.rowCount; i++) {
-                for (int j = 0; j < fTable.columnCount-1; j++) {
+                for (int j = 0; j < fTable.columnCount; j++) {
                     totalCount += fTable.table[i][j];
                     //TODO should this be where the +1 is done???
                     //System.out.println("i:"+i+"\n j:"+j);
