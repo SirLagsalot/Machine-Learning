@@ -117,8 +117,8 @@ public class NaiveBayes implements Classifier {
     private ArrayList<FrequencyTable> createFrequencyTables(ArrayList<Instance> trainingData) {
         ArrayList<FrequencyTable> tables = new ArrayList<>();
         numOfClassifications = Utilities.getClassificationCount(trainingData);
-        for (int i = 0; i < data.length - 1; i++) {
-            tables.add(new FrequencyTable(data[i], numOfClassifications, i));
+        for (int i = 0; i < data[0].length - 1; i++) {
+            tables.add(new FrequencyTable(getColumn(i), numOfClassifications, i));
         }
         return tables;
     }
@@ -167,19 +167,32 @@ public class NaiveBayes implements Classifier {
         return classification;
     }
 
-    public double probabilityOfClass(int classValue, int[] line) {
+    public double probabilityOfAttrGivenClass(int attr, int attrValue, int classValue){
         double probability = 1;
+        LiklihoodTable table = lTables.get(attr);
+        if(attrValue < table.table.length)
+            probability = table.table[attrValue][classValue];
+        else
+            probability = 1;//non impacting probabilityValue, ie we're disregarding this attrValue, this works because it's disregarded for every class
+        return probability;
+    }
+    
+    public double probabilityOfClass(int classValue, int[] line) {
+        //start with probability of class
+        double probability = probabilityOfClassValue(classValue);
         for (int i = 0; i < line.length; i++) {
-            LiklihoodTable table = lTables.get(i);
 
             //Probability of class classValue given value of attribute at position i
-            probability *= table.table[line[i]][classValue];
+            //System.out.println("line[i]:"+line[i]);
+            probability *= probabilityOfAttrGivenClass(i,line[i],classValue);
+            //TODO
             //divide by probability of the given attribute
+            //probability /= probabilityOfAttrValue(getColumn(i), line[i]);
             //probability /= table.table[line[i]][]
         }
         //multiply by probability of given class.
 
-        return -1;
+        return probability;
     }
 
     public class FrequencyTable {
@@ -211,6 +224,7 @@ public class NaiveBayes implements Classifier {
         int attributeId;
         double[][] table;
 
+        //A liklihood table gives P(a|c) via lTable[a][c]
         public LiklihoodTable(FrequencyTable fTable) {
             attributeId = fTable.attributePosition;
             table = new double[fTable.rowCount][fTable.columnCount];
@@ -234,7 +248,7 @@ public class NaiveBayes implements Classifier {
                     totalCount += fTable.table[i][j];
                     //TODO should this be where the +1 is done???
                     //System.out.println("i:"+i+"\n j:"+j);
-                    table[i][j] = fTable.table[i][j] / (classificationTotals[j]+1);//the table position at i,j is P(Attribute i | classification j)
+                    table[i][j] = (fTable.table[i][j]+1) / (double)(classificationTotals[j]+1);//the table position at i,j is P(Attribute i | classification j)
 
                 }
             }

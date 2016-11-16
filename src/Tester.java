@@ -84,8 +84,8 @@ public class Tester {
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
             normalize(set2);
 
-            //NaiveBayes nb = new NaiveBayes(set1);
-            //TAN tan = new TAN(set1);
+//            NaiveBayes nb = new NaiveBayes(set1);
+            TAN tan = new TAN(set1);
             KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
             //ID3 id3 = new ID3(set1);
 
@@ -103,9 +103,9 @@ public class Tester {
 //                if (nb.classify(testInstance) == instance.classification) {
 //                    nbAccuracy++;
 //                }
-//                if (tan.classify(testInstance) == instance.classification) {
-//                    tanAccuracy++;
-//                }
+                if (tan.classify(testInstance) == instance.classification) {
+                    tanAccuracy++;
+                }
 //                if (kNN.classify(testInstance) == instance.getClassification()) {
 //                    knnAccuracy++;
 //                }

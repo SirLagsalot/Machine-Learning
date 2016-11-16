@@ -6,8 +6,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        DataSet dataSet;
-//        Tester tester;
+        DataSet dataSet;
+        Tester tester;
 //
 //        dataSet = Reader.readFile("./data/glass.data.txt");
 //        tester = new Tester(dataSet, "glass");
@@ -20,9 +20,9 @@ public class Main {
 //
 //        dataSet = Reader.readFile("./data/iris.data.txt");
 //        tester = new Tester(dataSet, "iris");
-//
-//        dataSet = Reader.readFile("./data/soybean-small.data.txt");
-//        tester = new Tester(dataSet, "soybean-small");
-        ID3 id3 = new ID3(new ArrayList());
+
+        dataSet = Reader.readFile("./data/soybean-small.data.txt");
+        tester = new Tester(dataSet, "soybean-small");
+//        ID3 id3 = new ID3(new ArrayList());
     }
 }
