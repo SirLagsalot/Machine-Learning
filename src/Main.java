@@ -6,11 +6,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        DataSet dataSet;
-//        Tester tester;
+        DataSet dataSet;
+        Tester tester;
 //
-//        dataSet = Reader.readFile("./data/glass.data.txt");
-//        tester = new Tester(dataSet, "glass");
+        dataSet = Reader.readFile("./data/glass.data.txt");
+        tester = new Tester(dataSet, "glass");
 //
 //        dataSet = Reader.readFile("./data/breast-cancer-wisconsin.data.txt");
 //        tester = new Tester(dataSet, "breast-cancer-wisconsin");
@@ -23,6 +23,6 @@ public class Main {
 //
 //        dataSet = Reader.readFile("./data/soybean-small.data.txt");
 //        tester = new Tester(dataSet, "soybean-small");
-        ID3 id3 = new ID3(new ArrayList());
+//        ID3 id3 = new ID3(new ArrayList());
     }
 }

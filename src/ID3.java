@@ -49,12 +49,39 @@ public class ID3 implements Classifier {
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
-
+        findRootNode();
+        System.out.println("");
         return -1;
     }
 
+    //Calculate information gain to set root node
     public void findRootNode() {
-        
+        ArrayList<Integer[]> vals = new ArrayList();
+        ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
+        for (int j = 0; j < trainingData.get(0).features.size(); j++) {
+
+            for (Instance i : trainingData) {
+                Integer[] temp = {i.features.get(j), i.features.get(i.classification)};
+                vals.add(temp);
+            }
+            gains.add(gain(vals));
+            vals.clear();
+        }
+
+        Node node = new Node(false, max(gains));
+        decisionTree = new Tree(node);
+    }
+
+    public int max(ArrayList<Double> gains) {
+        Double max = gains.get(0);
+        int ind = 0;
+        for (int i = 1; i < gains.size(); i++) {
+            if (max < gains.get(i)) {
+                max = gains.get(i);
+                ind = i;
+            }
+        }
+        return ind;
     }
 
     //Information gain calculation
@@ -63,7 +90,7 @@ public class ID3 implements Classifier {
         ArrayList<Integer> classVals = new ArrayList();
         ArrayList<Integer> attrVals = new ArrayList();
         ArrayList<Integer> unique;
-        
+
         //Separate the input list
         for (Integer[] i : vals) {
             attrVals.add(i[0]);
@@ -150,7 +177,7 @@ public class ID3 implements Classifier {
                 temp.put(i, 1);
             }
         }
-        
+
         Iterator it = temp.entrySet().iterator();
         while (it.hasNext()) { //Edit out the key for returning only values
             HashMap.Entry pair = (HashMap.Entry) it.next();
@@ -172,23 +199,30 @@ public class ID3 implements Classifier {
 
     //Tree class
     private class Tree {
+
         Node root;
-        public Tree(Node root){
+
+        public Tree(Node root) {
             this.root = root;
         }
-        
+
         //Print the tree for testing
-        public void printTree(){
-            
+        public void printTree() {
+
         }
-        
+
     }
-    
+
     //Node with varying number of children
-    private class Node{
+    private class Node {
+
         boolean isLeaf;
-        boolean isAttr;
-        int path;
+        int attributeNum;
         ArrayList<Node> children;
+
+        public Node(boolean isLeaf, int attributeNum) {
+            this.isLeaf = isLeaf;
+            this.attributeNum = attributeNum;
+        }
     }
 }

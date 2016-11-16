@@ -87,14 +87,14 @@ public class Tester {
             //NaiveBayes nb = new NaiveBayes(set1);
             //TAN tan = new TAN(set1);
             KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
-            //ID3 id3 = new ID3(set1);
+            ID3 id3 = new ID3(set1);
 
             //call classifiers for each instance in the test set
             for (Instance instance : set2) {
                 ArrayList<Integer> testInstance = instance.features;                                                            //TODO: Logging for each classification maybe...
                 int result = kNN.classify(testInstance);
                 //  System.out.print("kNN Classified as: " + kNN.classify(testInstance) + " -- actual class: " + instance.getClassification());
-                if (result == instance.classification) {
+                if (result != instance.classification) {
                     //  System.out.println(" correct!");
                     knnAccuracy++;
                 } else {
@@ -109,9 +109,9 @@ public class Tester {
 //                if (kNN.classify(testInstance) == instance.getClassification()) {
 //                    knnAccuracy++;
 //                }
-//                if (id3.classify(testInstance) == instance.classification) {
-//                    id3Accuracy++;
-//                }
+                if (id3.classify(testInstance) == instance.classification) {
+                    id3Accuracy++;
+                }
             }
 
             //swap training and test sets, repeat trial
