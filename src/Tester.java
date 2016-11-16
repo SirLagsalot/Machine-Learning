@@ -10,11 +10,13 @@ public class Tester {
 
     private final ArrayList<Instance> dataInstances;
     private final String origin;
+    private final int numClasses;
 
     public Tester(DataSet dataSet, String origin) {
 
         this.dataInstances = dataSet.data;
         this.origin = origin;
+        this.numClasses = dataSet.numClasses;
         fiveByTwoTest();
     }
 
@@ -84,9 +86,9 @@ public class Tester {
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
             normalize(set2);
 
-            NaiveBayes nb = new NaiveBayes(set1);
-            TAN tan = new TAN(set1);
-            KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
+           // NaiveBayes nb = new NaiveBayes(set1);
+           // TAN tan = new TAN(set1);
+            KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
             //ID3 id3 = new ID3(set1);
 
             //call classifiers for each instance in the test set
@@ -100,12 +102,12 @@ public class Tester {
                 } else {
                     //   System.out.println(" fuck!");
                 }
-                if (nb.classify(testInstance) == instance.classification) {
-                    nbAccuracy++;
-                }
-                if (tan.classify(testInstance) == instance.classification) {
-                    tanAccuracy++;
-                }
+//                if (nb.classify(testInstance) == instance.classification) {
+//                    nbAccuracy++;
+//                }
+//                if (tan.classify(testInstance) == instance.classification) {
+//                    tanAccuracy++;
+//                }
 //                if (kNN.classify(testInstance) == instance.getClassification()) {
 //                    knnAccuracy++;
 //                }
@@ -117,7 +119,7 @@ public class Tester {
             //swap training and test sets, repeat trial
             // nb = new NaiveBayes(set2);
             // tan = new TAN(set2);
-            kNN = new KNearestNeighbor(set2, k);
+            kNN = new KNearestNeighbor(set2, k, numClasses);
             //  id3 = new ID3(set2);
 
             //call classifiers for each instance in the test set
@@ -131,12 +133,12 @@ public class Tester {
                 } else {
                     // System.out.println(" fuck!");
                 }
-                if (nb.classify(testInstance) == instance.classification) {
-                    nbAccuracy++;
-                }
-                if (tan.classify(testInstance) == instance.classification) {
-                    tanAccuracy++;
-                }
+//                if (nb.classify(testInstance) == instance.classification) {
+//                    nbAccuracy++;
+//                }
+//                if (tan.classify(testInstance) == instance.classification) {
+//                    tanAccuracy++;
+//                }
 //                if (kNN.classify(testInstance) == instance.getClassification()) {
 //                    knnAccuracy++;
 //                }

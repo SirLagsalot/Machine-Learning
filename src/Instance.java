@@ -9,6 +9,7 @@ public class Instance {
     public ArrayList<Double> unbinnedFeatures;
     public double distance;
     public boolean discrete;
+    public int numClasses;
 
     public Instance(ArrayList<Integer> features, String className, boolean discrete) {
 

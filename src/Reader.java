@@ -60,6 +60,7 @@ public class Reader {
         for (Instance instance : instances) {
             instance.setClassification(classifications.indexOf(instance.className));
         }
-        return new DataSet(instances);
+        
+        return new DataSet(instances, classifications.size());
     }
 }
