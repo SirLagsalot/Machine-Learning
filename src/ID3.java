@@ -45,19 +45,63 @@ public class ID3 implements Classifier {
         testSet.add(test14);
         testSet.add(test15);
         test = testSet;
+        convertForTest(test);
         classify(new ArrayList<Integer>());
+//        classify(new ArrayList<Integer>());
 //        System.out.println(gain(testSet));
+    }
+
+    public void convertForTest(ArrayList<Integer[]> test) {
+        trainingData.clear();
+        for (int j = 0; j < test.size(); j++) {
+            ArrayList<Integer> vals = new ArrayList();
+            for (int i = 0; i < test.get(0).length; i++) {
+                vals.add(test.get(j)[i]);
+            }
+            Instance temp = new Instance(vals, "golf", true);
+            temp.classification = 4;
+            trainingData.add(temp);
+        }
     }
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
         findRootNode();
         
+        ArrayList<Instance> temp = splitData(0, 1, trainingData);
+        printData(temp);
+
         return -1;
     }
     
-    public void makeTree(){
+    public void printData(ArrayList<Instance> data){
+        for(Instance i: data){
+            for(Integer j: i.features){
+                System.out.print(j + " ");
+            }
+            System.out.println("");
+        }
+    }
+
+    public int id3(ArrayList<Instance> trainingData) {
+        if (trainingData.isEmpty()) {
+            return -1;
+        }
+        return -1;
+    }
+
+    public void makeTree() {
         
+    }
+    
+    public ArrayList<Instance> splitData(int attr, int attrVal, ArrayList<Instance> data){
+        ArrayList<Instance> tempData = new ArrayList();
+        for(Instance i: data){
+            if(i.features.get(attr).equals(attrVal)){
+                tempData.add(i);
+            }
+        }
+        return tempData;
     }
 
     //Calculate information gain to set root node
@@ -65,32 +109,33 @@ public class ID3 implements Classifier {
         ArrayList<Integer[]> vals = new ArrayList();
         ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
         ArrayList<Integer> unique = new ArrayList();
-//        for (int j = 0; j < trainingData.get(0).features.size() - 1; j++) {
-//
-//            for (Instance i : trainingData) {
-//                Integer[] temp = {i.features.get(j), i.features.get(i.classification)};
-//                vals.add(temp);
-//            }
-//            gains.add(gain(vals));
-//            vals.clear();
-//        }
-        
-        for(int i = 0; i < test.get(0).length - 1; i++){
-            for(Integer[] j: test){
-                Integer[] tmp = {j[i], j[test.get(0).length - 1]};
-                vals.add(tmp);
-                unique.add(j[0]);
+        for (int j = 0; j < trainingData.get(0).features.size() - 1; j++) {
+
+            for (Instance i : trainingData) {
+                Integer[] temp = {i.features.get(j), i.features.get(i.classification)};
+                vals.add(temp);
+                unique.add(temp[0]);
             }
             gains.add(gain(vals));
             vals.clear();
         }
-      
-//        for(Double d: gains){
+
+        //For old test set
+//        for(int i = 0; i < test.get(0).length - 1; i++){
+//            for(Integer[] j: test){
+//                Integer[] tmp = {j[i], j[test.get(0).length - 1]};
+//                vals.add(tmp);
+//                unique.add(j[0]);
+//            }
+//            gains.add(gain(vals));
+//            vals.clear();
+//        }
+//        for (Double d : gains) {
 //            System.out.println(d);
 //        }
-        
-        decisionTree = new Tree(new Node(false, max(gains), getUniqueAttrValues(unique)));
-        for(Integer i: decisionTree.root.pathVals){
+
+        decisionTree = new Tree(new Node(false, max(gains), getUniqueAttrValues(unique), trainingData));
+        for (Integer i : decisionTree.root.pathVals) {
             System.out.println(i);
         }
         //System.out.println(decisionTree.root.attributeNum);
@@ -106,6 +151,11 @@ public class ID3 implements Classifier {
             }
         }
         return ind;
+    }
+    
+    public boolean checkForPureSet(ArrayList<Integer[]> vals){
+        
+        return false;
     }
 
     //Information gain calculation
@@ -242,13 +292,17 @@ public class ID3 implements Classifier {
 
         boolean isLeaf;
         int attributeNum;
+        double gain;
         ArrayList<Node> children;
         ArrayList<Integer> pathVals;
+        ArrayList<Instance> dataSet;
 
-        public Node(boolean isLeaf, int attributeNum, ArrayList<Integer> pathVals) {
+        public Node(boolean isLeaf, int attributeNum, ArrayList<Integer> pathVals, ArrayList<Instance> dataSet) {
             this.isLeaf = isLeaf;
             this.attributeNum = attributeNum;
             this.pathVals = pathVals;
+            this.dataSet = dataSet;
         }
+
     }
 }

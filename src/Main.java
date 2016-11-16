@@ -23,6 +23,6 @@ public class Main {
 //
 //        dataSet = Reader.readFile("./data/soybean-small.data.txt");
 //        tester = new Tester(dataSet, "soybean-small");
-        ID3 id3 = new ID3(new ArrayList());
+        ID3 id3 = new ID3(new ArrayList<Instance>());
     }
 }
