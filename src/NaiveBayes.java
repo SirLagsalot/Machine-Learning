@@ -228,7 +228,8 @@ public class NaiveBayes implements Classifier {
             for (int i = 0; i < fTable.rowCount; i++) {
                 for (int j = 0; j < fTable.columnCount; j++) {
                     totalCount += fTable.table[i][j];
-                    table[i][j] = fTable.table[i][j] / classificationTotals[j];//the table position at i,j is P(Attribute i | classification j)
+                    //TODO should this be where the +1 is done???
+                    table[i][j] = fTable.table[i][j] / (classificationTotals[j]+1);//the table position at i,j is P(Attribute i | classification j)
 
                 }
             }
