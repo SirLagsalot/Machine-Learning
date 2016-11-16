@@ -67,9 +67,8 @@ public class ID3 implements Classifier {
             gains.add(gain(vals));
             vals.clear();
         }
-
-        Node node = new Node(false, max(gains));
-        decisionTree = new Tree(node);
+      
+        decisionTree = new Tree(new Node(false, max(gains)));
     }
 
     public int max(ArrayList<Double> gains) {
