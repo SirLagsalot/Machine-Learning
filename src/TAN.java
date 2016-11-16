@@ -13,6 +13,7 @@ public class TAN extends NaiveBayes {
         ArrayList<Node> nodes = new ArrayList<>();
         for (int i = 0; i < numberOfFeatures; i++) {
             Node node = new Node(i);
+            nodes.add(node);
         }
         connectNodes(nodes);
 
@@ -42,7 +43,7 @@ public class TAN extends NaiveBayes {
         //numOfClassifications already calculated.
         //probabilityChart is classification, probabilityChart[0] is node is parentValue, probabilityChart[][] is given value.
         //Example, probabilityChart[2][0][1] = P(node = 1 | class=2 ^ parentValue = 0)
-        
+        node.probabilityChart = new double[numOfClassifications][parentRange][nodeRange];
         //in case there is no scenario of class and parentValue being equal, we will add 1 as a buffer.
         for (int i = 0; i < numOfClassifications; i++) {
             for (int j = 0; j < parentRange; j++) {
@@ -59,7 +60,7 @@ public class TAN extends NaiveBayes {
         double probability = -1;
         
         int totalCount = 1;//just start at 1 to offset chance of dividing by 0
-        int partialCount = 0;
+        int partialCount = 1;//also want to avoid chance of straight out 0 probability
         for (int i = 0; i < classColumn.length; i++) {
             if(parentColumn[i] == parentNodeVal && classColumn[i] == curClass){
                 totalCount++;
@@ -67,7 +68,7 @@ public class TAN extends NaiveBayes {
                     partialCount++;
             }
         }
-        probability = partialCount / totalCount;
+        probability = partialCount / (double)totalCount;
         
         return probability;
     }
@@ -177,35 +178,45 @@ public class TAN extends NaiveBayes {
         //returns P(node value | parentValue ^ c) for all children nodes of node
         double probability = 1;
         for (Edge edge : node.edges) {
-            probability*= edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
+            //System.out.println("class value: "+classValue+"\n node attrPos: "+node.attrPosition+"\n endNode.attrPos"+edge.endNode.attrPosition);
+            probability*= getNodeProbability(edge.endNode,classValue,featureVector.get(node.attrPosition),featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
             probability *= getChildrenProbabilities(edge.endNode, classValue, featureVector);
         }
         return probability;
     }
     
+    private double getNodeProbability(Node node, int classValue, int parentValue, int value){
+        double probability = 1;
+        //Stay at 1 if there isn't an entry for the given value, it'll ignore the impact of that attribute as no other chart should have that value, thus we're using 1 across the board regardless of which class we try
+        if(parentValue < node.probabilityChart[0].length && value < node.probabilityChart[0][0].length)
+            probability = node.probabilityChart[classValue][parentValue][value];
+        return probability;
+    }
 
     //returns the probability of x and y and z from their respective columns. Sum of all matching/whole
     private double getProbabilityXYZ(int[] feature1, int[] feature2, int curFeature1, int curFeature2, int curClass) {
-        int count = 0;
+        //Want to avoid 0 probability so start with a count of 1
+        int count = 1;
         for (int i = 0; i < feature1.length; i++) {
             if (feature1[i] == curFeature1 && feature2[i] == curFeature2 && classColumn[i] == curClass) {
                 count++;
             }
         }
-        return count / feature1.length;
+        return count /(double) feature1.length;
     }
 
     //this will use prims algorithm
     private void makeMaximumSpanningTree(ArrayList<Node> nodes) {
         ArrayList<Node> visited = new ArrayList<>();
         Node startNode = nodes.get(0);
-        ArrayList<Edge> edgesToWorkWith = startNode.edges;
+        ArrayList<Edge> edgesToWorkWith = (ArrayList<Edge>)startNode.edges.clone();
+        visited.add(startNode);
         while (!edgesToWorkWith.isEmpty()) {
             Edge largestEdge = getLargestEdge(edgesToWorkWith);
             edgesToWorkWith.remove(largestEdge);
             if (!visited.contains(largestEdge.endNode)) {
                 visited.add(largestEdge.endNode);
-                edgesToWorkWith.addAll(largestEdge.endNode.edges);
+                edgesToWorkWith.addAll((ArrayList<Edge>)largestEdge.endNode.edges.clone());
             } else {
                 //remove edge from it's startNode, algo will handle endNode
                 largestEdge.startNode.edges.remove(largestEdge);

@@ -12,7 +12,7 @@ public class NaiveBayes implements Classifier {
     public int[] classColumn;//TODO get this early...
 
     public int[] getColumn(int position){
-        System.out.println("Position: "+position);
+        //System.out.println("Position: "+position);
         //gets column of data at the given position;
         int[] column = new int[data.length];
         for (int i = 0; i < data.length; i++) {
@@ -27,7 +27,8 @@ public class NaiveBayes implements Classifier {
             if(value == classColumn[i])
                 count++;
         }
-        return count/classColumn.length;
+        double probability = count/ (double)classColumn.length;
+        return probability;
     }
     public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
@@ -40,13 +41,14 @@ public class NaiveBayes implements Classifier {
         }
 
         //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
-        int match = 0;
+        //start at 1 to avoid the 0 probability
+        int match = 1;
         for (int feature : limitedFeatureColumn) {
             if (feature == featureValue) {
                 match++;
             }
         }
-        return match / limitedFeatureColumn.size();
+        return match / (double)limitedFeatureColumn.size();
     }
 
     public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
@@ -62,7 +64,8 @@ public class NaiveBayes implements Classifier {
         }
 
         //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
-        int match = 0;
+        //start at 1 to avoid the 0 probability scenario
+        int match = 1;
         for (int i = 0; i < limitedFeatureColumn.size(); i++) {
             int feature = limitedFeatureColumn.get(i);
             int feature2 = limitedFeatureColumn2.get(i);
@@ -70,13 +73,15 @@ public class NaiveBayes implements Classifier {
                 match++;
             }
         }
-        return match / limitedFeatureColumn.size();
+        double probability = match / (double)limitedFeatureColumn.size();
+        return probability;
     }
     
     public double probabilityOfAttrValue(int[] attrVector, int attrValue){
         double probability = 0;
         for (int i = 0; i < attrVector.length; i++) {
-            probability+=attrVector[i];
+            if(attrVector[i] == attrValue)
+                probability++;
         }
         return probability/attrVector.length;
     }
@@ -113,8 +118,8 @@ public class NaiveBayes implements Classifier {
     private ArrayList<FrequencyTable> createFrequencyTables(ArrayList<Instance> trainingData) {
         ArrayList<FrequencyTable> tables = new ArrayList<>();
         numOfClassifications = Utilities.getClassificationCount(trainingData);
-        for (int i = 0; i < data.length - 1; i++) {
-            tables.add(new FrequencyTable(data[i], numOfClassifications, i));
+        for (int i = 0; i < data[0].length - 1; i++) {
+            tables.add(new FrequencyTable(getColumn(i), numOfClassifications, i));
         }
         return tables;
     }
@@ -163,19 +168,32 @@ public class NaiveBayes implements Classifier {
         return classification;
     }
 
-    public double probabilityOfClass(int classValue, int[] line) {
+    public double probabilityOfAttrGivenClass(int attr, int attrValue, int classValue){
         double probability = 1;
+        LiklihoodTable table = lTables.get(attr);
+        if(attrValue < table.table.length)
+            probability = table.table[attrValue][classValue];
+        else
+            probability = 1;//non impacting probabilityValue, ie we're disregarding this attrValue, this works because it's disregarded for every class
+        return probability;
+    }
+    
+    public double probabilityOfClass(int classValue, int[] line) {
+        //start with probability of class
+        double probability = probabilityOfClassValue(classValue);
         for (int i = 0; i < line.length; i++) {
-            LiklihoodTable table = lTables.get(i);
 
             //Probability of class classValue given value of attribute at position i
-            probability *= table.table[line[i]][classValue];
+            //System.out.println("line[i]:"+line[i]);
+            probability *= probabilityOfAttrGivenClass(i,line[i],classValue);
+            //TODO
             //divide by probability of the given attribute
+            probability /= probabilityOfAttrValue(getColumn(i), line[i]);
             //probability /= table.table[line[i]][]
         }
         //multiply by probability of given class.
 
-        return -1;
+        return probability;
     }
 
     public class FrequencyTable {
@@ -207,19 +225,20 @@ public class NaiveBayes implements Classifier {
         int attributeId;
         double[][] table;
 
+        //A liklihood table gives P(a|c) via lTable[a][c]
         public LiklihoodTable(FrequencyTable fTable) {
             attributeId = fTable.attributePosition;
             table = new double[fTable.rowCount][fTable.columnCount];
             int totalCount = 0;
 
-            int[] classificationTotals = new int[fTable.columnCount - 1];
+            int[] classificationTotals = new int[fTable.columnCount];
             for (int i = 0; i < classificationTotals.length; i++) {
                 for (int j = 0; j < fTable.rowCount; j++) {
                     classificationTotals[i] += fTable.table[j][i];
                 }
             }
-            int[] attributeTotals = new int[fTable.rowCount];
-            for (int i = 0; i < attributeTotals.length; i++) {
+            int[] attributeTotals = new int[fTable.columnCount];
+            for (int i = 0; i < fTable.rowCount; i++) {
                 for (int j = 0; j < fTable.columnCount; j++) {
                     attributeTotals[j] += fTable.table[i][j];
                 }
@@ -229,7 +248,8 @@ public class NaiveBayes implements Classifier {
                 for (int j = 0; j < fTable.columnCount; j++) {
                     totalCount += fTable.table[i][j];
                     //TODO should this be where the +1 is done???
-                    table[i][j] = fTable.table[i][j] / (classificationTotals[j]+1);//the table position at i,j is P(Attribute i | classification j)
+                    //System.out.println("i:"+i+"\n j:"+j);
+                    table[i][j] = (fTable.table[i][j]+1) / (double)(classificationTotals[j]+1);//the table position at i,j is P(Attribute i | classification j)
 
                 }
             }
