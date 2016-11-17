@@ -138,9 +138,9 @@ public class KNearestNeighbor implements Classifier {
 
         //calculate distance to each instance in training set
         for (Instance trainingInstance : trainingData) {
-            //trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
+            trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
             //trainingInstance.distance = HVDM(testFeatures, trainingInstance.features);
-            trainingInstance.distance = VDM(trainingInstance, testFeatures);
+            //trainingInstance.distance = VDM(trainingInstance, testFeatures);
         }
 
         //sort by distance
