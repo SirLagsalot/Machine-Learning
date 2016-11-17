@@ -86,20 +86,20 @@ public class KNearestNeighbor implements Classifier {
                 ArrayList<Instance> jInstances = getInstances(j);
 
                 //get p(cj|xi)
-                int Nxij = 0;
+                int Nxij = 1;
                 for (Instance in : jInstances) {
                     if (Objects.equals(in.features.get(i), testVector.get(i))) {
                         Nxij++;
                     }
                 }
-                int Nxi = 0;
+                int Nxi = 1;
                 for (Instance in : trainingData) {
                     //System.out.println("sup");
                     if (Objects.equals(in.features.get(i), testVector.get(i))) {
                         Nxi++;
                     }
                 }
-                System.out.println("Nxi: " + Nxi + " Nxij: " + Nxij);
+                //System.out.println("Nxi: " + Nxi + " Nxij: " + Nxij);
                 double pcjxi = Nxij / Nxi;
 
                 //num of instances of class j where trainingvector.features.get(i) == testVector.get(i) / 
@@ -137,9 +137,9 @@ public class KNearestNeighbor implements Classifier {
 
         //calculate distance to each instance in training set
         for (Instance trainingInstance : trainingData) {
-            trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
+            //trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
             //trainingInstance.distance = HVDM(testFeatures, trainingInstance.features);
-            //trainingInstance.distance = VDM(trainingInstance, testFeatures);
+            trainingInstance.distance = VDM(trainingInstance, testFeatures);
         }
 
         //sort by distance
