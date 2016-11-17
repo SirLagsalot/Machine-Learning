@@ -110,8 +110,7 @@ public class TAN extends NaiveBayes {
             for (int j = i + 1; j < nodes.size(); j++) {
                 Node node2 = nodes.get(j);
                 //calculate weight between node i and j
-                //Todo determine if getWeight2 is better
-                double weight = getWeight2(i, j);
+                double weight = getWeight(i, j);
                 //connect i and j
                 Edge edge = new Edge(node1, node2, weight);
                 node1.edges.add(edge);
@@ -120,25 +119,6 @@ public class TAN extends NaiveBayes {
                 node2.edges.add(edge2);
             }
         }
-    }
-    
-    public double getWeight2(int firstIndex, int secondIndex){
-        int[] feature1 = getColumn(firstIndex);
-        int[] feature2 = getColumn(secondIndex);
-        
-        int feature1Range = getDistinctValueCount(feature1);
-        int feature2Range = getDistinctValueCount(feature2);
-        double sum = 0;
-        for (int curFeature1 = 0; curFeature1 < feature1Range; curFeature1++) {
-            for (int curFeature2 = 0; curFeature2 < feature2Range; curFeature2++) {
-                    double probabilityXY = getProbabilityXAndY(feature1, feature2, curFeature1, curFeature2);
-                    double probabilityX = probabilityOfAttrValue(feature1,curFeature1);
-                    double probabilityY = probabilityOfAttrValue(feature2, curFeature2);
-                    sum += probabilityXY * Math.log(probabilityXY / (double)(probabilityX * probabilityY));
-                
-            }
-        }
-        return sum;
     }
     
     public double getProbabilityXAndY(int[] xColumn, int[] yColumn, int xVal, int yVal){
@@ -235,7 +215,7 @@ public class TAN extends NaiveBayes {
     //returns the probability of x and y and z from their respective columns. Sum of all matching/whole
     private double getProbabilityXYZ(int[] feature1, int[] feature2, int curFeature1, int curFeature2, int curClass) {
         //Want to avoid 0 probability so start with a count of 1
-        int count = 1;
+        int count = 0;
         for (int i = 0; i < feature1.length; i++) {
             if (feature1[i] == curFeature1 && feature2[i] == curFeature2 && classColumn[i] == curClass) {
                 count++;
