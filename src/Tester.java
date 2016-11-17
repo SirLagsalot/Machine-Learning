@@ -129,22 +129,24 @@ public class Tester {
 
             ArrayList<Instance> set1 = new ArrayList<>();
             set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
-            //normalize(set1);
-
             ArrayList<Instance> set2 = new ArrayList<>();
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
-            //normalize(set2);
+
+            ArrayList<Instance> set1Copy = new ArrayList(set1);
+            ArrayList<Instance> set2Copy = new ArrayList(set2);
+
+            normalize(set1);
 
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
             KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
             //ID3 id3 = new ID3(set1);
 
-            //call classifiers for each instance in the test set
-            normalize(set1);
-            for (Instance instance : set2) {
-                ArrayList<Integer> testInstance = instance.features;                                                        //TODO: Logging for each classification maybe...
+            for (Instance instance : set2Copy) {
+
                 normalize(instance);
+                ArrayList<Integer> testInstance = instance.features;                                                        //TODO: Logging for each classification maybe...
+
                 if (nb.classify(testInstance) == instance.classification) {
                     nbAccuracy++;
                 }
@@ -158,18 +160,21 @@ public class Tester {
 //                    id3Accuracy++;
 //                }
             }
-            // System.exit(0);
-            normalize(set2);
+
             //swap training and test sets, repeat trial
+            normalize(set2);
+
             nb = new NaiveBayes(set2);
             tan = new TAN(set2);
             kNN = new KNearestNeighbor(set2, k, numClasses);
             //  id3 = new ID3(set2);
 
             //call classifiers for each instance in the test set
-            for (Instance instance : set1) {
+            for (Instance instance : set1Copy) {
+
                 normalize(instance);
                 ArrayList<Integer> testInstance = instance.features;
+
                 if (nb.classify(testInstance) == instance.classification) {
                     nbAccuracy++;
                 }
@@ -184,7 +189,7 @@ public class Tester {
 //                }
             }
         }
-        //System.out.println("knnacc" + knnAccuracy);
+
         //calculate accuracy %
         int trials = dataInstances.size() * 5;
         nbAccuracy /= trials;
