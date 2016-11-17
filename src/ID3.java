@@ -46,7 +46,7 @@ public class ID3 implements Classifier {
         testSet.add(test15);
         test = testSet;
         convertForTest(test);
-        classify(new ArrayList<Integer>());
+        //classify(new ArrayList<Integer>());
 //        classify(new ArrayList<Integer>());
 //        System.out.println(gain(testSet));
     }
@@ -67,11 +67,27 @@ public class ID3 implements Classifier {
     @Override
     public int classify(ArrayList<Integer> featureVector) {
         initVals();
+        //printData(trainingData);
         makeTree();
+        return traverseTree(featureVector);
 
         //printData(decisionTree.root.children.get(0).dataSet);
         //System.out.println(decisionTree.root.children.get(0).classVal);
-        return -1;
+    }
+
+    public int traverseTree(ArrayList<Integer> featureVector) {
+        Node curr = decisionTree.root;
+        while (!curr.isLeaf) {
+            int counter = 0;
+            for (Integer i : curr.pathVals) {
+                if (featureVector.get(curr.attributeNum).compareTo(i) == 0) {
+                    curr = curr.children.get(counter);
+                    break;
+                }
+                counter++;
+            }
+        }
+        return curr.classVal;
     }
 
     public void initVals() {
@@ -92,9 +108,21 @@ public class ID3 implements Classifier {
 
     public void makeTree() {
         findRootNode();
+        //printData(decisionTree.root.dataSet);
         placeChildren(decisionTree.root);
-        //placeChildren(decisionTree.root.children.get(1));
         id3(decisionTree.root);
+        placeChildren(decisionTree.root.children.get(0));
+        id3(decisionTree.root.children.get(0));
+        //printData(decisionTree.root.children.get(2).dataSet);
+        placeChildren(decisionTree.root.children.get(2));
+        id3(decisionTree.root.children.get(2));
+//        printData(decisionTree.root.children.get(2).children.get(0).dataSet);
+//        printData(decisionTree.root.children.get(2).children.get(1).dataSet);
+//        System.out.println(decisionTree.root.children.get(2).children.get(0).isLeaf);
+//        System.out.println(decisionTree.root.children.get(2).children.get(0).classVal);
+//
+//        System.out.println(decisionTree.root.children.get(2).children.get(1).isLeaf);
+//        System.out.println(decisionTree.root.children.get(2).children.get(1).classVal);
 
     }
 
@@ -107,12 +135,7 @@ public class ID3 implements Classifier {
             i.features.remove((int) attr);
             i.featureInd.remove((int) attr);
         }
-        System.out.println("Here");
-        for (Integer i : newData.get(0).featureInd) {
-            System.out.print(i + " ");
-        }
-        System.out.println("");
-        printData(newData);
+        //printData(newData);
         return newData;
     }
 
@@ -147,11 +170,13 @@ public class ID3 implements Classifier {
 
     public void fillNode(ArrayList<Instance> data, Node node) {
         if (checkForPureSet(node.dataSet, node)) {
+            System.out.println("Made it to pure");
             return;
         }
         ArrayList<Integer[]> vals = new ArrayList();
         ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
         ArrayList<Integer> unique = new ArrayList();
+        HashMap<Integer, ArrayList<Integer>> uniques = new HashMap();
         int col = -1;
         for (int i = 0; i < data.get(0).featureInd.size(); i++) {
             if (data.get(0).featureInd.get(i) == data.get(0).classification) {
@@ -166,22 +191,32 @@ public class ID3 implements Classifier {
                 unique.add(temp[0]);
             }
             gains.add(gain(vals));
+            uniques.put(j, getUniqueAttrValues(unique));
             vals.clear();
+            unique.clear();
         }
 
-        node.attributeNum = max(gains);
+//        for(Double i : gains){
+//            System.out.println(i);
+//        }
+        node.attributeNum = data.get(0).featureInd.get(max(gains));
+        System.out.println("Feature is " + data.get(0).featureInd.get(max(gains)));
         node.isLeaf = false;
-        node.pathVals = getUniqueAttrValues(unique);
+        node.pathVals = uniques.get(max(gains));
     }
 
     public void placeChildren(Node parent) {
         for (int i = 0; i < parent.pathVals.size(); i++) {
-            Node node = new Node(removeAttr(splitData(parent.attributeNum, i, parent.dataSet), parent.attributeNum));
+            Node node = new Node(removeAttr(splitData(parent.attributeNum, i, parent.dataSet), parent.dataSet.get(0).featureInd.indexOf(parent.attributeNum)));
             parent.children.add(node);
         }
     }
 
     public void printData(ArrayList<Instance> data) {
+        for (Integer i : data.get(0).featureInd) {
+            System.out.print(i + " ");
+        }
+        System.out.println("");
         for (Instance i : data) {
             for (Integer j : i.features) {
                 System.out.print(j + " ");
@@ -193,8 +228,14 @@ public class ID3 implements Classifier {
 
     public ArrayList<Instance> splitData(int attr, int attrVal, ArrayList<Instance> data) {
         ArrayList<Instance> tempData = new ArrayList();
+        int col = -1;
+        for (int i = 0; i < data.get(0).featureInd.size(); i++) {
+            if (data.get(0).featureInd.get(i) == attr) {
+                col = i;
+            }
+        }
         for (Instance i : data) {
-            if (i.features.get(attr).equals(attrVal)) {
+            if (i.features.get(col).equals(attrVal)) {
                 tempData.add(i);
             }
         }
@@ -211,7 +252,7 @@ public class ID3 implements Classifier {
         Double max = gains.get(0);
         int ind = 0;
         for (int i = 1; i < gains.size(); i++) {
-            if (max < gains.get(i)) {
+            if (max.compareTo(gains.get(i)) < 0) {
                 max = gains.get(i);
                 ind = i;
             }
