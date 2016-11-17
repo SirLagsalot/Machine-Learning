@@ -67,6 +67,7 @@ public class ID3 implements Classifier {
     @Override
     public int classify(ArrayList<Integer> featureVector) {
         initVals();
+        printData(trainingData);
         makeTree();
 
         //printData(decisionTree.root.children.get(0).dataSet);
@@ -92,9 +93,10 @@ public class ID3 implements Classifier {
 
     public void makeTree() {
         findRootNode();
-        placeChildren(decisionTree.root);
         //placeChildren(decisionTree.root.children.get(1));
+        placeChildren(decisionTree.root);
         id3(decisionTree.root);
+        placeChildren(decisionTree.root.children.get(0));
 
     }
 
@@ -107,11 +109,6 @@ public class ID3 implements Classifier {
             i.features.remove((int) attr);
             i.featureInd.remove((int) attr);
         }
-        System.out.println("Here");
-        for (Integer i : newData.get(0).featureInd) {
-            System.out.print(i + " ");
-        }
-        System.out.println("");
         printData(newData);
         return newData;
     }
@@ -169,7 +166,7 @@ public class ID3 implements Classifier {
             vals.clear();
         }
 
-        node.attributeNum = max(gains);
+        node.attributeNum = data.get(0).featureInd.get(max(gains));
         node.isLeaf = false;
         node.pathVals = getUniqueAttrValues(unique);
     }
@@ -182,6 +179,10 @@ public class ID3 implements Classifier {
     }
 
     public void printData(ArrayList<Instance> data) {
+        for(Integer i: data.get(0).featureInd){
+            System.out.print(i + " ");
+        }
+        System.out.println("");
         for (Instance i : data) {
             for (Integer j : i.features) {
                 System.out.print(j + " ");
@@ -216,6 +217,7 @@ public class ID3 implements Classifier {
                 ind = i;
             }
         }
+//        System.out.println(ind);
         return ind;
     }
 
