@@ -78,12 +78,12 @@ public class NaiveBayes implements Classifier {
     }
     
     public double probabilityOfAttrValue(int[] attrVector, int attrValue){
-        double probability = 0;
+        double probability = 1;//start at 1 to avoid 0 math scenario
         for (int i = 0; i < attrVector.length; i++) {
             if(attrVector[i] == attrValue)
                 probability++;
         }
-        return probability/attrVector.length;
+        return probability/(double)attrVector.length;
     }
 
     public NaiveBayes(ArrayList<Instance> trainingData) {
