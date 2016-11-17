@@ -246,6 +246,7 @@ public class TAN extends NaiveBayes {
         Node startNode = nodes.get(0);
         ArrayList<Edge> edgesToWorkWith = (ArrayList<Edge>) startNode.edges.clone();
         visited.add(startNode);
+
         while (!edgesToWorkWith.isEmpty()) {
             Edge largestEdge = getLargestEdge(edgesToWorkWith);
             edgesToWorkWith.remove(largestEdge);
@@ -257,7 +258,6 @@ public class TAN extends NaiveBayes {
                 largestEdge.startNode.edges.remove(largestEdge);
             }
         }
-
     }
 
     private Edge getLargestEdge(ArrayList<Edge> edges) {
@@ -276,19 +276,17 @@ public class TAN extends NaiveBayes {
         int attrPosition;
         ArrayList<Edge> edges = new ArrayList<>();
         Node parent;
-        //probabilityChart[class][parentval][nodeVal]
         double[][][] probabilityChart;
+        //probabilityChart[class][parentval][nodeVal]
 
         public Node(int position) {
             attrPosition = position;
         }
-
     }
 
     class Edge {
 
-        Node startNode;
-        Node endNode;
+        Node startNode, endNode;
         double weight;
 
         public Edge(Node startNode, Node endNode, double weight) {

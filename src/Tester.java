@@ -6,12 +6,12 @@ import java.util.Collections;
 
 public class Tester {
 
-    private final int k = 3;
+    private final int k = 3;    //value for kNN
 
     private final ArrayList<Instance> dataInstances;
+    private final ArrayList<Double> binWidths = new ArrayList();
     private final String origin;
     private final int numClasses;
-    private ArrayList<Double> binWidths = new ArrayList();
 
     public Tester(DataSet dataSet, String origin) {
 
@@ -21,6 +21,7 @@ public class Tester {
         fiveByTwoTest();
     }
 
+    //process a single instance to place continuous values in discrete bins of computed size
     private void normalize(Instance instance) {
 
         if (!instance.discrete) {
@@ -46,6 +47,7 @@ public class Tester {
         }
     }
 
+    //process dataset to place continuous values in discrete bins of computed size
     private void normalize(ArrayList<Instance> instances) {
 
         if (!instances.get(0).discrete) {
@@ -80,6 +82,7 @@ public class Tester {
     }
 
     private int[] doubleArrayToIntArray(double[] column) {
+        
         int[] intColumn = new int[column.length];
         for (int i = 0; i < column.length; i++) {
             intColumn[i] = (int) column[i];
@@ -88,6 +91,7 @@ public class Tester {
     }
 
     private boolean containsDoubles(double[] column) {
+        
         for (int i = 0; i < column.length; i++) {
             if (column[i] - (int) column[i] != 0) {
                 return true;
@@ -96,6 +100,7 @@ public class Tester {
         return false;
     }
 
+    //assign the input values to bins beginning with index 0
     private int[] bin(double[] values, int b) {
 
         //use Sturge's Rule to calculate number of bins
@@ -132,8 +137,8 @@ public class Tester {
             ArrayList<Instance> set2 = new ArrayList<>();
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
 
-            ArrayList<Instance> set1Copy = new ArrayList(set1);
-            ArrayList<Instance> set2Copy = new ArrayList(set2);
+            ArrayList<Instance> set1Copy = (ArrayList<Instance>) set1.clone();          //these need to be hard coppied i think
+            ArrayList<Instance> set2Copy = (ArrayList<Instance>) set2.clone();
 
             normalize(set1);
 
@@ -145,7 +150,7 @@ public class Tester {
             for (Instance instance : set2Copy) {
 
                 normalize(instance);
-                ArrayList<Integer> testInstance = instance.features;                                                        //TODO: Logging for each classification maybe...
+                ArrayList<Integer> testInstance = instance.features;
 
                 if (nb.classify(testInstance) == instance.classification) {
                     nbAccuracy++;

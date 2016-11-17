@@ -11,21 +11,21 @@ public class Instance {
     public double distance;
     public boolean discrete;
     public int numClasses;
-    
-    public Instance(){
-        
+
+    public Instance() {
+
     }
-    
-    public Instance(Instance i){
-        
+
+    public Instance(Instance i) {
+
         classification = i.classification;
         className = i.className;
         features = new ArrayList();
-        for(Integer inst: i.features){
+        for (Integer inst : i.features) {
             features.add(inst);
         }
         featureInd = new ArrayList();
-        for(Integer inst: i.featureInd){
+        for (Integer inst : i.featureInd) {
             featureInd.add(inst);
         }
         unbinnedFeatures = i.unbinnedFeatures;
