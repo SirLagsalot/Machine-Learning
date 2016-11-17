@@ -63,13 +63,20 @@ public class KNearestNeighbor implements Classifier {
         return Math.sqrt(distance);
     }
 
-    private double VDM(ArrayList<Integer> trainingFeatures, ArrayList<Integer> testFeatures) {
+    private double HVDM(ArrayList<Integer> trainingFeatures, ArrayList<Integer> testFeatures) {
 
         double distance = 0.0;
         for (int i = 0; i < testFeatures.size(); i++) {
-            distance += (Math.pow(Math.abs(trainingFeatures.get(i) - testFeatures.get(i)), 2) / (4 * stdDevs[i]));
+            distance += (Math.pow(trainingFeatures.get(i) - testFeatures.get(i), 2) / (4 * stdDevs[i]));
         }
         return Math.sqrt(distance);
+    }
+
+    private double VDM(ArrayList<Integer> trainingFeatures, ArrayList<Integer> testFeatures) {
+
+        double distance = 0.0;
+
+        return distance;
     }
 
     //well fk me mate valuedifferencemetric is kinda hard...
@@ -118,7 +125,7 @@ public class KNearestNeighbor implements Classifier {
         //calculate distance to each instance in training set
         for (Instance trainingInstance : trainingData) {
             //trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
-            trainingInstance.distance = VDM(testFeatures, trainingInstance.features);
+            trainingInstance.distance = HVDM(testFeatures, trainingInstance.features);
         }
 
         //sort by distance
