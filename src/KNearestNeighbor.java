@@ -17,10 +17,6 @@ public class KNearestNeighbor implements Classifier {
         this.numClasses = numClasses;
         this.k = k;
         getStdDev(trainingData);
-        for (int i = 0; i < stdDevs.length - 1; i++) {
-            System.out.print(stdDevs[i] + " ");
-        }
-        System.out.println("");
     }
 
     private void getStdDev(ArrayList<Instance> trainingData) {
@@ -67,9 +63,17 @@ public class KNearestNeighbor implements Classifier {
         return Math.sqrt(distance);
     }
 
-    //well fk me mate valuedifferencemetric is kinda hard...
-  //  private double valueDifferenceMetric(ArrayList<Integer> trainingFeatures) {
+    private double VDM(ArrayList<Integer> trainingFeatures, ArrayList<Integer> testFeatures) {
 
+        double distance = 0.0;
+        for (int i = 0; i < testFeatures.size(); i++) {
+            distance += (Math.pow(Math.abs(trainingFeatures.get(i) - testFeatures.get(i)), 2) / (4 * stdDevs[i]));
+        }
+        return Math.sqrt(distance);
+    }
+
+    //well fk me mate valuedifferencemetric is kinda hard...
+    //  private double valueDifferenceMetric(ArrayList<Integer> trainingFeatures) {
 //        double distance = 0.0;
 //        int q = 1;
 //        int C = numClasses;
@@ -92,30 +96,29 @@ public class KNearestNeighbor implements Classifier {
 //            pAXC[c] = (nAXC[c] / nAX);
 //        }
 //        System.out.println("pAXC" + Arrays.toString(pAXC));
-        //HVDM(x,y) = sqrt(sum over features (da^2(xa,ya)))
-        //da(xa, ya) = |x - y| / 4 sigma a
-        //for each attribute in feature vector, get stdDev
-        //get P(a,x,c)= N(a,x,c) / N(a,x)
-        //N(a,x) = sum over C N(a,x,c)
-        //N(a,x,c) = num instances in training set with val x for attribute a and output class c
-        //vdm(x,y) = sum over classes (p(a,x,c) -p(a,y,c))^q 
-        //N(a,x) = num instances in training set with value x for attribute a
-        //N(a,x,c) num instances in training set with value x for attribute a and output class c
-        //C is the number of output classes in domain
-        //q is constantant (1 or 2)?
-        //P(a,x,c) is the conditional probability that the output class is c given that attribute a has the value x : P(c|Xa)
-        //P(a,x,c) = N(a,x,c) / N (a,x)
-        //N(a,x) = sum over C of N(a,x,c)
-       // return distance;
-  //  }
-
+    //HVDM(x,y) = sqrt(sum over features (da^2(xa,ya)))
+    //da(xa, ya) = |x - y| / 4 sigma a
+    //for each attribute in feature vector, get stdDev
+    //get P(a,x,c)= N(a,x,c) / N(a,x)
+    //N(a,x) = sum over C N(a,x,c)
+    //N(a,x,c) = num instances in training set with val x for attribute a and output class c
+    //vdm(x,y) = sum over classes (p(a,x,c) -p(a,y,c))^q 
+    //N(a,x) = num instances in training set with value x for attribute a
+    //N(a,x,c) num instances in training set with value x for attribute a and output class c
+    //C is the number of output classes in domain
+    //q is constantant (1 or 2)?
+    //P(a,x,c) is the conditional probability that the output class is c given that attribute a has the value x : P(c|Xa)
+    //P(a,x,c) = N(a,x,c) / N (a,x)
+    //N(a,x) = sum over C of N(a,x,c)
+    // return distance;
+    //  }
     @Override
     public int classify(ArrayList<Integer> testFeatures) {
 
         //calculate distance to each instance in training set
         for (Instance trainingInstance : trainingData) {
-            trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
-           // valueDifferenceMetric(testFeatures);
+            //trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
+            trainingInstance.distance = VDM(testFeatures, trainingInstance.features);
         }
 
         //sort by distance
