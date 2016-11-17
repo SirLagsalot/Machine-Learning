@@ -200,10 +200,10 @@ public class Tester {
         //print results
         System.out.println("\n\n5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
         System.out.println("____________________________________");
-        System.out.println("Naive Bayes:               " + new DecimalFormat("#.##").format(nbAccuracy));
-        System.out.println("Tree Augmented Naive Bayes:" + new DecimalFormat("#.##").format(tanAccuracy));
-        System.out.println("k-Nearest Neighbor:        " + new DecimalFormat("#.##").format(knnAccuracy));
-        System.out.println("Iterative Dichotomiser 3:  " + new DecimalFormat("#.##").format(id3Accuracy));
+        System.out.println("Naive Bayes:                  " + new DecimalFormat("#.##").format(nbAccuracy * 100) + "%");
+        System.out.println("Tree Augmented Naive Bayes:   " + new DecimalFormat("#.##").format(tanAccuracy * 100) + "%");
+        System.out.println("k-Nearest Neighbor:           " + new DecimalFormat("#.##").format(knnAccuracy * 100) + "%");
+        System.out.println("Iterative Dichotomiser 3:     " + new DecimalFormat("#.##").format(id3Accuracy * 100) + "%");
     }
 
     private static void printDataSet(ArrayList<Instance> data, boolean binned) {

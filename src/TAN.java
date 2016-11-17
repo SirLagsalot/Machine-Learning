@@ -4,12 +4,14 @@ import java.util.ArrayList;
 public class TAN extends NaiveBayes {
 
     private Node root;
+
     public TAN(ArrayList<Instance> trainingData) {
         super(trainingData);
         createTree();
     }
 
-    public void createTree() {
+    private void createTree() {
+
         ArrayList<Node> nodes = new ArrayList<>();
         for (int i = 0; i < numberOfFeatures; i++) {
             Node node = new Node(i);
@@ -20,23 +22,25 @@ public class TAN extends NaiveBayes {
         //make maximum spanning tree
         makeMaximumSpanningTree(nodes);
         //choose root node and have all edges go away from it ie, go from graph to tree.
-        
+
         directTree(nodes);
         addParents(nodes);
         createProbabilityCharts(nodes);
         //assuming directTree makes 0 the root node.
         root = nodes.get(0);
     }
-    
-    private void createProbabilityCharts(ArrayList<Node> nodes){
+
+    private void createProbabilityCharts(ArrayList<Node> nodes) {
+
         //do not do for root node as that only has class as a parent
         for (int i = 1; i < nodes.size(); i++) {
             Node node = nodes.get(i);
             createProbabilityChart(node);
         }
     }
-    
-    private void createProbabilityChart(Node node){
+
+    private void createProbabilityChart(Node node) {
+
         Node parent = node.parent;
         int nodeRange = getDistinctValueCount(getColumn(node.attrPosition));
         int parentRange = getDistinctValueCount(getColumn(parent.attrPosition));
@@ -48,39 +52,40 @@ public class TAN extends NaiveBayes {
         for (int i = 0; i < numOfClassifications; i++) {
             for (int j = 0; j < parentRange; j++) {
                 for (int k = 0; k < nodeRange; k++) {
-                    node.probabilityChart[i][j][k] = probabilityGivenClassAndFeature(i,j,k,getColumn(node.attrPosition),getColumn(parent.attrPosition));
+                    node.probabilityChart[i][j][k] = probabilityGivenClassAndFeature(i, j, k, getColumn(node.attrPosition), getColumn(parent.attrPosition));
                 }
             }
         }
-        
+
     }
-    
+
     //Returns P(curNodeVal | class ^ parentNodeVal)
-    private double probabilityGivenClassAndFeature(int curClass, int parentNodeVal, int curNodeVal, int[] nodeColumn, int[] parentColumn){
-        double probability = -1;
-        
+    private double probabilityGivenClassAndFeature(int curClass, int parentNodeVal, int curNodeVal, int[] nodeColumn, int[] parentColumn) {
+
         int totalCount = 1;//just start at 1 to offset chance of dividing by 0
         int partialCount = 1;//also want to avoid chance of straight out 0 probability
         for (int i = 0; i < classColumn.length; i++) {
-            if(parentColumn[i] == parentNodeVal && classColumn[i] == curClass){
+            if (parentColumn[i] == parentNodeVal && classColumn[i] == curClass) {
                 totalCount++;
-                if(curNodeVal == nodeColumn[i])
+                if (curNodeVal == nodeColumn[i]) {
                     partialCount++;
+                }
             }
         }
-        probability = partialCount / (double)totalCount;
-        
-        return probability;
+        return partialCount / (double) totalCount;
     }
-    private void addParents(ArrayList<Node> nodes){
+
+    private void addParents(ArrayList<Node> nodes) {
+
         for (Node node : nodes) {
-            for(Edge edge : node.edges){
+            for (Edge edge : node.edges) {
                 edge.endNode.parent = node;
             }
         }
     }
 
     private void directTree(ArrayList<Node> nodes) {
+
         //Always make the first node the root
         Node root = nodes.get(0);
         ArrayList<Node> toWork = new ArrayList<>();
@@ -96,6 +101,7 @@ public class TAN extends NaiveBayes {
     }
 
     private void removeEdgeWithStart(Node node, Node toRemove) {
+
         for (Edge edge : node.edges) {
             if (edge.endNode == toRemove) {
                 node.edges.remove(edge);
@@ -104,7 +110,8 @@ public class TAN extends NaiveBayes {
         }
     }
 
-    public void connectNodes(ArrayList<Node> nodes) {
+    private void connectNodes(ArrayList<Node> nodes) {
+
         for (int i = 0; i < nodes.size(); i++) {
             Node node1 = nodes.get(i);
             for (int j = i + 1; j < nodes.size(); j++) {
@@ -120,17 +127,20 @@ public class TAN extends NaiveBayes {
             }
         }
     }
-    
-    public double getProbabilityXAndY(int[] xColumn, int[] yColumn, int xVal, int yVal){
+
+    private double getProbabilityXAndY(int[] xColumn, int[] yColumn, int xVal, int yVal) {
+
         int sum = 1;//start from one to avoid 0 probabilities
         for (int i = 0; i < xColumn.length; i++) {
-            if(xColumn[i] == xVal && yColumn[i] == yVal)
+            if (xColumn[i] == xVal && yColumn[i] == yVal) {
                 sum++;
+            }
         }
-        return sum/(double)xColumn.length;
+        return sum / (double) xColumn.length;
     }
 
-    public double getWeight(int firstIndex, int secondIndex) {
+    private double getWeight(int firstIndex, int secondIndex) {
+
         int[] feature1 = getColumn(firstIndex);
         int[] feature2 = getColumn(secondIndex);
         //int[] classValues = getColumn(data[0].length - 1);//assuming class is last column in data
@@ -144,67 +154,71 @@ public class TAN extends NaiveBayes {
             for (int curFeature2 = 0; curFeature2 < feature2Range; curFeature2++) {
                 for (int curClass = 0; curClass < classRange; curClass++) {
                     double probabilityXYZ = getProbabilityXYZ(feature1, feature2, curFeature1, curFeature2, curClass);
-                    double probabilityXYGivenZ = getProbabilityGivenClass(feature1, feature2,  curFeature1, curFeature2, curClass);
-                    double probabilityXGivenZ = getProbabilityGivenClass(feature1,  curFeature1, curClass);
-                    double probabilityYGivenZ = getProbabilityGivenClass(feature2,  curFeature2, curClass);
-                    sum += probabilityXYZ * Math.log(probabilityXYGivenZ / (double)(probabilityXGivenZ * probabilityYGivenZ));
+                    double probabilityXYGivenZ = getProbabilityGivenClass(feature1, feature2, curFeature1, curFeature2, curClass);
+                    double probabilityXGivenZ = getProbabilityGivenClass(feature1, curFeature1, curClass);
+                    double probabilityYGivenZ = getProbabilityGivenClass(feature2, curFeature2, curClass);
+                    sum += probabilityXYZ * Math.log(probabilityXYGivenZ / (double) (probabilityXGivenZ * probabilityYGivenZ));
                 }
             }
         }
-
         return sum;
     }
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
+
         int bestClass = 0;
         double bestProbability = 0;
-        
+
         //Algorithm: every node will have 1 parent(we didn't add the class node) except the root. 
         //Calculate root probability seperately
         //compare probabilities for each class, and then take the best class.
         for (int i = 0; i < numOfClassifications; i++) {
             double probability = probabilityOfClass(i, featureVector);
-            if(probability > bestProbability){
+            if (probability > bestProbability) {
                 bestClass = i;
                 bestProbability = probability;
             }
         }
-        
+
         return bestClass;
     }
-    
-    private double probabilityOfClass(int classValue, ArrayList<Integer> featureVector){
+
+    private double probabilityOfClass(int classValue, ArrayList<Integer> featureVector) {
+
         double probability = 1;
         //Algo: return P(c) * P(rootVal | c) * (for all other nodes)P(nodeVal|parent^c)
-        probability*=probabilityOfClassValue(classValue);
-        probability*=getProbabilityGivenClass(getColumn(root.attrPosition), featureVector.get(root.attrPosition), classValue);
-        probability*=getChildrenProbabilities(root, classValue, featureVector);
+        probability *= probabilityOfClassValue(classValue);
+        probability *= getProbabilityGivenClass(getColumn(root.attrPosition), featureVector.get(root.attrPosition), classValue);
+        probability *= getChildrenProbabilities(root, classValue, featureVector);
         //TODO check this
         //probability/=probabilityOfAttrValue(getColumn(root.attrPosition), featureVector.get(root.attrPosition));
         return probability;
     }
-    
-    private double getChildrenProbabilities(Node node, int classValue, ArrayList<Integer> featureVector){
+
+    private double getChildrenProbabilities(Node node, int classValue, ArrayList<Integer> featureVector) {
+
         //returns P(node value | parentValue ^ c) for all children nodes of node
         double probability = 1;
         for (Edge edge : node.edges) {
             //System.out.println("class value: "+classValue+"\n node attrPos: "+node.attrPosition+"\n endNode.attrPos"+edge.endNode.attrPosition);
-            probability*= getNodeProbability(edge.endNode,classValue,featureVector.get(node.attrPosition),featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
+            probability *= getNodeProbability(edge.endNode, classValue, featureVector.get(node.attrPosition), featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
             probability *= getChildrenProbabilities(edge.endNode, classValue, featureVector);
             //TODO check this
             //probability /= probabilityOfAttrValue(getColumn(edge.endNode.attrPosition), featureVector.get(edge.endNode.attrPosition));
         }
         return probability;
     }
-    
-    private double getNodeProbability(Node node, int classValue, int parentValue, int value){
+
+    private double getNodeProbability(Node node, int classValue, int parentValue, int value) {
+
         double probability = 1;
         //Stay at 1 if there isn't an entry for the given value, it'll ignore the impact of that attribute as no other chart should have that value, thus we're using 1 across the board regardless of which class we try
         int length1 = node.probabilityChart[0].length;
         int length2 = node.probabilityChart[0][0].length;
-        if(!(parentValue >= length1 || value >= length2))
+        if (!(parentValue >= length1 || value >= length2)) {
             probability = node.probabilityChart[classValue][parentValue][value];
+        }
 //        else if(value == 6)
 //            System.out.println("6oddity");
 //        else
@@ -214,6 +228,7 @@ public class TAN extends NaiveBayes {
 
     //returns the probability of x and y and z from their respective columns. Sum of all matching/whole
     private double getProbabilityXYZ(int[] feature1, int[] feature2, int curFeature1, int curFeature2, int curClass) {
+
         //Want to avoid 0 probability so start with a count of 1
         int count = 0;
         for (int i = 0; i < feature1.length; i++) {
@@ -221,21 +236,22 @@ public class TAN extends NaiveBayes {
                 count++;
             }
         }
-        return count /(double) feature1.length;
+        return count / (double) feature1.length;
     }
 
     //this will use prims algorithm
     private void makeMaximumSpanningTree(ArrayList<Node> nodes) {
+
         ArrayList<Node> visited = new ArrayList<>();
         Node startNode = nodes.get(0);
-        ArrayList<Edge> edgesToWorkWith = (ArrayList<Edge>)startNode.edges.clone();
+        ArrayList<Edge> edgesToWorkWith = (ArrayList<Edge>) startNode.edges.clone();
         visited.add(startNode);
         while (!edgesToWorkWith.isEmpty()) {
             Edge largestEdge = getLargestEdge(edgesToWorkWith);
             edgesToWorkWith.remove(largestEdge);
             if (!visited.contains(largestEdge.endNode)) {
                 visited.add(largestEdge.endNode);
-                edgesToWorkWith.addAll((ArrayList<Edge>)largestEdge.endNode.edges.clone());
+                edgesToWorkWith.addAll((ArrayList<Edge>) largestEdge.endNode.edges.clone());
             } else {
                 //remove edge from it's startNode, algo will handle endNode
                 largestEdge.startNode.edges.remove(largestEdge);
@@ -245,6 +261,7 @@ public class TAN extends NaiveBayes {
     }
 
     private Edge getLargestEdge(ArrayList<Edge> edges) {
+
         Edge largestEdge = edges.get(0);
         for (Edge edge : edges) {
             if (edge.weight > largestEdge.weight) {
@@ -254,7 +271,7 @@ public class TAN extends NaiveBayes {
         return largestEdge;
     }
 
-    private class Node {
+    class Node {
 
         int attrPosition;
         ArrayList<Edge> edges = new ArrayList<>();
@@ -268,7 +285,8 @@ public class TAN extends NaiveBayes {
 
     }
 
-    private class Edge {
+    class Edge {
+
         Node startNode;
         Node endNode;
         double weight;
