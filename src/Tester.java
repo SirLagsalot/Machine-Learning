@@ -35,7 +35,10 @@ public class Tester {
             //bin data
             int[][] binnedValues = new int[instances.get(0).unbinnedFeatures.size()][instances.size()];
             for (int i = 0; i < instances.get(0).unbinnedFeatures.size(); i++) {
-                binnedValues[i] = bin(features[i]);
+                if(!containsDoubles(features[i]))
+                    binnedValues[i] = doubleArrayToIntArray(features[i]);
+                else
+                    binnedValues[i] = bin(features[i]);
             }
 
             //add binned data to each data instance
@@ -49,6 +52,20 @@ public class Tester {
         }
     }
 
+    private int[] doubleArrayToIntArray(double[] column){
+        int[] intColumn = new int[column.length];
+        for (int i = 0; i < column.length; i++) {
+            intColumn[i] = (int) column[i];
+        }
+        return intColumn;
+    }
+    private boolean containsDoubles(double[] column){
+        for (int i = 0; i < column.length; i++) {
+            if(column[i] - (int)column[i] != 0)
+                return true;
+        }
+        return false;
+    }
     private int[] bin(double[] values) {
 
         //use Sturge's Rule to calculate number of bins
@@ -83,7 +100,7 @@ public class Tester {
             ArrayList<Instance> set1 = new ArrayList<>();
             set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
             normalize(set1);
-
+            
             ArrayList<Instance> set2 = new ArrayList<>();
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
             normalize(set2);
@@ -153,7 +170,7 @@ public class Tester {
 
     private static void printDataSet(ArrayList<Instance> data, boolean binned) {
 
-        if (binned) {
+        if (binned || data.get(0).discrete) {
 
             for (Instance in : data) {
                 ArrayList<Integer> binnedData = in.features;
