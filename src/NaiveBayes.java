@@ -6,10 +6,10 @@ public class NaiveBayes implements Classifier {
     private final ArrayList<Instance> trainingData;
     private final ArrayList<LiklihoodTable> lTables;
 
-    public LiklihoodTable liklihoodTable;
     public int[][] data;
     public int[] classColumn;
 
+    LiklihoodTable liklihoodTable;
     int numOfClassifications;
     int numberOfFeatures;
 
@@ -22,7 +22,32 @@ public class NaiveBayes implements Classifier {
         lTables = createLiklihoodTables(fTables);
     }
 
-    public int[] getColumn(int position) {
+    @Override
+    public int classify(ArrayList<Integer> featureVector) {
+
+        int[] intArray = new int[featureVector.size()];
+        for (int i = 0; i < intArray.length; i++) {
+            intArray[i] = featureVector.get(i);
+        }
+        return classify(intArray);
+    }
+
+    //We assume line is an array of attribute values pre-binned.
+    private int classify(int[] line) {
+
+        double maxProbability = 0;
+        int classification = -1;
+        for (int i = 0; i < numOfClassifications; i++) {
+            double probability = probabilityOfClass(i, line);
+            if (probability > maxProbability) {
+                maxProbability = probability;
+                classification = i;
+            }
+        }
+        return classification;
+    }
+
+    public final int[] getColumn(int position) {
 
         //System.out.println("Position: "+position);
         //gets column of data at the given position;
@@ -41,8 +66,7 @@ public class NaiveBayes implements Classifier {
                 count++;
             }
         }
-        double probability = count / (double) classColumn.length;
-        return probability;
+        return count / (double) classColumn.length;
     }
 
     public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
@@ -90,8 +114,7 @@ public class NaiveBayes implements Classifier {
                 match++;
             }
         }
-        double probability = match / (double) limitedFeatureColumn.size();
-        return probability;
+        return match / (double) limitedFeatureColumn.size();
     }
 
     public double probabilityOfAttrValue(int[] attrVector, int attrValue) {
@@ -111,6 +134,7 @@ public class NaiveBayes implements Classifier {
         Instance sample = trainingData.get(0);
         numberOfFeatures = sample.features.size();
         int[][] data = new int[trainingData.size()][numberOfFeatures + 1];
+
         for (int i = 0; i < trainingData.size(); i++) {
             Instance instance = trainingData.get(i);
             for (int j = 0; j < numberOfFeatures; j++) {
@@ -119,7 +143,6 @@ public class NaiveBayes implements Classifier {
             //class is last element in the row
             data[i][numberOfFeatures] = instance.classification;
         }
-
         return data;
     }
 
@@ -161,31 +184,6 @@ public class NaiveBayes implements Classifier {
         return tables;
     }
 
-    @Override
-    public int classify(ArrayList<Integer> featureVector) {
-
-        int[] intArray = new int[featureVector.size()];
-        for (int i = 0; i < intArray.length; i++) {
-            intArray[i] = featureVector.get(i);
-        }
-        return classify(intArray);
-    }
-
-    //We assume line is an array of attribute values pre-binned.
-    public int classify(int[] line) {
-
-        double maxProbability = 0;
-        int classification = -1;
-        for (int i = 0; i < numOfClassifications; i++) {
-            double probability = probabilityOfClass(i, line);
-            if (probability > maxProbability) {
-                maxProbability = probability;
-                classification = i;
-            }
-        }
-        return classification;
-    }
-
     public double probabilityOfAttrGivenClass(int attr, int attrValue, int classValue) {
 
         double probability = 1;
@@ -213,7 +211,6 @@ public class NaiveBayes implements Classifier {
             //probability /= table.table[line[i]][]
         }
         //multiply by probability of given class.
-
         return probability;
     }
 

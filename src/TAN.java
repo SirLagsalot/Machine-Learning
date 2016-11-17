@@ -10,6 +10,25 @@ public class TAN extends NaiveBayes {
         createTree();
     }
 
+    @Override
+    public int classify(ArrayList<Integer> featureVector) {
+
+        int bestClass = 0;
+        double bestProbability = 0;
+
+        //Algorithm: every node will have 1 parent(we didn't add the class node) except the root. 
+        //Calculate root probability seperately
+        //compare probabilities for each class, and then take the best class.
+        for (int i = 0; i < numOfClassifications; i++) {
+            double probability = probabilityOfClass(i, featureVector);
+            if (probability > bestProbability) {
+                bestClass = i;
+                bestProbability = probability;
+            }
+        }
+        return bestClass;
+    }
+
     private void createTree() {
 
         ArrayList<Node> nodes = new ArrayList<>();
@@ -162,26 +181,6 @@ public class TAN extends NaiveBayes {
             }
         }
         return sum;
-    }
-
-    @Override
-    public int classify(ArrayList<Integer> featureVector) {
-
-        int bestClass = 0;
-        double bestProbability = 0;
-
-        //Algorithm: every node will have 1 parent(we didn't add the class node) except the root. 
-        //Calculate root probability seperately
-        //compare probabilities for each class, and then take the best class.
-        for (int i = 0; i < numOfClassifications; i++) {
-            double probability = probabilityOfClass(i, featureVector);
-            if (probability > bestProbability) {
-                bestClass = i;
-                bestProbability = probability;
-            }
-        }
-
-        return bestClass;
     }
 
     private double probabilityOfClass(int classValue, ArrayList<Integer> featureVector) {

@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -12,10 +11,10 @@ public class KNearestNeighbor implements Classifier {
     private final int numClasses;
     private static final int alpha = 2;
 
-    public KNearestNeighbor(ArrayList<Instance> trainingData, int k, int numClasses) {
+    public KNearestNeighbor(ArrayList<Instance> trainingData, int k) {
 
         this.trainingData = trainingData;
-        this.numClasses = numClasses;
+        this.numClasses = Utilities.getClassificationCount(trainingData);
         this.k = k;
         getStdDev(trainingData);
     }

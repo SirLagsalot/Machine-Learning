@@ -11,13 +11,11 @@ public class Tester {
     private final ArrayList<Instance> dataInstances;
     private final ArrayList<Double> binWidths = new ArrayList();
     private final String origin;
-    private final int numClasses;
 
     public Tester(DataSet dataSet, String origin) {
 
         this.dataInstances = dataSet.data;
         this.origin = origin;
-        this.numClasses = dataSet.numClasses;
         fiveByTwoTest();
     }
 
@@ -28,11 +26,13 @@ public class Tester {
 
             ArrayList<Double> features = instance.unbinnedFeatures;
             ArrayList<Integer> binnedFeatures = new ArrayList();
+
             for (int i = 0; i < features.size(); i++) {
+
                 double binMe = features.get(i);
                 int binned = 0;
                 double count = 0.0;
-                //get bin for binMe
+
                 for (int b = 0; b < binWidths.size(); b++) {
                     count += binWidths.get(b);
                     if (count > binMe) {
@@ -40,7 +40,6 @@ public class Tester {
                         break;
                     }
                 }
-                // System.out.println("binned value: " + binned);
                 binnedFeatures.add(binned);
             }
             instance.features = binnedFeatures;
@@ -81,8 +80,9 @@ public class Tester {
         }
     }
 
+    //cast entire column of integers to doubles
     private int[] doubleArrayToIntArray(double[] column) {
-        
+
         int[] intColumn = new int[column.length];
         for (int i = 0; i < column.length; i++) {
             intColumn[i] = (int) column[i];
@@ -90,8 +90,9 @@ public class Tester {
         return intColumn;
     }
 
+    //determine if the provided column contrains double or integer values
     private boolean containsDoubles(double[] column) {
-        
+
         for (int i = 0; i < column.length; i++) {
             if (column[i] - (int) column[i] != 0) {
                 return true;
@@ -137,17 +138,15 @@ public class Tester {
             ArrayList<Instance> set2 = new ArrayList<>();
             set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
 
-            ArrayList<Instance> set1Copy = (ArrayList<Instance>) set1.clone();          //these need to be hard coppied i think
-            ArrayList<Instance> set2Copy = (ArrayList<Instance>) set2.clone();
-
             normalize(set1);
+            normalize(set2);
 
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
-            KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
+            KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
             //ID3 id3 = new ID3(set1);
 
-            for (Instance instance : set2Copy) {
+            for (Instance instance : set2) {
 
                 normalize(instance);
                 ArrayList<Integer> testInstance = instance.features;
@@ -167,15 +166,13 @@ public class Tester {
             }
 
             //swap training and test sets, repeat trial
-            normalize(set2);
-
             nb = new NaiveBayes(set2);
             tan = new TAN(set2);
-            kNN = new KNearestNeighbor(set2, k, numClasses);
+            kNN = new KNearestNeighbor(set2, k);
             //  id3 = new ID3(set2);
 
             //call classifiers for each instance in the test set
-            for (Instance instance : set1Copy) {
+            for (Instance instance : set1) {
 
                 normalize(instance);
                 ArrayList<Integer> testInstance = instance.features;
