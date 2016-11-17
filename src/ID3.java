@@ -46,7 +46,7 @@ public class ID3 implements Classifier {
         testSet.add(test15);
         test = testSet;
         convertForTest(test);
-        classify(new ArrayList<Integer>());
+        //classify(new ArrayList<Integer>());
 //        classify(new ArrayList<Integer>());
 //        System.out.println(gain(testSet));
     }
@@ -69,10 +69,25 @@ public class ID3 implements Classifier {
         initVals();
         //printData(trainingData);
         makeTree();
+        return traverseTree(featureVector);
 
         //printData(decisionTree.root.children.get(0).dataSet);
         //System.out.println(decisionTree.root.children.get(0).classVal);
-        return -1;
+    }
+
+    public int traverseTree(ArrayList<Integer> featureVector) {
+        Node curr = decisionTree.root;
+        while (!curr.isLeaf) {
+            int counter = 0;
+            for (Integer i : curr.pathVals) {
+                if (featureVector.get(curr.attributeNum).compareTo(i) == 0) {
+                    curr = curr.children.get(counter);
+                    break;
+                }
+                counter++;
+            }
+        }
+        return curr.classVal;
     }
 
     public void initVals() {
@@ -93,20 +108,21 @@ public class ID3 implements Classifier {
 
     public void makeTree() {
         findRootNode();
-        printData(decisionTree.root.dataSet);
+        //printData(decisionTree.root.dataSet);
         placeChildren(decisionTree.root);
         id3(decisionTree.root);
-        printData(decisionTree.root.children.get(0).dataSet);
         placeChildren(decisionTree.root.children.get(0));
         id3(decisionTree.root.children.get(0));
-        printData(decisionTree.root.children.get(0).children.get(0).dataSet);
-        printData(decisionTree.root.children.get(0).children.get(1).dataSet);
-        System.out.println(decisionTree.root.children.get(0).children.get(0).isLeaf);
-        System.out.println(decisionTree.root.children.get(0).children.get(0).classVal);
-        
-        System.out.println(decisionTree.root.children.get(0).children.get(1).isLeaf);
-        System.out.println(decisionTree.root.children.get(0).children.get(1).classVal);
-        
+        //printData(decisionTree.root.children.get(2).dataSet);
+        placeChildren(decisionTree.root.children.get(2));
+        id3(decisionTree.root.children.get(2));
+//        printData(decisionTree.root.children.get(2).children.get(0).dataSet);
+//        printData(decisionTree.root.children.get(2).children.get(1).dataSet);
+//        System.out.println(decisionTree.root.children.get(2).children.get(0).isLeaf);
+//        System.out.println(decisionTree.root.children.get(2).children.get(0).classVal);
+//
+//        System.out.println(decisionTree.root.children.get(2).children.get(1).isLeaf);
+//        System.out.println(decisionTree.root.children.get(2).children.get(1).classVal);
 
     }
 
@@ -180,15 +196,18 @@ public class ID3 implements Classifier {
             unique.clear();
         }
 
+//        for(Double i : gains){
+//            System.out.println(i);
+//        }
         node.attributeNum = data.get(0).featureInd.get(max(gains));
-        System.out.println(data.get(0).featureInd.get(max(gains)));
+        System.out.println("Feature is " + data.get(0).featureInd.get(max(gains)));
         node.isLeaf = false;
         node.pathVals = uniques.get(max(gains));
     }
 
     public void placeChildren(Node parent) {
         for (int i = 0; i < parent.pathVals.size(); i++) {
-            Node node = new Node(removeAttr(splitData(parent.attributeNum, i, parent.dataSet), parent.attributeNum));
+            Node node = new Node(removeAttr(splitData(parent.attributeNum, i, parent.dataSet), parent.dataSet.get(0).featureInd.indexOf(parent.attributeNum)));
             parent.children.add(node);
         }
     }
@@ -233,12 +252,11 @@ public class ID3 implements Classifier {
         Double max = gains.get(0);
         int ind = 0;
         for (int i = 1; i < gains.size(); i++) {
-            if (max < gains.get(i)) {
+            if (max.compareTo(gains.get(i)) < 0) {
                 max = gains.get(i);
                 ind = i;
             }
         }
-//        System.out.println(ind);
         return ind;
     }
 
