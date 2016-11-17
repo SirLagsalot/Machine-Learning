@@ -107,7 +107,7 @@ public class Tester {
 
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
-            KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
+//            KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
             //ID3 id3 = new ID3(set1);
 
             //call classifiers for each instance in the test set
@@ -120,9 +120,9 @@ public class Tester {
                 if (tan.classify(testInstance) == instance.classification) {
                     tanAccuracy++;
                 }
-                if (kNN.classify(testInstance) == instance.getClassification()) {
-                    knnAccuracy++;
-                }
+//                if (kNN.classify(testInstance) == instance.getClassification()) {
+//                    knnAccuracy++;
+//                }
 //                if (id3.classify(testInstance) == instance.classification) {
 //                    id3Accuracy++;
 //                }
@@ -131,7 +131,7 @@ public class Tester {
             //swap training and test sets, repeat trial
             nb = new NaiveBayes(set2);
             tan = new TAN(set2);
-            kNN = new KNearestNeighbor(set2, k, numClasses);
+//            kNN = new KNearestNeighbor(set2, k, numClasses);
             //  id3 = new ID3(set2);
 
             //call classifiers for each instance in the test set
@@ -143,9 +143,9 @@ public class Tester {
                 if (tan.classify(testInstance) == instance.classification) {
                     tanAccuracy++;
                 }
-                if (kNN.classify(testInstance) == instance.getClassification()) {
-                    knnAccuracy++;
-                }
+//                if (kNN.classify(testInstance) == instance.getClassification()) {
+//                    knnAccuracy++;
+//                }
 //                if (id3.classify(testInstance) == instance.classification) {
 //                    id3Accuracy++;
 //                }
