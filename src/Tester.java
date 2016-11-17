@@ -38,6 +38,8 @@ public class Tester {
 
             //add binned data to each data instance
             for (int i = 0; i < instances.size(); i++) {
+                Instance instance = instances.get(i);
+                instance.features.clear();
                 for (int j = 0; j < instances.get(0).unbinnedFeatures.size(); j++) {
                     instances.get(i).features.add(binnedValues[j][i]);
                 }
@@ -87,7 +89,7 @@ public class Tester {
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
             KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
-            ID3 id3 = new ID3(set1);
+           // ID3 id3 = new ID3(set1);
 
             //call classifiers for each instance in the test set
             for (Instance instance : set2) {
@@ -106,17 +108,17 @@ public class Tester {
                 if (tan.classify(testInstance) == instance.classification) {
                     tanAccuracy++;
                 }
-//                if (kNN.classify(testInstance) == instance.getClassification()) {
-//                    knnAccuracy++;
-//                }
-                if (id3.classify(testInstance) == instance.classification) {
-                    id3Accuracy++;
+                if (kNN.classify(testInstance) == instance.getClassification()) {
+                    knnAccuracy++;
                 }
+//                if (id3.classify(testInstance) == instance.classification) {
+//                    id3Accuracy++;
+//                }
             }
 
             //swap training and test sets, repeat trial
-            // nb = new NaiveBayes(set2);
-            // tan = new TAN(set2);
+             nb = new NaiveBayes(set2);
+             tan = new TAN(set2);
             kNN = new KNearestNeighbor(set2, k);
             //  id3 = new ID3(set2);
 

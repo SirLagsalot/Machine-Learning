@@ -110,7 +110,8 @@ public class TAN extends NaiveBayes {
             for (int j = i + 1; j < nodes.size(); j++) {
                 Node node2 = nodes.get(j);
                 //calculate weight between node i and j
-                double weight = getWeight(i, j);
+                //Todo determine if getWeight2 is better
+                double weight = getWeight2(i, j);
                 //connect i and j
                 Edge edge = new Edge(node1, node2, weight);
                 node1.edges.add(edge);
@@ -119,6 +120,34 @@ public class TAN extends NaiveBayes {
                 node2.edges.add(edge2);
             }
         }
+    }
+    
+    public double getWeight2(int firstIndex, int secondIndex){
+        int[] feature1 = getColumn(firstIndex);
+        int[] feature2 = getColumn(secondIndex);
+        
+        int feature1Range = getDistinctValueCount(feature1);
+        int feature2Range = getDistinctValueCount(feature2);
+        double sum = 0;
+        for (int curFeature1 = 0; curFeature1 < feature1Range; curFeature1++) {
+            for (int curFeature2 = 0; curFeature2 < feature2Range; curFeature2++) {
+                    double probabilityXY = getProbabilityXAndY(feature1, feature2, curFeature1, curFeature2);
+                    double probabilityX = probabilityOfAttrValue(feature1,curFeature1);
+                    double probabilityY = probabilityOfAttrValue(feature2, curFeature2);
+                    sum += probabilityXY * Math.log(probabilityXY / (double)(probabilityX * probabilityY));
+                
+            }
+        }
+        return sum;
+    }
+    
+    public double getProbabilityXAndY(int[] xColumn, int[] yColumn, int xVal, int yVal){
+        int sum = 1;//start from one to avoid 0 probabilities
+        for (int i = 0; i < xColumn.length; i++) {
+            if(xColumn[i] == xVal && yColumn[i] == yVal)
+                sum++;
+        }
+        return sum/(double)xColumn.length;
     }
 
     public double getWeight(int firstIndex, int secondIndex) {
@@ -138,7 +167,7 @@ public class TAN extends NaiveBayes {
                     double probabilityXYGivenZ = getProbabilityGivenClass(feature1, feature2,  curFeature1, curFeature2, curClass);
                     double probabilityXGivenZ = getProbabilityGivenClass(feature1,  curFeature1, curClass);
                     double probabilityYGivenZ = getProbabilityGivenClass(feature2,  curFeature2, curClass);
-                    sum += probabilityXYZ * Math.log(probabilityXYGivenZ / (probabilityXGivenZ * probabilityYGivenZ));
+                    sum += probabilityXYZ * Math.log(probabilityXYGivenZ / (double)(probabilityXGivenZ * probabilityYGivenZ));
                 }
             }
         }
@@ -172,7 +201,7 @@ public class TAN extends NaiveBayes {
         probability*=getProbabilityGivenClass(getColumn(root.attrPosition), featureVector.get(root.attrPosition), classValue);
         probability*=getChildrenProbabilities(root, classValue, featureVector);
         //TODO check this
-        probability/=probabilityOfAttrValue(getColumn(root.attrPosition), featureVector.get(root.attrPosition));
+        //probability/=probabilityOfAttrValue(getColumn(root.attrPosition), featureVector.get(root.attrPosition));
         return probability;
     }
     
@@ -184,7 +213,7 @@ public class TAN extends NaiveBayes {
             probability*= getNodeProbability(edge.endNode,classValue,featureVector.get(node.attrPosition),featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
             probability *= getChildrenProbabilities(edge.endNode, classValue, featureVector);
             //TODO check this
-            probability /= probabilityOfAttrValue(getColumn(edge.endNode.attrPosition), featureVector.get(edge.endNode.attrPosition));
+            //probability /= probabilityOfAttrValue(getColumn(edge.endNode.attrPosition), featureVector.get(edge.endNode.attrPosition));
         }
         return probability;
     }
@@ -192,8 +221,14 @@ public class TAN extends NaiveBayes {
     private double getNodeProbability(Node node, int classValue, int parentValue, int value){
         double probability = 1;
         //Stay at 1 if there isn't an entry for the given value, it'll ignore the impact of that attribute as no other chart should have that value, thus we're using 1 across the board regardless of which class we try
-        if(parentValue < node.probabilityChart[0].length && value < node.probabilityChart[0][0].length)
+        int length1 = node.probabilityChart[0].length;
+        int length2 = node.probabilityChart[0][0].length;
+        if(!(parentValue >= length1 || value >= length2))
             probability = node.probabilityChart[classValue][parentValue][value];
+//        else if(value == 6)
+//            System.out.println("6oddity");
+//        else
+//            System.out.println("oddity");
         return probability;
     }
 
