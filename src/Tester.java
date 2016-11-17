@@ -90,20 +90,12 @@ public class Tester {
 
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
-//            KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
+            KNearestNeighbor kNN = new KNearestNeighbor(set1, k, numClasses);
             //ID3 id3 = new ID3(set1);
 
             //call classifiers for each instance in the test set
             for (Instance instance : set2) {
                 ArrayList<Integer> testInstance = instance.features;                                                            //TODO: Logging for each classification maybe...
-//                int result = kNN.classify(testInstance);
-//                //  System.out.print("kNN Classified as: " + kNN.classify(testInstance) + " -- actual class: " + instance.getClassification());
-//                if (result == instance.classification) {
-//                    //  System.out.println(" correct!");
-//                    knnAccuracy++;
-//                } else {
-//                    //   System.out.println(" fuck!");
-//                }
 
                 if (nb.classify(testInstance) == instance.classification) {
                     nbAccuracy++;
@@ -111,40 +103,32 @@ public class Tester {
                 if (tan.classify(testInstance) == instance.classification) {
                     tanAccuracy++;
                 }
-//                if (kNN.classify(testInstance) == instance.getClassification()) {
-//                    knnAccuracy++;
-//                }
+                if (kNN.classify(testInstance) == instance.getClassification()) {
+                    knnAccuracy++;
+                }
 //                if (id3.classify(testInstance) == instance.classification) {
 //                    id3Accuracy++;
 //                }
             }
 
             //swap training and test sets, repeat trial
-             nb = new NaiveBayes(set2);
-             tan = new TAN(set2);
-//            kNN = new KNearestNeighbor(set2, k, numClasses);
+            nb = new NaiveBayes(set2);
+            tan = new TAN(set2);
+            kNN = new KNearestNeighbor(set2, k, numClasses);
             //  id3 = new ID3(set2);
 
             //call classifiers for each instance in the test set
             for (Instance instance : set1) {
                 ArrayList<Integer> testInstance = instance.features;
-//                int result = kNN.classify(testInstance);
-//                // System.out.print("kNN Classified as: " + kNN.classify(testInstance) + " -- actual class: " + instance.getClassification());
-//                if (result == instance.classification) {
-//                    // System.out.println(" correct!");
-//                    knnAccuracy++;
-//                } else {
-//                    // System.out.println(" fuck!");
-//                }
                 if (nb.classify(testInstance) == instance.classification) {
                     nbAccuracy++;
                 }
                 if (tan.classify(testInstance) == instance.classification) {
                     tanAccuracy++;
                 }
-//                if (kNN.classify(testInstance) == instance.getClassification()) {
-//                    knnAccuracy++;
-//                }
+                if (kNN.classify(testInstance) == instance.getClassification()) {
+                    knnAccuracy++;
+                }
 //                if (id3.classify(testInstance) == instance.classification) {
 //                    id3Accuracy++;
 //                }
