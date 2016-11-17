@@ -28,7 +28,7 @@ public class ID3 implements Classifier {
         Integer[] test12 = {0, 1, 1, 1, 1};
         Integer[] test13 = {1, 1, 0, 1, 1};
         Integer[] test14 = {1, 0, 1, 0, 1};
-        Integer[] test15 = {2, 1, 0, 1, 0};
+        Integer[] test15 = {2, 1, 0, 1, 1};
 
         testSet.add(test2);
         testSet.add(test3);
@@ -68,11 +68,58 @@ public class ID3 implements Classifier {
     public int classify(ArrayList<Integer> featureVector) {
         initVals();
         //printData(trainingData);
-        makeTree();
-        return traverseTree(featureVector);
-
+        //makeTree();
+        findRootNode(new Node(trainingData));
+        placeChildren(decisionTree.root);
+        fillPaths(decisionTree.root);
+        id3(trainingData, trainingData.get(0).classification, decisionTree.root);
+        //return traverseTree(featureVector);
+        return 1;
         //printData(decisionTree.root.children.get(0).dataSet);
         //System.out.println(decisionTree.root.children.get(0).classVal);
+    }
+
+    public void id3(ArrayList<Instance> t, int classification, Node curr) {
+        if (t.isEmpty()) {
+            System.exit(1);
+        } else {
+            for (Node j : curr.children) {
+                printData(j.dataSet);
+                if (checkForPureSet(j.dataSet, j)) {
+                    System.out.println("Made it here");
+                } else {
+
+                    placeChildren(j);
+                    fillPaths(j);
+                }
+                id3(j.dataSet, classification, j);
+            }
+        }
+    }
+
+    private void noMoreAttr(Node node) {
+        node.isLeaf = true;
+        HashMap<Integer, Integer> counts = new HashMap();
+        int max = - 1;
+        int count = -1;
+        for(Instance i: node.dataSet){
+            if(counts.containsKey(i.features.get(0))){
+                counts.put(i.features.get(0), counts.get(i.features.get(0)) + 1);
+            }
+            else{
+                counts.put(i.features.get(0), 1);
+            }
+        }
+        
+        Iterator it = counts.entrySet().iterator();
+        while(it.hasNext()){
+            HashMap.Entry pair = (HashMap.Entry) it.next();
+            if(count < (int)pair.getValue()){
+                max = (int)pair.getKey();
+            }
+        }
+        node.classVal = max;
+        
     }
 
     public int traverseTree(ArrayList<Integer> featureVector) {
@@ -107,15 +154,15 @@ public class ID3 implements Classifier {
     }
 
     public void makeTree() {
-        findRootNode();
+        findRootNode(new Node(trainingData));
         //printData(decisionTree.root.dataSet);
         placeChildren(decisionTree.root);
-        id3(decisionTree.root);
+        fillPaths(decisionTree.root);
         placeChildren(decisionTree.root.children.get(0));
-        id3(decisionTree.root.children.get(0));
+        fillPaths(decisionTree.root.children.get(0));
         //printData(decisionTree.root.children.get(2).dataSet);
         placeChildren(decisionTree.root.children.get(2));
-        id3(decisionTree.root.children.get(2));
+        fillPaths(decisionTree.root.children.get(2));
 //        printData(decisionTree.root.children.get(2).children.get(0).dataSet);
 //        printData(decisionTree.root.children.get(2).children.get(1).dataSet);
 //        System.out.println(decisionTree.root.children.get(2).children.get(0).isLeaf);
@@ -161,18 +208,18 @@ public class ID3 implements Classifier {
         return false;
     }
 
-    public void id3(Node root) {
+    public void fillPaths(Node curr) {
 
-        for (Node i : root.children) {
+        for (Node i : curr.children) {
             fillNode(i.dataSet, i);
         }
     }
 
     public void fillNode(ArrayList<Instance> data, Node node) {
-        if (checkForPureSet(node.dataSet, node)) {
-            System.out.println("Made it to pure");
-            return;
-        }
+//        if (checkForPureSet(node.dataSet, node)) {
+//            System.out.println("Made it to pure");
+//            return;
+//        }
         ArrayList<Integer[]> vals = new ArrayList();
         ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
         ArrayList<Integer> unique = new ArrayList();
@@ -200,7 +247,7 @@ public class ID3 implements Classifier {
 //            System.out.println(i);
 //        }
         node.attributeNum = data.get(0).featureInd.get(max(gains));
-        System.out.println("Feature is " + data.get(0).featureInd.get(max(gains)));
+        //System.out.println("Feature is " + data.get(0).featureInd.get(max(gains)));
         node.isLeaf = false;
         node.pathVals = uniques.get(max(gains));
     }
@@ -210,6 +257,11 @@ public class ID3 implements Classifier {
             Node node = new Node(removeAttr(splitData(parent.attributeNum, i, parent.dataSet), parent.dataSet.get(0).featureInd.indexOf(parent.attributeNum)));
             parent.children.add(node);
         }
+    }
+
+    public void placeChild(Node parent, int branch) {
+        Node node = new Node(removeAttr(splitData(parent.attributeNum, parent.children.size(), parent.dataSet), parent.dataSet.get(0).featureInd.indexOf(parent.attributeNum)));
+        parent.children.add(node);
     }
 
     public void printData(ArrayList<Instance> data) {
@@ -243,9 +295,9 @@ public class ID3 implements Classifier {
     }
 
     //Calculate information gain to set root node
-    public void findRootNode() {
-        decisionTree = new Tree(new Node(trainingData));
-        fillNode(trainingData, decisionTree.root);
+    public void findRootNode(Node insert) {
+        decisionTree = new Tree(insert);
+        fillNode(trainingData, insert);
     }
 
     public int max(ArrayList<Double> gains) {
