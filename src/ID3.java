@@ -67,7 +67,7 @@ public class ID3 implements Classifier {
     @Override
     public int classify(ArrayList<Integer> featureVector) {
         initVals();
-        printData(trainingData);
+        //printData(trainingData);
         makeTree();
 
         //printData(decisionTree.root.children.get(0).dataSet);
@@ -93,10 +93,20 @@ public class ID3 implements Classifier {
 
     public void makeTree() {
         findRootNode();
-        //placeChildren(decisionTree.root.children.get(1));
+        printData(decisionTree.root.dataSet);
         placeChildren(decisionTree.root);
         id3(decisionTree.root);
+        printData(decisionTree.root.children.get(0).dataSet);
         placeChildren(decisionTree.root.children.get(0));
+        id3(decisionTree.root.children.get(0));
+        printData(decisionTree.root.children.get(0).children.get(0).dataSet);
+        printData(decisionTree.root.children.get(0).children.get(1).dataSet);
+        System.out.println(decisionTree.root.children.get(0).children.get(0).isLeaf);
+        System.out.println(decisionTree.root.children.get(0).children.get(0).classVal);
+        
+        System.out.println(decisionTree.root.children.get(0).children.get(1).isLeaf);
+        System.out.println(decisionTree.root.children.get(0).children.get(1).classVal);
+        
 
     }
 
@@ -109,7 +119,7 @@ public class ID3 implements Classifier {
             i.features.remove((int) attr);
             i.featureInd.remove((int) attr);
         }
-        printData(newData);
+        //printData(newData);
         return newData;
     }
 
@@ -144,11 +154,13 @@ public class ID3 implements Classifier {
 
     public void fillNode(ArrayList<Instance> data, Node node) {
         if (checkForPureSet(node.dataSet, node)) {
+            System.out.println("Made it to pure");
             return;
         }
         ArrayList<Integer[]> vals = new ArrayList();
         ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
         ArrayList<Integer> unique = new ArrayList();
+        HashMap<Integer, ArrayList<Integer>> uniques = new HashMap();
         int col = -1;
         for (int i = 0; i < data.get(0).featureInd.size(); i++) {
             if (data.get(0).featureInd.get(i) == data.get(0).classification) {
@@ -163,12 +175,15 @@ public class ID3 implements Classifier {
                 unique.add(temp[0]);
             }
             gains.add(gain(vals));
+            uniques.put(j, getUniqueAttrValues(unique));
             vals.clear();
+            unique.clear();
         }
 
         node.attributeNum = data.get(0).featureInd.get(max(gains));
+        System.out.println(data.get(0).featureInd.get(max(gains)));
         node.isLeaf = false;
-        node.pathVals = getUniqueAttrValues(unique);
+        node.pathVals = uniques.get(max(gains));
     }
 
     public void placeChildren(Node parent) {
@@ -179,7 +194,7 @@ public class ID3 implements Classifier {
     }
 
     public void printData(ArrayList<Instance> data) {
-        for(Integer i: data.get(0).featureInd){
+        for (Integer i : data.get(0).featureInd) {
             System.out.print(i + " ");
         }
         System.out.println("");
@@ -194,8 +209,14 @@ public class ID3 implements Classifier {
 
     public ArrayList<Instance> splitData(int attr, int attrVal, ArrayList<Instance> data) {
         ArrayList<Instance> tempData = new ArrayList();
+        int col = -1;
+        for (int i = 0; i < data.get(0).featureInd.size(); i++) {
+            if (data.get(0).featureInd.get(i) == attr) {
+                col = i;
+            }
+        }
         for (Instance i : data) {
-            if (i.features.get(attr).equals(attrVal)) {
+            if (i.features.get(col).equals(attrVal)) {
                 tempData.add(i);
             }
         }
