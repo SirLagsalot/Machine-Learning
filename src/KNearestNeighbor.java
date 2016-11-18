@@ -22,17 +22,9 @@ public class KNearestNeighbor implements Classifier {
         this.trainingData = trainingData;
         this.numClasses = Utilities.getClassificationCount(trainingData);
         this.k = k;
-        getStdDev(trainingData);
+        getStdDev(trainingData);//TODO, do we need this???
+        //Calculate the value of every N_(a,x,c) to later be used when calculating VDM
         createNaxc();
-//        for (int i = 0; i < Naxc.length; i++) {
-//            for (int j = 0; j < Naxc[0].length; j++) {
-//                for (int l = 0; l < Naxc[0][0].length; l++) {
-//                    System.out.print(Naxc[i][j][l] + " ");
-//                }
-//                System.out.println("");
-//            }
-//            System.out.println("");
-//        }
 
 
     }
@@ -42,10 +34,10 @@ public class KNearestNeighbor implements Classifier {
     private void createNaxc() {
         int maxAttrRange = getMaxAttrRange();
         Naxc = new double[trainingData.get(0).features.size()][maxAttrRange][numClasses];
-        for (int i = 0; i < trainingData.get(0).features.size(); i++) {
-            for (int j = 0; j < maxAttrRange; j++) {
-                for (int l = 0; l < numClasses; l++) {
-                    Naxc[i][j][l] = probabilityOfClassGivenAttr(i, j, l);
+        for (int attributePosition = 0; attributePosition < trainingData.get(0).features.size(); attributePosition++) {
+            for (int classValue = 0; classValue < numClasses; classValue++) {
+                for (int attributeValue = 0; attributeValue < maxAttrRange; attributeValue++) {
+                    Naxc[attributePosition][attributeValue][classValue] = probabilityOfClassGivenAttr(attributePosition, classValue, attributeValue);
                 }
             }
         }
