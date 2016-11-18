@@ -3,32 +3,31 @@ import java.util.ArrayList;
 
 public class Instance {
 
-    public int classification;
-    public String className;
     public ArrayList<Integer> featureInd;
     public ArrayList<Integer> features;
     public ArrayList<Double> unbinnedFeatures;
+    public int classification, numClasses;
+    public String className;
     public double distance;
     public boolean discrete;
-    public int numClasses;
 
     //Clone an instance
     public Instance(Instance i) {
 
-        classification = i.classification;
-        className = i.className;
-        features = new ArrayList();
-        for (Integer inst : i.features) {
-            features.add(inst);
+        this.classification = i.classification;
+        this.className = i.className;
+        this.features = new ArrayList();
+        for (Integer instance : i.features) {
+            features.add(instance);
         }
-        featureInd = new ArrayList();
-        for (Integer inst : i.featureInd) {
-            featureInd.add(inst);
+        this.featureInd = new ArrayList();
+        for (Integer instance : i.featureInd) {
+            featureInd.add(instance);
         }
-        unbinnedFeatures = i.unbinnedFeatures;
-        distance = i.distance;
-        discrete = i.discrete;
-        numClasses = i.numClasses;
+        this.unbinnedFeatures = i.unbinnedFeatures;
+        this.distance = i.distance;
+        this.discrete = i.discrete;
+        this.numClasses = i.numClasses;
     }
 
     //Add new binned instance
@@ -49,6 +48,6 @@ public class Instance {
         this.features = new ArrayList<>();
         this.className = className;
         this.discrete = false;
-        this.distance = 0.0f;
+        this.distance = 0.0;
     }
 }
