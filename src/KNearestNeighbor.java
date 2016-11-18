@@ -19,7 +19,8 @@ public class KNearestNeighbor implements Classifier {
         createNaxc();
     }
 
-    //Calculate the value of every N_(a,x,c) to later be used when calculating VDM
+    //Calculate the conditional probability of attribute a taking on value x given classification c
+    //Store these values in a table to reduce computation time when calculating each distance using VDM
     private void createNaxc() {
 
         int maxAttrRange = getMaxAttrRange();
@@ -50,6 +51,7 @@ public class KNearestNeighbor implements Classifier {
         return classAndAttrValue / (double) attrValueCount;
     }
 
+    //return an array of the values of a particular attribute index for all instances in the set
     private int[] getColumn(int index) {
         int[] column = new int[trainingData.size()];
         for (int i = 0; i < trainingData.size(); i++) {
@@ -59,6 +61,7 @@ public class KNearestNeighbor implements Classifier {
         return column;
     }
 
+    //get the classifications of all instances in the set
     private int[] getClasses() {
 
         int[] column = new int[trainingData.size()];
@@ -67,9 +70,9 @@ public class KNearestNeighbor implements Classifier {
             column[i] = instance.classification;
         }
         return column;
-
     }
 
+    //return the largest attribute value in the set
     private int getMaxAttrRange() {
 
         int max = 0;
@@ -87,31 +90,14 @@ public class KNearestNeighbor implements Classifier {
     private double VDM(Instance trainingVector, ArrayList<Integer> testVector) {
 
         double distance = 0.0;
-
-        int C = numClasses;
-        int j = trainingVector.classification;
-//        System.out.println("num classes: " + C);
-
-        for (int i = 0; i < testVector.size(); i++) {   //loop over each feature
-
-            for (int c = 0; c < C; c++) {               //sum over number of classes
-
+        //loop over each feature
+        for (int i = 0; i < testVector.size(); i++) {
+            //sum over number of classes
+            for (int c = 0; c < numClasses; c++) {
                 distance += Math.pow(Math.abs(Naxc[i][testVector.get(i)][c] - Naxc[i][trainingVector.features.get(i)][c]), alpha);
             }
         }
         return distance;
-    }
-
-    private ArrayList<Instance> getInstances(int classID) {
-
-        ArrayList<Instance> classes = new ArrayList();
-
-        for (Instance i : trainingData) {
-            if (i.classification == classID) {
-                classes.add(i);
-            }
-        }
-        return classes;
     }
 
     @Override
