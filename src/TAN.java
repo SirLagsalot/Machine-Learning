@@ -173,19 +173,7 @@ public class TAN extends NaiveBayes {
         }
     }
 
-    //returns P(X=x ^ Y=y)
-    private double getProbabilityXAndY(int[] xColumn, int[] yColumn, int xVal, int yVal) {
-
-        int sum = 1;//start from one to avoid 0 probabilities
-        for (int i = 0; i < xColumn.length; i++) {
-            if (xColumn[i] == xVal && yColumn[i] == yVal) {
-                sum++;
-            }
-        }
-        return sum / (double) xColumn.length;
-    }
-
-    public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
+    private double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
 
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
 
@@ -205,8 +193,8 @@ public class TAN extends NaiveBayes {
         }
         return match > 0 ? match / (double) limitedFeatureColumn.size() : 1;
     }
-    
-    public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
+
+    private double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
 
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
         ArrayList<Integer> limitedFeatureColumn2 = new ArrayList<>();
@@ -230,6 +218,7 @@ public class TAN extends NaiveBayes {
         }
         return match > 0 ? match / (double) limitedFeatureColumn.size() : 1;
     }
+
     //returns the correlation weight between two features
     private double getWeight(int firstIndex, int secondIndex) {
 

@@ -238,7 +238,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing Naive Bayes:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
@@ -251,7 +251,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing TAN:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
@@ -263,7 +263,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing kNN:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
@@ -276,7 +276,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing ID3:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
@@ -318,7 +318,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing Naive Bayes:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
@@ -331,7 +331,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing TAN:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
@@ -343,7 +343,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing kNN:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
@@ -356,7 +356,7 @@ public class Tester {
                     writer.println();
                     writer.println("\t\t Testing ID3:");
                     writer.println("\t\t\t Classified class: " + classification);
-                    writer.println("\t\t\t Actual class: " + instance.classification);
+                    writer.println("\t\t\t Actual class: " + instance.className);
 
                     if (classification == instance.classification) {
                         writer.println("\t\t\t Success!");
