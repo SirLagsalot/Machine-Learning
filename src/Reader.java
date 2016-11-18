@@ -32,13 +32,16 @@ public class Reader {
             ArrayList<String> attributes = new ArrayList<>(Arrays.asList(line.split(",")));
             boolean classAtStart = !attributes.get(0).matches("[-+]?\\d*\\.?\\d+");
 
+            //Save string value of classification
             String classification = classAtStart ? attributes.remove(0) : attributes.remove(attributes.size() - 1);
             if (!classifications.contains(classification)) {
                 classifications.add(classification);
             }
 
+            //Case for house-votes-86
             if (classAtStart) {
                 ArrayList<Integer> features = new ArrayList<>();
+                //Add attributes for y, n, or ?
                 for (String attribute : attributes) {
                     assert attribute != null;
                     if ("y".equals(attribute)) {
@@ -50,14 +53,18 @@ public class Reader {
                     }
                 }
                 instances.add(new Instance(features, classification, true));
+            
+            //All other files
             } else {
                 ArrayList<Double> features = new ArrayList<>();
+                //Add attribute value to features
                 for (String attribute : attributes) {
                     features.add(Double.parseDouble(attribute));
                 }
                 instances.add(new Instance(features, classification));
             }
         }
+        //Set the classification value to the className's index in classifications
         for (Instance instance : instances) {
             instance.setClassification(classifications.indexOf(instance.className));
         }
