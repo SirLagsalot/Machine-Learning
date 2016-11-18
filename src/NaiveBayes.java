@@ -69,54 +69,6 @@ public class NaiveBayes implements Classifier {
         return count / (double) classColumn.length;
     }
 
-    //Gets the probability of an attributeValue given a class value, returns P(Fi=featureValue|C=classValue)
-//    public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
-//
-//        ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
-//
-//        //We take the values of the feature column that have a match in the class column for the desired class value
-//        for (int i = 0; i < classColumn.length; i++) {
-//            if (classColumn[i] == classValue) {
-//                limitedFeatureColumn.add(featureColumn[i]);
-//            }
-//        }
-//
-//        //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
-//        int match = 0;
-//        for (int feature : limitedFeatureColumn) {
-//            if (feature == featureValue) {
-//                match++;
-//            }
-//        }
-//        return match > 0 ? match / (double) limitedFeatureColumn.size() : 1;
-//    }
-
-    //Returns P(Fi=featureValue ^ Fj=featureValue2 | C=classValue)
-//    public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
-//
-//        ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
-//        ArrayList<Integer> limitedFeatureColumn2 = new ArrayList<>();
-//
-//        //We take the values of the feature column that have a match in the class column for the desired class value
-//        for (int i = 0; i < classColumn.length; i++) {
-//            if (classColumn[i] == classValue) {
-//                limitedFeatureColumn.add(featureColumn[i]);
-//                limitedFeatureColumn2.add(featureColumn2[i]);
-//            }
-//        }
-//
-//        //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
-//        int match = 0;
-//        for (int i = 0; i < limitedFeatureColumn.size(); i++) {
-//            int feature = limitedFeatureColumn.get(i);
-//            int feature2 = limitedFeatureColumn2.get(i);
-//            if (feature == featureValue && feature2 == featureValue2) {
-//                match++;
-//            }
-//        }
-//        return match > 0 ? match / (double) limitedFeatureColumn.size() : 1;
-//    }
-
     //returns P(Fi=attrValue)
     public double probabilityOfAttrValue(int[] attrVector, int attrValue) {
 

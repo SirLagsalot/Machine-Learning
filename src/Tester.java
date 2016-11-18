@@ -57,7 +57,9 @@ public class Tester {
         }
     }
 
+    //return the correct bin for a given attribute
     private Bin getBin(int attrIndex) {
+
         for (Bin bin : bins) {
             if (bin.attrPosition == attrIndex) {
                 return bin;
@@ -132,18 +134,16 @@ public class Tester {
         Arrays.sort(sortedValues);
 
         //calculate bin width
-        //binWidths.add((sortedValues[sortedValues.length - 1] - sortedValues[0]) / numBins + 0.00001);
         int[] binnedValues = new int[values.length];
         Bin bin = new Bin();
         bin.attrPosition = featureIndex;
-        int position = -1;
+        int position = 0;
         int binNumber = 0;
         //todo make sure to fix the 0,0,0,0,0,...,0,.011,.012 case so that you don't have 5 bins but rather just 2
         boolean sameStreak = false;
         for (int i = 0; i < numBins; i++) {
             for (int j = 0; j < itemsPerBin; j++) {
                 position++;
-
                 if (position < sortedValues.length) {
                     binnedValues[position] = binNumber;
                 } else {
@@ -153,7 +153,7 @@ public class Tester {
             binNumber++;
             //here we are 'in between' bins
             if (sortedValues[position] != sortedValues[position - 1]) {
-                bin.binWidths.add((sortedValues[position] + sortedValues[position - 1]) / (double) 2);
+                bin.binWidths.add((sortedValues[position] + sortedValues[position - 1]) / 2.0);
             }
 
         }
@@ -163,14 +163,6 @@ public class Tester {
         for (int i = 0; i < values.length; i++) {
             returnValues[i] = binValue(values[i], bin);
         }
-        //bin the values based on binwidth
-
-//
-//        //assign values to bins
-//        for (int i = 0; i < values.length; i++) {
-//            double val = values[i];
-//            binnedValues[i] = (int) (val / binWidths.get(featureIndex)) % numBins;
-//        }
         return returnValues;
     }
 
@@ -193,8 +185,8 @@ public class Tester {
                 writer.println(" ACCURACIES ARE AT THE BOTTOM");
                 writer.println("*******************************");
                 writer.println("Testing file '" + origin + ".data'");
-                writer.println();
-                writer.println("Performing 5x2 cross validation");
+            writer.println();
+            writer.println("Performing 5x2 cross validation");
                 double nbAccuracy = 0, tanAccuracy = 0, knnAccuracy = 0, id3Accuracy = 0;
                 //run 5 times, 2 trails each time
                 for (int i = 0; i < 5; i++) {
@@ -278,6 +270,7 @@ public class Tester {
                         } else {
                             writer.println("\t\t\t Failure!");
                         }
+                    
                     }
 
                     //swap training and test sets, repeat trial
@@ -377,6 +370,7 @@ public class Tester {
                 writer.println("k-Nearest Neighbor:           " + new DecimalFormat("#.##").format(knnAccuracy * 100) + "%");
                 writer.println("Iterative Dichotomiser 3:     " + new DecimalFormat("#.##").format(id3Accuracy * 100) + "%");
             }
+                    
         } catch (Exception ex) {
             System.out.println("Error encountered: " + ex);
             System.exit(-1);
@@ -387,7 +381,6 @@ public class Tester {
     private static void printDataSet(ArrayList<Instance> data, boolean binned, PrintWriter writer) {
 
         if (binned || data.get(0).discrete) {
-
             for (Instance in : data) {
                 ArrayList<Integer> binnedData = in.features;
                 for (Integer i : binnedData) {
@@ -396,7 +389,6 @@ public class Tester {
                 writer.println("");
             }
         } else {
-
             for (Instance in : data) {
                 ArrayList<Double> binnedData = in.unbinnedFeatures;
                 for (Double i : binnedData) {
