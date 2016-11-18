@@ -53,8 +53,8 @@ public class Reader {
                     }
                 }
                 instances.add(new Instance(features, classification, true));
-            
-            //All other files
+
+                //All other files
             } else {
                 ArrayList<Double> features = new ArrayList<>();
                 //Add attribute value to features
@@ -66,7 +66,7 @@ public class Reader {
         }
         //Set the classification value to the className's index in classifications
         for (Instance instance : instances) {
-            instance.setClassification(classifications.indexOf(instance.className));
+            instance.classification = (classifications.indexOf(instance.className));
         }
 
         return new DataSet(instances, classifications.size());

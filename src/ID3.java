@@ -26,16 +26,16 @@ public class ID3 implements Classifier {
     //Create ID3 data tree model
     public ID3(ArrayList<Instance> dataset) {
         this.trainingData = dataset;
-        
+
         //Split dataset for training and pruning
         ArrayList<Instance> set1 = new ArrayList<>();
         set1.addAll(dataset.subList(0, dataset.size() / 2));
         ArrayList<Instance> set2 = new ArrayList<>();
         set2.addAll(dataset.subList(dataset.size() / 2, dataset.size()));
-        
+
         //Convert from instance to int[][]
         testData = convertTrainingDataToData(set1);
-        
+
         pruneData = set2;
         makeTree();
         pruneTree(root);
@@ -53,7 +53,7 @@ public class ID3 implements Classifier {
 
     //Prune the created decision tree using the prune set
     private void pruneTree(Node node) {
-        
+
         //Back up if node is not an attribute
         if (node.isLeaf) {
             return;
@@ -61,24 +61,24 @@ public class ID3 implements Classifier {
 
         //Get the current accuracy of the tree over the training set
         double currentAccuracy = getCurrentAccuracy();
-        
+
         //Find the most common class
         int mostCommonClass = getMostCommonValue(getColumn(node.data[0].length - 1, node.data));
-        
+
         //Create a temporary node to test a change
         Node temp = new Node();
         temp.isLeaf = true;
         temp.classification = mostCommonClass;
         temp.parent = node.parent;
-        
+
         //Not the root node
         if (temp.parent != null) {
             Node parent = temp.parent;
             Edge goalEdge = getEdgeToNode(parent, node);
             goalEdge.endNode = temp;
-            
+
             //Check if new tree is more accurate over the training set than the old one
-            double newAccuracy = getCurrentAccuracy();            
+            double newAccuracy = getCurrentAccuracy();
             if (newAccuracy > currentAccuracy) {
                 //Finalize the change
                 pruneTree(root);
@@ -86,7 +86,7 @@ public class ID3 implements Classifier {
             } else {
                 goalEdge.endNode = node;
             }
-        //Test accuracy over root with prune change
+            //Test accuracy over root with prune change
         } else {
             root = temp;
             double newAccuracy = getCurrentAccuracy();
@@ -320,7 +320,7 @@ public class ID3 implements Classifier {
 
     //Calculate gain
     private double gain(int[] column, int[] classifications) {
-        
+
         double entropyOfClasses = entropy(classifications);
         double gain = entropyOfClasses;
         int[] uniqueAttrVals = getUniqueAttrVals(column);

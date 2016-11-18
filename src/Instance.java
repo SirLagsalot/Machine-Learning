@@ -12,10 +12,6 @@ public class Instance {
     public boolean discrete;
     public int numClasses;
 
-    public Instance() {
-
-    }
-
     //Clone an instance
     public Instance(Instance i) {
 
@@ -54,13 +50,5 @@ public class Instance {
         this.className = className;
         this.discrete = false;
         this.distance = 0.0f;
-    }
-
-    public void setClassification(int classID) {
-        classification = classID;
-    }
-
-    public int getClassification() {
-        return classification;
     }
 }
