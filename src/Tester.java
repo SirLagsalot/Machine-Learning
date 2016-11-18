@@ -302,6 +302,7 @@ public class Tester {
                     id3 = new ID3(set2);
                     
                     uniques = getUnique(set2);
+                    
 
                     //call classifiers for each instance in the test set
                     for (Instance instance : set1) {
