@@ -1,5 +1,7 @@
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,12 +14,19 @@ public class Tester {
     private final ArrayList<Instance> dataInstances;
     private final ArrayList<Bin> bins = new ArrayList();
     private final String origin;
+    private PrintWriter writer;
 
     public Tester(DataSet dataSet, String origin) {
 
         this.dataInstances = dataSet.data;
         this.origin = origin;
+        try {
+            writer = new PrintWriter(origin + "-test.txt", "UTF-8");
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+            System.out.println("Writer Exception: " + ex);
+        }
         fiveByTwoTest();
+        writer.close();
     }
 
     //process a single instance to place continuous values in discrete bins of computed size
@@ -186,190 +195,191 @@ public class Tester {
     private void fiveByTwoTest() {
 
         try {
-            try (PrintWriter writer = new PrintWriter(origin + "-test.txt", "UTF-8")) {
-                writer.println("*******************************");
-                writer.println(" ACCURACIES ARE AT THE BOTTOM");
-                writer.println("*******************************");
-                writer.println("Testing file '" + origin + ".data'");
+
+            writer.println("*******************************");
+            writer.println(" ACCURACIES ARE AT THE BOTTOM");
+            writer.println("*******************************");
+            writer.println("Testing file '" + origin + ".data'");
+            writer.println();
+            writer.println("Performing 5x2 cross validation");
+            double nbAccuracy = 0, tanAccuracy = 0, knnAccuracy = 0, id3Accuracy = 0;
+
+            //run 5 times, 2 trails each time
+            for (int i = 0; i < 5; i++) {
+                writer.println((i + 1) + ".1: Training data");
+                bins.clear();
+                //randomly split dataSet into a test set and a trainging set
+                Collections.shuffle(dataInstances);
+
+                ArrayList<Instance> set1 = new ArrayList<>();
+                set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
+                ArrayList<Instance> set2 = new ArrayList<>();
+                set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
+
+                normalize(set1);
+                printDataSet(set1, true);
                 writer.println();
-                writer.println("Performing 5x2 cross validation");
-                double nbAccuracy = 0, tanAccuracy = 0, knnAccuracy = 0, id3Accuracy = 0;
-                //run 5 times, 2 trails each time
-                for (int i = 0; i < 5; i++) {
-                    writer.println((i + 1) + ".1: Training data");
-                    bins.clear();
-                    //randomly split dataSet into a test set and a trainging set
-                    Collections.shuffle(dataInstances);
 
-                    ArrayList<Instance> set1 = new ArrayList<>();
-                    set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
-                    ArrayList<Instance> set2 = new ArrayList<>();
-                    set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
+                writer.println("\tBuilding classifier Naive Bayes with training set");
+                NaiveBayes nb = new NaiveBayes(set1);
+                writer.println("\tBuilding classifier TAN with training set");
+                TAN tan = new TAN(set1);
+                writer.println("\tBuilding classifier kNN with training set");
+                KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
+                writer.println("\tBuilding classifier ID3 with training set");
+                ID3 id3 = new ID3(set1);
 
-                    normalize(set1);
-                    printDataSet(set1, true, writer);
+                for (Instance instance : set2) {
+
+                    normalize(instance);
+                    ArrayList<Integer> testInstance = instance.features;
+                    int classification = nb.classify(testInstance);
+
                     writer.println();
+                    writer.println("\t\t Testing Naive Bayes:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
 
-                    writer.println("\tBuilding classifier Naive Bayes with training set");
-                    NaiveBayes nb = new NaiveBayes(set1);
-                    writer.println("\tBuilding classifier TAN with training set");
-                    TAN tan = new TAN(set1);
-                    writer.println("\tBuilding classifier kNN with training set");
-                    KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
-                    writer.println("\tBuilding classifier ID3 with training set");
-                    ID3 id3 = new ID3(set1);
-
-                    for (Instance instance : set2) {
-
-                        normalize(instance);
-                        ArrayList<Integer> testInstance = instance.features;
-                        int classification = nb.classify(testInstance);
-
-                        writer.println();
-                        writer.println("\t\t Testing Naive Bayes:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            nbAccuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
-
-                        classification = tan.classify(testInstance);
-                        writer.println();
-                        writer.println("\t\t Testing TAN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            tanAccuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
-                        classification = kNN.classify(testInstance);
-                        writer.println();
-                        writer.println("\t\t Testing kNN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            knnAccuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
-
-                        classification = id3.classify(testInstance);
-                        writer.println();
-                        writer.println("\t\t Testing ID3:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            id3Accuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        nbAccuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
                     }
 
-                    //swap training and test sets, repeat trial
-                    bins.clear();
-                    set1 = new ArrayList<>();
-                    set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
-                    set2 = new ArrayList<>();
-                    set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
-
-                    normalize(set2);
-                    writer.println((i + 1) + ".2: Training data");
-                    printDataSet(set2, true, writer);
+                    classification = tan.classify(testInstance);
                     writer.println();
+                    writer.println("\t\t Testing TAN:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
 
-                    writer.println("\tBuilding classifier Naive Bayes with training set");
-                    nb = new NaiveBayes(set2);
-                    writer.println("\tBuilding classifier TAN with training set");
-                    tan = new TAN(set2);
-                    writer.println("\tBuilding classifier kNN with training set");
-                    kNN = new KNearestNeighbor(set2, k);
-                    writer.println("\tBuilding classifier ID3 with training set");
-                    id3 = new ID3(set2);
-
-                    //call classifiers for each instance in the test set
-                    for (Instance instance : set1) {
-
-                        normalize(instance);
-                        ArrayList<Integer> testInstance = instance.features;
-
-                        int classification = nb.classify(testInstance);
-
-                        writer.println();
-                        writer.println("\t\t Testing Naive Bayes:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            nbAccuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
-
-                        classification = tan.classify(testInstance);
-                        writer.println();
-                        writer.println("\t\t Testing TAN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            tanAccuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
-                        classification = kNN.classify(testInstance);
-                        writer.println();
-                        writer.println("\t\t Testing kNN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            knnAccuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
-
-                        classification = id3.classify(testInstance);
-                        writer.println();
-                        writer.println("\t\t Testing ID3:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
-
-                        if (classification == instance.classification) {
-                            writer.println("\t\t\t Success!");
-                            id3Accuracy++;
-                        } else {
-                            writer.println("\t\t\t Failure!");
-                        }
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        tanAccuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
                     }
-                }   //calculate accuracy %
-                int trials = dataInstances.size() * 5;
-                nbAccuracy /= trials;
-                tanAccuracy /= trials;
-                knnAccuracy /= trials;
-                id3Accuracy /= trials;
-                //print results
+                    classification = kNN.classify(testInstance);
+                    writer.println();
+                    writer.println("\t\t Testing kNN:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
+
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        knnAccuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
+                    }
+
+                    classification = id3.classify(testInstance);
+                    writer.println();
+                    writer.println("\t\t Testing ID3:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
+
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        id3Accuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
+                    }
+                }
+
+                //swap training and test sets, repeat trial
+                bins.clear();
+                set1 = new ArrayList<>();
+                set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
+                set2 = new ArrayList<>();
+                set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
+
+                normalize(set2);
+                writer.println((i + 1) + ".2: Training data");
+                printDataSet(set2, true);
                 writer.println();
-                writer.println("\n\n5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
-                writer.println("____________________________________");
-                writer.println("Naive Bayes:                  " + new DecimalFormat("#.##").format(nbAccuracy * 100) + "%");
-                writer.println("Tree Augmented Naive Bayes:   " + new DecimalFormat("#.##").format(tanAccuracy * 100) + "%");
-                writer.println("k-Nearest Neighbor:           " + new DecimalFormat("#.##").format(knnAccuracy * 100) + "%");
-                writer.println("Iterative Dichotomiser 3:     " + new DecimalFormat("#.##").format(id3Accuracy * 100) + "%");
-            }
+
+                writer.println("\tBuilding classifier Naive Bayes with training set");
+                nb = new NaiveBayes(set2);
+                writer.println("\tBuilding classifier TAN with training set");
+                tan = new TAN(set2);
+                writer.println("\tBuilding classifier kNN with training set");
+                kNN = new KNearestNeighbor(set2, k);
+                writer.println("\tBuilding classifier ID3 with training set");
+                id3 = new ID3(set2);
+
+                //call classifiers for each instance in the test set
+                for (Instance instance : set1) {
+
+                    normalize(instance);
+                    ArrayList<Integer> testInstance = instance.features;
+
+                    int classification = nb.classify(testInstance);
+
+                    writer.println();
+                    writer.println("\t\t Testing Naive Bayes:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
+
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        nbAccuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
+                    }
+
+                    classification = tan.classify(testInstance);
+                    writer.println();
+                    writer.println("\t\t Testing TAN:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
+
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        tanAccuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
+                    }
+                    classification = kNN.classify(testInstance);
+                    writer.println();
+                    writer.println("\t\t Testing kNN:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
+
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        knnAccuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
+                    }
+
+                    classification = id3.classify(testInstance);
+                    writer.println();
+                    writer.println("\t\t Testing ID3:");
+                    writer.println("\t\t\t Classified class: " + classification);
+                    writer.println("\t\t\t Actual class: " + instance.classification);
+
+                    if (classification == instance.classification) {
+                        writer.println("\t\t\t Success!");
+                        id3Accuracy++;
+                    } else {
+                        writer.println("\t\t\t Failure!");
+                    }
+                }
+            }   //calculate accuracy %
+            int trials = dataInstances.size() * 5;
+            nbAccuracy /= trials;
+            tanAccuracy /= trials;
+            knnAccuracy /= trials;
+            id3Accuracy /= trials;
+            //print results
+            writer.println();
+            writer.println("\n\n5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
+            writer.println("____________________________________");
+            writer.println("Naive Bayes:                  " + new DecimalFormat("#.##").format(nbAccuracy * 100) + "%");
+            writer.println("Tree Augmented Naive Bayes:   " + new DecimalFormat("#.##").format(tanAccuracy * 100) + "%");
+            writer.println("k-Nearest Neighbor:           " + new DecimalFormat("#.##").format(knnAccuracy * 100) + "%");
+            writer.println("Iterative Dichotomiser 3:     " + new DecimalFormat("#.##").format(id3Accuracy * 100) + "%");
+
         } catch (Exception ex) {
             System.out.println("Error encountered: " + ex);
             System.exit(-1);
@@ -377,7 +387,7 @@ public class Tester {
     }
 
     //Write training set data to file
-    private static void printDataSet(ArrayList<Instance> data, boolean binned, PrintWriter writer) {
+    private void printDataSet(ArrayList<Instance> data, boolean binned) {
 
         if (binned || data.get(0).discrete) {
 
@@ -393,7 +403,6 @@ public class Tester {
             for (Instance in : data) {
                 ArrayList<Double> binnedData = in.unbinnedFeatures;
                 for (Double i : binnedData) {
-                    // System.out.print(i + " ");
                     writer.print(new DecimalFormat("#.##").format(i) + " ");
                 }
                 writer.println("");

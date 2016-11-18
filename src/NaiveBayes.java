@@ -70,65 +70,63 @@ public class NaiveBayes implements Classifier {
     }
 
     //Gets the probability of an attributeValue given a class value, returns P(Fi=featureValue|C=classValue)
-    public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
-
-        ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
-
-        //We take the values of the feature column that have a match in the class column for the desired class value
-        for (int i = 0; i < classColumn.length; i++) {
-            if (classColumn[i] == classValue) {
-                limitedFeatureColumn.add(featureColumn[i]);
-            }
-        }
-
-        //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
-        //start at 1 to avoid the 0 probability
-        int match = 1;
-        for (int feature : limitedFeatureColumn) {
-            if (feature == featureValue) {
-                match++;
-            }
-        }
-        return match / (double) limitedFeatureColumn.size();
-    }
+//    public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
+//
+//        ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
+//
+//        //We take the values of the feature column that have a match in the class column for the desired class value
+//        for (int i = 0; i < classColumn.length; i++) {
+//            if (classColumn[i] == classValue) {
+//                limitedFeatureColumn.add(featureColumn[i]);
+//            }
+//        }
+//
+//        //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
+//        int match = 0;
+//        for (int feature : limitedFeatureColumn) {
+//            if (feature == featureValue) {
+//                match++;
+//            }
+//        }
+//        return match > 0 ? match / (double) limitedFeatureColumn.size() : 1;
+//    }
 
     //Returns P(Fi=featureValue ^ Fj=featureValue2 | C=classValue)
-    public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
-
-        ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
-        ArrayList<Integer> limitedFeatureColumn2 = new ArrayList<>();
-
-        //We take the values of the feature column that have a match in the class column for the desired class value
-        for (int i = 0; i < classColumn.length; i++) {
-            if (classColumn[i] == classValue) {
-                limitedFeatureColumn.add(featureColumn[i]);
-                limitedFeatureColumn2.add(featureColumn2[i]);
-            }
-        }
-
-        //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
-        //start at 1 to avoid the 0 probability scenario
-        int match = 1;
-        for (int i = 0; i < limitedFeatureColumn.size(); i++) {
-            int feature = limitedFeatureColumn.get(i);
-            int feature2 = limitedFeatureColumn2.get(i);
-            if (feature == featureValue && feature2 == featureValue2) {
-                match++;
-            }
-        }
-        return match / (double) limitedFeatureColumn.size();
-    }
+//    public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
+//
+//        ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
+//        ArrayList<Integer> limitedFeatureColumn2 = new ArrayList<>();
+//
+//        //We take the values of the feature column that have a match in the class column for the desired class value
+//        for (int i = 0; i < classColumn.length; i++) {
+//            if (classColumn[i] == classValue) {
+//                limitedFeatureColumn.add(featureColumn[i]);
+//                limitedFeatureColumn2.add(featureColumn2[i]);
+//            }
+//        }
+//
+//        //Take the sum of the items in the limitedFeatureColumn and divide by the total size for the probability
+//        int match = 0;
+//        for (int i = 0; i < limitedFeatureColumn.size(); i++) {
+//            int feature = limitedFeatureColumn.get(i);
+//            int feature2 = limitedFeatureColumn2.get(i);
+//            if (feature == featureValue && feature2 == featureValue2) {
+//                match++;
+//            }
+//        }
+//        return match > 0 ? match / (double) limitedFeatureColumn.size() : 1;
+//    }
 
     //returns P(Fi=attrValue)
     public double probabilityOfAttrValue(int[] attrVector, int attrValue) {
 
-        double probability = 1;//start at 1 to avoid 0 math scenario
+        double probability = 0.0;
         for (int i = 0; i < attrVector.length; i++) {
             if (attrVector[i] == attrValue) {
                 probability++;
             }
         }
-        return probability / (double) attrVector.length;
+        return probability > 0 ? probability / (double) attrVector.length : 1;
     }
 
     //converts the training data into a more usable 2D int array
@@ -136,17 +134,17 @@ public class NaiveBayes implements Classifier {
 
         Instance sample = trainingData.get(0);
         numberOfFeatures = sample.features.size();
-        int[][] data = new int[trainingData.size()][numberOfFeatures + 1];
+        int[][] dataArray = new int[trainingData.size()][numberOfFeatures + 1];
 
         for (int i = 0; i < trainingData.size(); i++) {
             Instance instance = trainingData.get(i);
             for (int j = 0; j < numberOfFeatures; j++) {
-                data[i][j] = instance.features.get(j);
+                dataArray[i][j] = instance.features.get(j);
             }
             //class is last element in the row
-            data[i][numberOfFeatures] = instance.classification;
+            dataArray[i][numberOfFeatures] = instance.classification;
         }
-        return data;
+        return dataArray;
     }
 
     //Creates a series of tables for each attribute and maps the frequencys of 
@@ -156,7 +154,7 @@ public class NaiveBayes implements Classifier {
 
         ArrayList<FrequencyTable> tables = new ArrayList<>();
         numOfClassifications = Utilities.getClassificationCount(trainingData);
-        for (int i = 0; i < data[0].length - 1; i++) {
+        for (int i = 0; i < data[0].length; i++) {
             tables.add(new FrequencyTable(getColumn(i), numOfClassifications, i));
         }
         return tables;
@@ -180,7 +178,6 @@ public class NaiveBayes implements Classifier {
     private ArrayList<LiklihoodTable> createLiklihoodTables(ArrayList<FrequencyTable> fTables) {
 
         ArrayList<LiklihoodTable> tables = new ArrayList<>();
-        //Todo
         for (FrequencyTable table : fTables) {
             tables.add(new LiklihoodTable(table));
         }
@@ -247,9 +244,9 @@ public class NaiveBayes implements Classifier {
 
         //A liklihood table gives P(a|c) via lTable[a][c]
         public LiklihoodTable(FrequencyTable fTable) {
+
             attributeId = fTable.attributePosition;
             table = new double[fTable.rowCount][fTable.columnCount];
-            int totalCount = 0;
 
             int[] classificationTotals = new int[fTable.columnCount];
             for (int i = 0; i < classificationTotals.length; i++) {
@@ -266,7 +263,6 @@ public class NaiveBayes implements Classifier {
 
             for (int i = 0; i < fTable.rowCount; i++) {
                 for (int j = 0; j < fTable.columnCount; j++) {
-                    totalCount += fTable.table[i][j];
                     table[i][j] = (fTable.table[i][j] + 1) / (double) (classificationTotals[j] + 1);//the table position at i,j is P(Attribute i | classification j)
                 }
             }
