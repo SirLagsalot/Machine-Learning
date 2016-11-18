@@ -64,7 +64,9 @@ public class Tester {
         }
     }
 
+    //return the correct bin for a given attribute
     private Bin getBin(int attrIndex) {
+
         for (Bin bin : bins) {
             if (bin.attrPosition == attrIndex) {
                 return bin;
@@ -139,18 +141,16 @@ public class Tester {
         Arrays.sort(sortedValues);
 
         //calculate bin width
-        //binWidths.add((sortedValues[sortedValues.length - 1] - sortedValues[0]) / numBins + 0.00001);
         int[] binnedValues = new int[values.length];
         Bin bin = new Bin();
         bin.attrPosition = featureIndex;
-        int position = -1;
+        int position = 0;
         int binNumber = 0;
         //todo make sure to fix the 0,0,0,0,0,...,0,.011,.012 case so that you don't have 5 bins but rather just 2
         boolean sameStreak = false;
         for (int i = 0; i < numBins; i++) {
             for (int j = 0; j < itemsPerBin; j++) {
                 position++;
-
                 if (position < sortedValues.length) {
                     binnedValues[position] = binNumber;
                 } else {
@@ -160,7 +160,7 @@ public class Tester {
             binNumber++;
             //here we are 'in between' bins
             if (sortedValues[position] != sortedValues[position - 1]) {
-                bin.binWidths.add((sortedValues[position] + sortedValues[position - 1]) / (double) 2);
+                bin.binWidths.add((sortedValues[position] + sortedValues[position - 1]) / 2.0);
             }
 
         }
@@ -170,14 +170,6 @@ public class Tester {
         for (int i = 0; i < values.length; i++) {
             returnValues[i] = binValue(values[i], bin);
         }
-        //bin the values based on binwidth
-
-//
-//        //assign values to bins
-//        for (int i = 0; i < values.length; i++) {
-//            double val = values[i];
-//            binnedValues[i] = (int) (val / binWidths.get(featureIndex)) % numBins;
-//        }
         return returnValues;
     }
 
@@ -195,7 +187,6 @@ public class Tester {
     private void fiveByTwoTest() {
 
         try {
-
             writer.println("*******************************");
             writer.println(" ACCURACIES ARE AT THE BOTTOM");
             writer.println("*******************************");
@@ -206,11 +197,12 @@ public class Tester {
 
             //run 5 times, 2 trails each time
             for (int i = 0; i < 5; i++) {
+
                 writer.println((i + 1) + ".1: Training data");
                 bins.clear();
+
                 //randomly split dataSet into a test set and a trainging set
                 Collections.shuffle(dataInstances);
-
                 ArrayList<Instance> set1 = new ArrayList<>();
                 set1.addAll(dataInstances.subList(0, dataInstances.size() / 2));
                 ArrayList<Instance> set2 = new ArrayList<>();
@@ -259,6 +251,7 @@ public class Tester {
                     } else {
                         writer.println("\t\t\t Failure!");
                     }
+
                     classification = kNN.classify(testInstance);
                     writer.println();
                     writer.println("\t\t Testing kNN:");
@@ -365,12 +358,15 @@ public class Tester {
                         writer.println("\t\t\t Failure!");
                     }
                 }
-            }   //calculate accuracy %
+            }
+
+            //calculate accuracy %
             int trials = dataInstances.size() * 5;
             nbAccuracy /= trials;
             tanAccuracy /= trials;
             knnAccuracy /= trials;
             id3Accuracy /= trials;
+
             //print results
             writer.println();
             writer.println("\n\n5 x 2 Cross Validation Test on " + origin + " classifier accuracies");
@@ -390,7 +386,6 @@ public class Tester {
     private void printDataSet(ArrayList<Instance> data, boolean binned) {
 
         if (binned || data.get(0).discrete) {
-
             for (Instance in : data) {
                 ArrayList<Integer> binnedData = in.features;
                 for (Integer i : binnedData) {
@@ -399,7 +394,6 @@ public class Tester {
                 writer.println("");
             }
         } else {
-
             for (Instance in : data) {
                 ArrayList<Double> binnedData = in.unbinnedFeatures;
                 for (Double i : binnedData) {
