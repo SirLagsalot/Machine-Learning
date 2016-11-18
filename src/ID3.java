@@ -51,9 +51,9 @@ public class ID3 implements Classifier {
         System.out.println(trainingData.size());
         initVals();
         findRootNode(new Node(trainingData));
-        placeChildren(decisionTree.root);
+//        placeChildren(decisionTree.root);
         //fillPaths(decisionTree.root);
-        printData(decisionTree.root.dataSet);
+//        printData(decisionTree.root.dataSet);
         id3(trainingData, decisionTree.root);
     }
 
@@ -83,8 +83,10 @@ public class ID3 implements Classifier {
 
     public void id3(ArrayList<Instance> t, Node curr) {
         if (t.isEmpty()) {
+            System.out.println("Here");
             System.exit(1);
         } else {
+            placeChildren(curr);
             printData(curr.dataSet);
             for (Node j : curr.children) {
                 if (j.dataSet.get(0).features.isEmpty()) {
@@ -227,10 +229,12 @@ public class ID3 implements Classifier {
         ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
         ArrayList<Integer> unique = new ArrayList();
         HashMap<Integer, ArrayList<Integer>> uniques = new HashMap();
+        System.out.println("Feature size: " + data.get(0).features.size());
         for (int j = 0; j < data.get(0).features.size(); j++) {
 
             for (Instance i : data) {
                 Integer[] temp = {i.features.get(j), i.classification};
+                //System.out.println(temp[0]);
                 vals.add(temp);
                 unique.add(temp[0]);
             }
@@ -240,6 +244,7 @@ public class ID3 implements Classifier {
             unique.clear();
         }
 
+        System.out.println("Gains");
         for (Double i : gains) {
             System.out.println(i);
         }

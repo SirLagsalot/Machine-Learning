@@ -24,75 +24,86 @@ public class KNearestNeighbor implements Classifier {
         this.k = k;
         getStdDev(trainingData);
         createNaxc();
-        for (int i = 0; i < Naxc.length; i++) {
-            for (int j = 0; j < Naxc[0].length; j++) {
-                for (int l = 0; l < Naxc[0][0].length; l++) {
-                    System.out.print(Naxc[i][j][l] + " ");
-                }
-                System.out.println("");
-            }
-            System.out.println("");
-        }
-        
+//        for (int i = 0; i < Naxc.length; i++) {
+//            for (int j = 0; j < Naxc[0].length; j++) {
+//                for (int l = 0; l < Naxc[0][0].length; l++) {
+//                    System.out.print(Naxc[i][j][l] + " ");
+//                }
+//                System.out.println("");
+//            }
+//            System.out.println("");
+//        }
+
+
     }
-    
-    private void createNaxc(){
+
+
+    private void createNaxc() {
         int maxAttrRange = getMaxAttrRange();
         Naxc = new double[trainingData.get(0).features.size()][maxAttrRange][numClasses];
         for (int i = 0; i < trainingData.get(0).features.size(); i++) {
             for (int j = 0; j < maxAttrRange; j++) {
                 for (int l = 0; l < numClasses; l++) {
-                    Naxc[i][j][l] = probabilityOfClassGivenAttr(i,j,l);
+                    Naxc[i][j][l] = probabilityOfClassGivenAttr(i, j, l);
                 }
             }
         }
     }
-    
-    private double probabilityOfClassGivenAttr(int attrPosition, int classValue, int attrValue){
+
+
+    private double probabilityOfClassGivenAttr(int attrPosition, int classValue, int attrValue) {
         int[] attrValues = getColumn(attrPosition);
         int[] classValues = getClasses();
         int classAndAttrValue = 0;
         int attrValueCount = 0;
         for (int i = 0; i < attrValues.length; i++) {
-            if(attrValues[i] == attrValue){
+            if (attrValues[i] == attrValue) {
                 attrValueCount++;
-                if(classValues[i] == classValue)
+                if (classValues[i] == classValue) {
                     classAndAttrValue++;
+                }
             }
         }
-        
-        return classAndAttrValue / (double)attrValueCount;
+
+
+        return classAndAttrValue / (double) attrValueCount;
     }
-    
-    private int[] getColumn(int index){
+
+
+    private int[] getColumn(int index) {
         int[] column = new int[trainingData.size()];
         for (int i = 0; i < trainingData.size(); i++) {
             Instance instance = trainingData.get(i);
             column[i] = instance.features.get(index);
         }
         return column;
-        
+
+
     }
-    private int[] getClasses(){
+
+
+    private int[] getClasses() {
         int[] column = new int[trainingData.size()];
         for (int i = 0; i < trainingData.size(); i++) {
             Instance instance = trainingData.get(i);
             column[i] = instance.classification;
         }
         return column;
-        
+
+
     }
-    
-    
-    private int getMaxAttrRange(){
+
+
+    private int getMaxAttrRange() {
         int max = 0;
-        for(Instance instance : trainingData){
-            for(int feature : instance.features){
-                if(feature > max)
+        for (Instance instance : trainingData) {
+            for (int feature : instance.features) {
+                if (feature > max) {
                     max = feature;
+                }
             }
         }
-        return max;
+        return max + 1;
     }
 
 
@@ -164,19 +175,20 @@ public class KNearestNeighbor implements Classifier {
 
 
         double distance = 0.0;
-        
-        
+
+
         int C = numClasses;
         int j = trainingVector.classification;
-        System.out.println("num classes: " + C);
-        
+//        System.out.println("num classes: " + C);
+
+
         for (int i = 0; i < testVector.size(); i++) {   //loop over each feature
 
 
             for (int c = 0; c < C; c++) {               //sum over number of classes
 
 
-                distance += Math.pow(Math.abs(Naxc[i][testVector.get(i)][c] - Naxc[i][trainingVector.features.get(i)][c]),2);
+                distance += Math.pow(Math.abs(Naxc[i][testVector.get(i)][c] - Naxc[i][trainingVector.features.get(i)][c]), 2);
             }
         }
 
@@ -190,7 +202,6 @@ public class KNearestNeighbor implements Classifier {
         //dvm = sum over c classes |P(cj|xi) - P(cj|ri)|^alpha
         return distance;
     }
-    
 
 
     private ArrayList<Instance> getInstances(int classID) {
@@ -216,7 +227,7 @@ public class KNearestNeighbor implements Classifier {
         for (Instance trainingInstance : trainingData) {
             //trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
             //trainingInstance.distance = HVDM(testFeatures, trainingInstance.features);
-            trainingInstance.distance = Math.pow(VDM(trainingInstance, testFeatures), (1/alpha));
+            trainingInstance.distance = Math.pow(VDM(trainingInstance, testFeatures), (1 / alpha));
         }
 
 
@@ -259,6 +270,8 @@ public class KNearestNeighbor implements Classifier {
         return classification;
     }
 }
+
+
 
 
 
