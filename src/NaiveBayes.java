@@ -58,10 +58,11 @@ public class NaiveBayes implements Classifier {
         return column;
     }
 
+    //Gets the probability of an individual class value 
     public double probabilityOfClassValue(int value) {
 
         int count = 0;
-        for (int i = 0; i < classColumn.length; i++) {
+        for (int i = 0; i < classColumn.length; i++) { //count the number of times the value appears in the set
             if (value == classColumn[i]) {
                 count++;
             }
