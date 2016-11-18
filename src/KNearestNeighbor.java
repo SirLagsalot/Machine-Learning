@@ -20,7 +20,7 @@ public class KNearestNeighbor implements Classifier {
     }
 
     //Calculate the value of every N_(a,x,c) to later be used when calculating VDM
-    private final void createNaxc() {
+    private void createNaxc() {
 
         int maxAttrRange = getMaxAttrRange();
         Naxc = new double[trainingData.get(0).features.size()][maxAttrRange][numClasses];
@@ -31,15 +31,6 @@ public class KNearestNeighbor implements Classifier {
                 }
             }
         }
-    }
-
-    private int[] getColumn(int index) {
-        int[] column = new int[trainingData.size()];
-        for (int i = 0; i < trainingData.size(); i++) {
-            Instance instance = trainingData.get(i);
-            column[i] = instance.features.get(index);
-        }
-        return column;
     }
 
     private double probabilityOfClassGivenAttr(int attrPosition, int classValue, int attrValue) {
@@ -57,6 +48,15 @@ public class KNearestNeighbor implements Classifier {
             }
         }
         return classAndAttrValue / (double) attrValueCount;
+    }
+
+    private int[] getColumn(int index) {
+        int[] column = new int[trainingData.size()];
+        for (int i = 0; i < trainingData.size(); i++) {
+            Instance instance = trainingData.get(i);
+            column[i] = instance.features.get(index);
+        }
+        return column;
     }
 
     private int[] getClasses() {

@@ -3,7 +3,6 @@ import java.util.ArrayList;
 
 public class NaiveBayes implements Classifier {
 
-    private final ArrayList<Instance> trainingData;
     private final ArrayList<LiklihoodTable> lTables;
 
     public int[][] data;
@@ -15,7 +14,6 @@ public class NaiveBayes implements Classifier {
 
     public NaiveBayes(ArrayList<Instance> trainingData) {
 
-        this.trainingData = trainingData;
         data = convertTrainingDataToData(trainingData);
         classColumn = getColumn(data[0].length - 1);//class column is last column.
         ArrayList<FrequencyTable> fTables = createFrequencyTables(trainingData);
@@ -47,7 +45,6 @@ public class NaiveBayes implements Classifier {
         return classification;
     }
 
-    //gets column of data at the given position;
     public final int[] getColumn(int position) {
         int[] column = new int[data.length];
         for (int i = 0; i < data.length; i++) {
@@ -63,7 +60,7 @@ public class NaiveBayes implements Classifier {
 
         int count = 0;
         //count the number of times the value appears in the class column
-        for (int i = 0; i < classColumn.length; i++) { 
+        for (int i = 0; i < classColumn.length; i++) {
             if (value == classColumn[i]) {
                 count++;
             }
@@ -194,14 +191,8 @@ public class NaiveBayes implements Classifier {
     //return 1 to not affect probability calculations
     public double probabilityOfAttrGivenClass(int attr, int attrValue, int classValue) {
 
-        double probability = 1;
         LiklihoodTable table = lTables.get(attr);
-        if (attrValue < table.table.length) {
-            probability = table.table[attrValue][classValue];
-        } else {
-            probability = 1;//non impacting probabilityValue, ie we're disregarding this attrValue, this works because it's disregarded for every class
-        }
-        return probability;
+        return attr < table.table.length ? table.table[attrValue][classValue] : 1;
     }
 
     //returns the probability of a given class given all attribute values

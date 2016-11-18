@@ -11,6 +11,7 @@ import java.util.ArrayList;
 //P(C|features) = P(class)*P(rootFeature | class) * MULT(P(nonRootFeature | class ^ pa(nonRootFeature))--for each nonRootFeature
 //Note that for the TAN Model every nonRootFeature has EXACTLY 1 parent Node
 //
+
 public class TAN extends NaiveBayes {
 
     private Node root;
@@ -29,7 +30,6 @@ public class TAN extends NaiveBayes {
 
         //Algorithm: every node will have 1 parent(we didn't add the class node) except the root. 
         //Calculate root probability seperately
-        
         //compare probabilities for each class, and then take the best class.
         for (int i = 0; i < numOfClassifications; i++) {
             double probability = probabilityOfClass(i, featureVector);
@@ -230,7 +230,7 @@ public class TAN extends NaiveBayes {
         //returns P(node value | parentValue ^ c) for all children nodes of node
         double probability = 1;
         for (Edge edge : node.edges) {
-            
+
             probability *= getNodeProbability(edge.endNode, classValue, featureVector.get(node.attrPosition), featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
             probability *= getChildrenProbabilities(edge.endNode, classValue, featureVector);
         }
