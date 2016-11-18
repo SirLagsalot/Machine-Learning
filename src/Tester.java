@@ -281,17 +281,10 @@ public class Tester {
                     set2.addAll(dataInstances.subList(dataInstances.size() / 2, dataInstances.size()));
 
                     normalize(set2);
-                    printWithConditions((i + 1) + ".2: Training data", writer, i);
-                    printDataSet(set2, true, writer, i);
-                    printWithConditions("", writer, i);
 
-                    printWithConditions("\tBuilding classifier Naive Bayes with training set", writer, i);
                     nb = new NaiveBayes(set2);
-                    printWithConditions("\tBuilding classifier TAN with training set", writer, i);
                     tan = new TAN(set2);
-                    printWithConditions("\tBuilding classifier kNN with training set", writer, i);
                     kNN = new KNearestNeighbor(set2, k);
-                    printWithConditions("\tBuilding classifier ID3 with training set", writer, i);
                     id3 = new ID3(set2);
 
                     uniques = getUnique(set2);
@@ -304,54 +297,29 @@ public class Tester {
 
                         int classification = nb.classify(testInstance);
 
-                        printWithConditions("", writer, i);
-                        printWithConditions("\t\t Testing Naive Bayes:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
-                        printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
-
                         if (classification == instance.classification) {
-                            printWithConditions("\t\t\t Success!", writer, i);
                             nbAccuracy++;
                         } else {
-                            printWithConditions("\t\t\t Failure!", writer, i);
                         }
 
                         classification = tan.classify(testInstance);
-                        printWithConditions("", writer, i);
-                        printWithConditions("\t\t Testing TAN:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
-                        printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
 
                         if (classification == instance.classification) {
-                            printWithConditions("\t\t\t Success!", writer, i);
                             tanAccuracy++;
                         } else {
-                            printWithConditions("\t\t\t Failure!", writer, i);
                         }
                         classification = kNN.classify(testInstance);
-                        printWithConditions("", writer, i);
-                        printWithConditions("\t\t Testing kNN:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
-                        printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
 
                         if (classification == instance.classification) {
-                            printWithConditions("\t\t\t Success!", writer, i);
                             knnAccuracy++;
                         } else {
-                            printWithConditions("\t\t\t Failure!", writer, i);
                         }
 
                         classification = id3.classify(testInstance);
-                        printWithConditions("", writer, i);
-                        printWithConditions("\t\t Testing ID3:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
-                        printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
 
                         if (classification == instance.classification) {
-                            printWithConditions("\t\t\t Success!", writer, i);
                             id3Accuracy++;
                         } else {
-                            printWithConditions("\t\t\t Failure!", writer, i);
                         }
                     }
                 }   //calculate accuracy %
