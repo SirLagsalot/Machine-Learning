@@ -23,7 +23,7 @@ public class ID3 implements Classifier {
     private int numberOfFeatures;
     private Node root;
 
-    //Create data tree
+    //Create ID3 data tree model
     public ID3(ArrayList<Instance> dataset) {
         this.trainingData = dataset;
         

@@ -37,20 +37,18 @@ public class NaiveBayes implements Classifier {
 
         double maxProbability = 0;
         int classification = -1;
-        for (int i = 0; i < numOfClassifications; i++) {
-            double probability = probabilityOfClass(i, line);
+        for (int curClass = 0; curClass < numOfClassifications; curClass++) {
+            double probability = probabilityOfClass(curClass, line);
             if (probability > maxProbability) {
                 maxProbability = probability;
-                classification = i;
+                classification = curClass;
             }
         }
         return classification;
     }
 
+    //gets column of data at the given position;
     public final int[] getColumn(int position) {
-
-        //System.out.println("Position: "+position);
-        //gets column of data at the given position;
         int[] column = new int[data.length];
         for (int i = 0; i < data.length; i++) {
             column[i] = data[i][position];
@@ -58,18 +56,23 @@ public class NaiveBayes implements Classifier {
         return column;
     }
 
-    //Gets the probability of an individual class value 
+    //Gets the probability of an individual class value, returns P(C=value)
+    //Done by calculating the number of times the indicated value appears
+    //in the class column and dividing by the size of the column
     public double probabilityOfClassValue(int value) {
 
         int count = 0;
-        for (int i = 0; i < classColumn.length; i++) { //count the number of times the value appears in the set
+        //count the number of times the value appears in the class column
+        for (int i = 0; i < classColumn.length; i++) { 
             if (value == classColumn[i]) {
                 count++;
             }
         }
+        //return count / |classColumn|
         return count / (double) classColumn.length;
     }
 
+    //Gets the probability of an attributeValue given a class value, returns P(Fi=featureValue|C=classValue)
     public double getProbabilityGivenClass(int[] featureColumn, int featureValue, int classValue) {
 
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
@@ -92,6 +95,7 @@ public class NaiveBayes implements Classifier {
         return match / (double) limitedFeatureColumn.size();
     }
 
+    //Returns P(Fi=featureValue ^ Fj=featureValue2 | C=classValue)
     public double getProbabilityGivenClass(int[] featureColumn, int[] featureColumn2, int featureValue, int featureValue2, int classValue) {
 
         ArrayList<Integer> limitedFeatureColumn = new ArrayList<>();
@@ -118,6 +122,7 @@ public class NaiveBayes implements Classifier {
         return match / (double) limitedFeatureColumn.size();
     }
 
+    //returns P(Fi=attrValue)
     public double probabilityOfAttrValue(int[] attrVector, int attrValue) {
 
         double probability = 1;//start at 1 to avoid 0 math scenario
@@ -129,7 +134,7 @@ public class NaiveBayes implements Classifier {
         return probability / (double) attrVector.length;
     }
 
-    //converts the training data into a more usable int array
+    //converts the training data into a more usable 2D int array
     private int[][] convertTrainingDataToData(ArrayList<Instance> trainingData) {
 
         Instance sample = trainingData.get(0);
@@ -160,8 +165,8 @@ public class NaiveBayes implements Classifier {
         return tables;
     }
 
+    //returns the maximul number of distinct values in a given column
     public int getDistinctValueCount(int[] column) {
-
         //should be the max in the array + 1 as we assume valid values are 0+ and we 'should' have each value
         int max = 0;
         for (int i = 0; i < column.length; i++) {
@@ -185,6 +190,8 @@ public class NaiveBayes implements Classifier {
         return tables;
     }
 
+    //returns P(F_(attr)=attrValue | C=classValue), in the event we've never seen attrValue before,
+    //return 1 to not affect probability calculations
     public double probabilityOfAttrGivenClass(int attr, int attrValue, int classValue) {
 
         double probability = 1;
@@ -197,6 +204,11 @@ public class NaiveBayes implements Classifier {
         return probability;
     }
 
+    //returns the probability of a given class given all attribute values
+    //returns P(C=classValue | F1 = line[0] ^ F2=line[1] ^... Fn=line[n-1])
+    //note this does not give the exact probability, as it ignores dividing out
+    //the probability of attributes, this is because that value is independent of
+    //the class chosen and is unneeded to maximize.
     public double probabilityOfClass(int classValue, int[] line) {
 
         //start with probability of class
@@ -204,14 +216,11 @@ public class NaiveBayes implements Classifier {
         for (int i = 0; i < line.length; i++) {
 
             //Probability of class classValue given value of attribute at position i
-            //System.out.println("line[i]:"+line[i]);
             probability *= probabilityOfAttrGivenClass(i, line[i], classValue);
 
             //divide by probability of the given attribute
             probability /= probabilityOfAttrValue(getColumn(i), line[i]);
-            //probability /= table.table[line[i]][]
         }
-        //multiply by probability of given class.
         return probability;
     }
 
@@ -222,6 +231,8 @@ public class NaiveBayes implements Classifier {
         int[][] table;
         int attributePosition;
 
+        //A Frequency Table is a 2D array which stores the number of occurrences of 
+        //each possible attribute paired with a class value
         public FrequencyTable(int[] attributeValues, int numberOfClassifications, int attributePosition) {
             int attributeCount = getDistinctValueCount(attributeValues);
             table = new int[attributeCount][numberOfClassifications];
@@ -230,7 +241,6 @@ public class NaiveBayes implements Classifier {
             for (int i = 0; i < attributeValues.length - 1; i++) {
                 int attributeValue = attributeValues[i];
                 int classification = classColumn[i];
-                //System.out.println("AttributeValue: "+attributeValue+"\n classification: "+classification);
                 table[attributeValue][classification]++;
             }
 
@@ -266,8 +276,6 @@ public class NaiveBayes implements Classifier {
             for (int i = 0; i < fTable.rowCount; i++) {
                 for (int j = 0; j < fTable.columnCount; j++) {
                     totalCount += fTable.table[i][j];
-                    //TODO should this be where the +1 is done???
-                    //System.out.println("i:"+i+"\n j:"+j);
                     table[i][j] = (fTable.table[i][j] + 1) / (double) (classificationTotals[j] + 1);//the table position at i,j is P(Attribute i | classification j)
                 }
             }
