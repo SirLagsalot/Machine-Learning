@@ -5,6 +5,7 @@ import java.util.Set;
 
 public class Utilities {
 
+    //Count the number of classifications
     public static int getClassificationCount(ArrayList<Instance> dataSet) {
         Set set = new HashSet<>();
         int oldSize = 0;

@@ -16,6 +16,7 @@ public class Instance {
 
     }
 
+    //Clone an instance
     public Instance(Instance i) {
 
         classification = i.classification;
@@ -34,6 +35,7 @@ public class Instance {
         numClasses = i.numClasses;
     }
 
+    //Add new binned instance
     public Instance(ArrayList<Integer> features, String className, boolean discrete) {
 
         featureInd = new ArrayList();
@@ -43,6 +45,7 @@ public class Instance {
         this.distance = 0.0;
     }
 
+    //Add new unbinned instance
     public Instance(ArrayList<Double> unbinnedFeatures, String className) {
 
         this.unbinnedFeatures = unbinnedFeatures;

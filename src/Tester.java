@@ -389,6 +389,7 @@ public class Tester {
         }
     }
 
+    //Write training set data to file
     private static void printDataSet(ArrayList<Instance> data, boolean binned, PrintWriter writer) {
 
         if (binned || data.get(0).discrete) {
