@@ -77,6 +77,7 @@ public class KNearestNeighbor implements Classifier {
         double distance = 0.0;
         int C = numClasses;
         int j = trainingVector.classification;
+        System.out.println("num classes: " + C);
 
         for (int i = 0; i < testVector.size(); i++) {   //loop over each feature
 
@@ -139,7 +140,7 @@ public class KNearestNeighbor implements Classifier {
         for (Instance trainingInstance : trainingData) {
             //trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
             //trainingInstance.distance = HVDM(testFeatures, trainingInstance.features);
-            trainingInstance.distance = VDM(trainingInstance, testFeatures);
+            trainingInstance.distance = Math.pow(VDM(trainingInstance, testFeatures), (1/alpha));
         }
 
         //sort by distance
