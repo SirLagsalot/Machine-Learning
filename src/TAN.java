@@ -29,6 +29,7 @@ public class TAN extends NaiveBayes {
 
         //Algorithm: every node will have 1 parent(we didn't add the class node) except the root. 
         //Calculate root probability seperately
+        
         //compare probabilities for each class, and then take the best class.
         for (int i = 0; i < numOfClassifications; i++) {
             double probability = probabilityOfClass(i, featureVector);
@@ -47,6 +48,7 @@ public class TAN extends NaiveBayes {
             Node node = new Node(i);
             nodes.add(node);
         }
+        //Connect nodes with correlation weights
         connectNodes(nodes);
 
         //make maximum spanning tree
@@ -54,12 +56,15 @@ public class TAN extends NaiveBayes {
         //choose root node and have all edges go away from it ie, go from graph to tree.
 
         directTree(nodes);
+        //Add a reference to each node for it's parent
         addParents(nodes);
+        //Store every combination of P(nodesFeatureValue | classValue ^ parentsFeatureValue) for each node
         createProbabilityCharts(nodes);
         //assuming directTree makes 0 the root node.
         root = nodes.get(0);
     }
 
+    //create the probability chart for each node
     private void createProbabilityCharts(ArrayList<Node> nodes) {
 
         //do not do for root node as that only has class as a parent
@@ -78,7 +83,7 @@ public class TAN extends NaiveBayes {
         //probabilityChart is classification, probabilityChart[0] is node is parentValue, probabilityChart[][] is given value.
         //Example, probabilityChart[2][0][1] = P(node = 1 | class=2 ^ parentValue = 0)
         node.probabilityChart = new double[numOfClassifications][parentRange][nodeRange];
-        //in case there is no scenario of class and parentValue being equal, we will add 1 as a buffer.
+        //for the case there is no scenario of class and parentValue being equal, we will add 1 as a buffer.
         for (int i = 0; i < numOfClassifications; i++) {
             for (int j = 0; j < parentRange; j++) {
                 for (int k = 0; k < nodeRange; k++) {
@@ -105,6 +110,10 @@ public class TAN extends NaiveBayes {
         return partialCount / (double) totalCount;
     }
 
+    //Adds reference to each nodes parent to the node
+    //this is determined by viewing the edges 'parents'
+    //have to the children, if such an edge exists to a 
+    //child, add a reference to its parent.
     private void addParents(ArrayList<Node> nodes) {
 
         for (Node node : nodes) {
@@ -114,12 +123,15 @@ public class TAN extends NaiveBayes {
         }
     }
 
+    //Take the maximally spanning tree and direct it
+    //by making the first node encountered the root
     private void directTree(ArrayList<Node> nodes) {
 
         //Always make the first node the root
         Node root = nodes.get(0);
         ArrayList<Node> toWork = new ArrayList<>();
         toWork.add(root);
+        //while we have roots to direct outwords
         while (!toWork.isEmpty()) {
             Node curNode = toWork.get(0);
             for (Edge edge : curNode.edges) {
@@ -130,6 +142,7 @@ public class TAN extends NaiveBayes {
         }
     }
 
+    //Removed an edge with from node to toRemove
     private void removeEdgeWithStart(Node node, Node toRemove) {
 
         for (Edge edge : node.edges) {
@@ -140,13 +153,15 @@ public class TAN extends NaiveBayes {
         }
     }
 
+    //Create edges between every pair of nodes
+    //with correlation weight
     private void connectNodes(ArrayList<Node> nodes) {
 
         for (int i = 0; i < nodes.size(); i++) {
             Node node1 = nodes.get(i);
             for (int j = i + 1; j < nodes.size(); j++) {
                 Node node2 = nodes.get(j);
-                //calculate weight between node i and j
+                //calculate the correlation weight between node i and j
                 double weight = getWeight(i, j);
                 //connect i and j
                 Edge edge = new Edge(node1, node2, weight);
@@ -158,6 +173,7 @@ public class TAN extends NaiveBayes {
         }
     }
 
+    //returns P(X=x ^ Y=y)
     private double getProbabilityXAndY(int[] xColumn, int[] yColumn, int xVal, int yVal) {
 
         int sum = 1;//start from one to avoid 0 probabilities
@@ -169,11 +185,11 @@ public class TAN extends NaiveBayes {
         return sum / (double) xColumn.length;
     }
 
+    //returns the correlation weight between two features
     private double getWeight(int firstIndex, int secondIndex) {
 
         int[] feature1 = getColumn(firstIndex);
         int[] feature2 = getColumn(secondIndex);
-        //int[] classValues = getColumn(data[0].length - 1);//assuming class is last column in data
         int feature1Range = getDistinctValueCount(feature1);
         int feature2Range = getDistinctValueCount(feature2);
         int classRange = numOfClassifications;
@@ -194,6 +210,10 @@ public class TAN extends NaiveBayes {
         return sum;
     }
 
+    //returns P(C=c|featureVector) via bayes rule
+    //note that we ommit dividing by P(featureValue) at every point as this will
+    //not add anything of value to the maximization equation as it's independent
+    //of class chosen
     private double probabilityOfClass(int classValue, ArrayList<Integer> featureVector) {
 
         double probability = 1;
@@ -201,25 +221,23 @@ public class TAN extends NaiveBayes {
         probability *= probabilityOfClassValue(classValue);
         probability *= getProbabilityGivenClass(getColumn(root.attrPosition), featureVector.get(root.attrPosition), classValue);
         probability *= getChildrenProbabilities(root, classValue, featureVector);
-        //TODO check this
-        //probability/=probabilityOfAttrValue(getColumn(root.attrPosition), featureVector.get(root.attrPosition));
         return probability;
     }
 
+    //returns the multiplied probability of every child node of the given node
     private double getChildrenProbabilities(Node node, int classValue, ArrayList<Integer> featureVector) {
 
         //returns P(node value | parentValue ^ c) for all children nodes of node
         double probability = 1;
         for (Edge edge : node.edges) {
-            //System.out.println("class value: "+classValue+"\n node attrPos: "+node.attrPosition+"\n endNode.attrPos"+edge.endNode.attrPosition);
+            
             probability *= getNodeProbability(edge.endNode, classValue, featureVector.get(node.attrPosition), featureVector.get(edge.endNode.attrPosition));//edge.endNode.probabilityChart[classValue][featureVector.get(node.attrPosition)][featureVector.get(edge.endNode.attrPosition)];
             probability *= getChildrenProbabilities(edge.endNode, classValue, featureVector);
-            //TODO check this
-            //probability /= probabilityOfAttrValue(getColumn(edge.endNode.attrPosition), featureVector.get(edge.endNode.attrPosition));
         }
         return probability;
     }
 
+    //returns P(Node=value | Class=classValue ^ Pa=parentValue)
     private double getNodeProbability(Node node, int classValue, int parentValue, int value) {
 
         double probability = 1;
@@ -229,10 +247,6 @@ public class TAN extends NaiveBayes {
         if (!(parentValue >= length1 || value >= length2)) {
             probability = node.probabilityChart[classValue][parentValue][value];
         }
-//        else if(value == 6)
-//            System.out.println("6oddity");
-//        else
-//            System.out.println("oddity");
         return probability;
     }
 
@@ -249,7 +263,7 @@ public class TAN extends NaiveBayes {
         return count / (double) feature1.length;
     }
 
-    //this will use prims algorithm
+    //Use Prim's algorithm to create a maximally spanning tree
     private void makeMaximumSpanningTree(ArrayList<Node> nodes) {
 
         ArrayList<Node> visited = new ArrayList<>();
@@ -270,6 +284,7 @@ public class TAN extends NaiveBayes {
         }
     }
 
+    //returns the edge with the largest weight in the list
     private Edge getLargestEdge(ArrayList<Edge> edges) {
 
         Edge largestEdge = edges.get(0);
@@ -287,7 +302,7 @@ public class TAN extends NaiveBayes {
         ArrayList<Edge> edges = new ArrayList<>();
         Node parent;
         double[][][] probabilityChart;
-        //probabilityChart[class][parentval][nodeVal]
+        //probabilityChart[class][parentval][nodeVal] returns P(nodeVal | parentVal^class)
 
         public Node(int position) {
             attrPosition = position;
