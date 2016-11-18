@@ -1,12 +1,23 @@
 
 import java.util.ArrayList;
-
+//TAN operates the following algorithm
+//1. Create a Node for each attribute in trainingData
+//2. Calculate weight between each Node to create a Graph
+//3. Remove edges between nodes until you have the maximally spanning tree
+//4. Arbitrarily choose a root node(always 0 in this case) and make the tree directed
+//Normally from this point a Class Node is created and has an arc to each Node,
+//this is not done hear as that relationship is always constant.
+//When calculating the probability of a class, the equation 
+//P(C|features) = P(class)*P(rootFeature | class) * MULT(P(nonRootFeature | class ^ pa(nonRootFeature))--for each nonRootFeature
+//Note that for the TAN Model every nonRootFeature has EXACTLY 1 parent Node
+//
 public class TAN extends NaiveBayes {
 
     private Node root;
 
     public TAN(ArrayList<Instance> trainingData) {
         super(trainingData);
+        //create the tree that's used as the basis for the TAN Baysian Net
         createTree();
     }
 
