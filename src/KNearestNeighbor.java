@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class KNearestNeighbor extends Utilities implements Classifier {
+public class KNearestNeighbor implements Classifier {
 
     private final int k;                                //the number or neighbors to use for calculation
     private final ArrayList<Instance> trainingData;     //the training set
@@ -31,6 +31,15 @@ public class KNearestNeighbor extends Utilities implements Classifier {
                 }
             }
         }
+    }
+
+    private int[] getColumn(int index) {
+        int[] column = new int[trainingData.size()];
+        for (int i = 0; i < trainingData.size(); i++) {
+            Instance instance = trainingData.get(i);
+            column[i] = instance.features.get(index);
+        }
+        return column;
     }
 
     private double probabilityOfClassGivenAttr(int attrPosition, int classValue, int attrValue) {
