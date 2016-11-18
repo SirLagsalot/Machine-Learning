@@ -13,86 +13,95 @@ public class ID3 implements Classifier {
     public ID3(ArrayList<Instance> trainingData) {
 
         this.trainingData = trainingData;
-        ArrayList<Integer[]> testSet = new ArrayList();
-
-        Integer[] test2 = {0, 0, 0, 0, 0};
-        Integer[] test3 = {0, 0, 0, 1, 0};
-        Integer[] test4 = {1, 0, 0, 0, 1};
-        Integer[] test5 = {2, 1, 0, 0, 1};
-        Integer[] test6 = {2, 2, 1, 0, 1};
-        Integer[] test7 = {2, 2, 1, 1, 0};
-        Integer[] test8 = {1, 2, 1, 1, 1};
-        Integer[] test9 = {0, 1, 0, 0, 0};
-        Integer[] test10 = {0, 2, 1, 0, 1};
-        Integer[] test11 = {2, 1, 1, 0, 1};
-        Integer[] test12 = {0, 1, 1, 1, 1};
-        Integer[] test13 = {1, 1, 0, 1, 1};
-        Integer[] test14 = {1, 0, 1, 0, 1};
-        Integer[] test15 = {2, 1, 0, 1, 1};
-
-        testSet.add(test2);
-        testSet.add(test3);
-        testSet.add(test4);
-        testSet.add(test5);
-        testSet.add(test6);
-        testSet.add(test7);
-        testSet.add(test8);
-        testSet.add(test9);
-        testSet.add(test10);
-        testSet.add(test11);
-        testSet.add(test12);
-        testSet.add(test13);
-        testSet.add(test14);
-        testSet.add(test15);
-        test = testSet;
-        convertForTest(test);
-        //classify(new ArrayList<Integer>());
-//        classify(new ArrayList<Integer>());
-//        System.out.println(gain(testSet));
+//        ArrayList<Integer[]> testSet = new ArrayList();
+//
+//        Integer[] test2 = {0, 0, 0, 0, 0};
+//        Integer[] test3 = {0, 0, 0, 1, 0};
+//        Integer[] test4 = {1, 0, 0, 0, 1};
+//        Integer[] test5 = {2, 1, 0, 0, 1};
+//        Integer[] test6 = {2, 2, 1, 0, 2};
+//        Integer[] test7 = {2, 2, 1, 1, 0};
+//        Integer[] test8 = {1, 2, 1, 1, 1};
+//        Integer[] test9 = {0, 1, 0, 0, 1};
+//        Integer[] test10 = {0, 2, 1, 0, 1};
+//        Integer[] test11 = {2, 1, 1, 0, 1};
+//        Integer[] test12 = {0, 1, 1, 1, 1};
+//        Integer[] test13 = {1, 1, 0, 1, 1};
+//        Integer[] test14 = {1, 0, 1, 0, 1};
+//        Integer[] test15 = {2, 1, 0, 1, 2};
+//
+//        testSet.add(test2);
+//        testSet.add(test3);
+//        testSet.add(test4);
+//        testSet.add(test5);
+//        testSet.add(test6);
+//        testSet.add(test7);
+//        testSet.add(test8);
+//        testSet.add(test9);
+//        testSet.add(test10);
+//        testSet.add(test11);
+//        testSet.add(test12);
+//        testSet.add(test13);
+//        testSet.add(test14);
+//        testSet.add(test15);
+//        
+//        test = testSet;
+//        convertForTest(test);
+//        System.out.println(trainingData.get(0).features.size());
+        System.out.println(trainingData.size());
+        initVals();
+        findRootNode(new Node(trainingData));
+        placeChildren(decisionTree.root);
+        //fillPaths(decisionTree.root);
+        printData(decisionTree.root.dataSet);
+        id3(trainingData, decisionTree.root);
     }
 
     public void convertForTest(ArrayList<Integer[]> test) {
         trainingData.clear();
         for (int j = 0; j < test.size(); j++) {
             ArrayList<Integer> vals = new ArrayList();
-            for (int i = 0; i < test.get(0).length; i++) {
+            int tempi = test.get(j)[test.get(0).length - 1];
+            for (int i = 0; i < test.get(0).length - 1; i++) {
                 vals.add(test.get(j)[i]);
             }
             Instance temp = new Instance(vals, "golf", true);
-            temp.classification = 4;
+            temp.classification = tempi;
             trainingData.add(temp);
         }
     }
 
     @Override
     public int classify(ArrayList<Integer> featureVector) {
-        initVals();
         //printData(trainingData);
         //makeTree();
-        findRootNode(new Node(trainingData));
-        placeChildren(decisionTree.root);
-        fillPaths(decisionTree.root);
-        id3(trainingData, trainingData.get(0).classification, decisionTree.root);
         //return traverseTree(featureVector);
         return 1;
         //printData(decisionTree.root.children.get(0).dataSet);
         //System.out.println(decisionTree.root.children.get(0).classVal);
     }
 
-    public void id3(ArrayList<Instance> t, int classification, Node curr) {
+    public void id3(ArrayList<Instance> t, Node curr) {
         if (t.isEmpty()) {
             System.exit(1);
         } else {
+            printData(curr.dataSet);
             for (Node j : curr.children) {
-                printData(j.dataSet);
-                if (checkForPureSet(j.dataSet, j)) {
-                    System.out.println("Made it here");
+                if (j.dataSet.get(0).features.isEmpty()) {
+                    System.out.println("No more attribuets");
+                    noMoreAttr(j);
                 } else {
+                    if (checkForPureSet(j.dataSet, j)) {
+                        System.out.println("Made it here");
+                    } else {
 
-                    placeChildren(j);
-                    fillPaths(j);
+                        placeChildren(j);
+//                        System.out.println("Filling paths");
+//                        fillPaths(j);
+                    }
+                    System.out.println("New Child");
+                    id3(j.dataSet, j);
                 }
-                id3(j.dataSet, classification, j);
             }
         }
     }
@@ -102,24 +111,23 @@ public class ID3 implements Classifier {
         HashMap<Integer, Integer> counts = new HashMap();
         int max = - 1;
         int count = -1;
-        for(Instance i: node.dataSet){
-            if(counts.containsKey(i.features.get(0))){
-                counts.put(i.features.get(0), counts.get(i.features.get(0)) + 1);
-            }
-            else{
-                counts.put(i.features.get(0), 1);
+        for (Instance i : node.dataSet) {
+            if (counts.containsKey(i.features.get(0))) {
+                counts.put(i.classification, counts.get(i.classification) + 1);
+            } else {
+                counts.put(i.classification, 1);
             }
         }
-        
+
         Iterator it = counts.entrySet().iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             HashMap.Entry pair = (HashMap.Entry) it.next();
-            if(count < (int)pair.getValue()){
-                max = (int)pair.getKey();
+            if (count < (int) pair.getValue()) {
+                max = (int) pair.getKey();
             }
         }
         node.classVal = max;
-        
+
     }
 
     public int traverseTree(ArrayList<Integer> featureVector) {
@@ -190,14 +198,8 @@ public class ID3 implements Classifier {
         ArrayList<Integer> classVals = new ArrayList();
 
         //Separate the input list
-        int col = -1;
-        for (int i = 0; i < vals.get(0).featureInd.size(); i++) {
-            if (vals.get(0).featureInd.get(i) == vals.get(0).classification) {
-                col = i;
-            }
-        }
         for (Instance i : vals) {
-            classVals.add(i.features.get(col));
+            classVals.add(i.classification);
         }
 
         if (entropy(countClass(classVals)) == 0) {
@@ -211,6 +213,7 @@ public class ID3 implements Classifier {
     public void fillPaths(Node curr) {
 
         for (Node i : curr.children) {
+            System.out.println("Filling new child node");
             fillNode(i.dataSet, i);
         }
     }
@@ -224,16 +227,10 @@ public class ID3 implements Classifier {
         ArrayList<Double> gains/*bro gaaaaiiinnnsss*/ = new ArrayList();
         ArrayList<Integer> unique = new ArrayList();
         HashMap<Integer, ArrayList<Integer>> uniques = new HashMap();
-        int col = -1;
-        for (int i = 0; i < data.get(0).featureInd.size(); i++) {
-            if (data.get(0).featureInd.get(i) == data.get(0).classification) {
-                col = i;
-            }
-        }
-        for (int j = 0; j < data.get(0).features.size() - 1; j++) {
+        for (int j = 0; j < data.get(0).features.size(); j++) {
 
             for (Instance i : data) {
-                Integer[] temp = {i.features.get(j), i.features.get(col)};
+                Integer[] temp = {i.features.get(j), i.classification};
                 vals.add(temp);
                 unique.add(temp[0]);
             }
@@ -243,37 +240,55 @@ public class ID3 implements Classifier {
             unique.clear();
         }
 
-//        for(Double i : gains){
-//            System.out.println(i);
-//        }
+        for (Double i : gains) {
+            System.out.println(i);
+        }
+        System.out.println(gains.size());
+        System.out.println("");
+
         node.attributeNum = data.get(0).featureInd.get(max(gains));
         //System.out.println("Feature is " + data.get(0).featureInd.get(max(gains)));
         node.isLeaf = false;
         node.pathVals = uniques.get(max(gains));
+
+    }
+
+    public ArrayList<Integer> getUniqueAttrInd(ArrayList<Integer> vals) {
+        int counter = 0;
+        ArrayList<Integer> unique = new ArrayList();
+        ArrayList<Integer> uniqueInd = new ArrayList();
+        for (Integer i : vals) {
+            if (!unique.contains(i)) {
+                unique.add(i);
+            }
+        }
+        for (int i = 0; i < unique.size(); i++) {
+            uniqueInd.add(i);
+        }
+        return uniqueInd;
+
     }
 
     public void placeChildren(Node parent) {
         for (int i = 0; i < parent.pathVals.size(); i++) {
-            Node node = new Node(removeAttr(splitData(parent.attributeNum, i, parent.dataSet), parent.dataSet.get(0).featureInd.indexOf(parent.attributeNum)));
+            System.out.println("Placing child " + i);
+            Node node = new Node(removeAttr(splitData(parent.attributeNum, parent.pathVals.get(i), parent.dataSet), parent.dataSet.get(0).featureInd.indexOf(parent.attributeNum)));
             parent.children.add(node);
+            fillNode(node.dataSet, node);
         }
-    }
-
-    public void placeChild(Node parent, int branch) {
-        Node node = new Node(removeAttr(splitData(parent.attributeNum, parent.children.size(), parent.dataSet), parent.dataSet.get(0).featureInd.indexOf(parent.attributeNum)));
-        parent.children.add(node);
     }
 
     public void printData(ArrayList<Instance> data) {
         for (Integer i : data.get(0).featureInd) {
             System.out.print(i + " ");
         }
-        System.out.println("");
+        System.out.println("C");
         for (Instance i : data) {
             for (Integer j : i.features) {
                 System.out.print(j + " ");
             }
-            System.out.println("");
+
+            System.out.println(i.classification);
         }
         System.out.println("");
     }

@@ -46,6 +46,7 @@ public class Instance {
     public Instance(ArrayList<Double> unbinnedFeatures, String className) {
 
         this.unbinnedFeatures = unbinnedFeatures;
+        featureInd = new ArrayList();
         this.features = new ArrayList<>();
         this.className = className;
         this.discrete = false;
