@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Tester {
 
@@ -179,6 +181,7 @@ public class Tester {
     //Execute a 5x2 cross fold validation on the dataset using each of the algorithms
     private void fiveByTwoTest() {
 
+        Mapper map = new Mapper(dataInstances);
         try {
             try (PrintWriter writer = new PrintWriter(origin + "-test.txt", "UTF-8")) {
                 printWithConditions("*******************************", writer, 0);
@@ -213,7 +216,6 @@ public class Tester {
                     printWithConditions("\tBuilding classifier ID3 with training set", writer, i);
                     ID3 id3 = new ID3(set1);
 
-                    Map<Integer, String> uniques = getUnique(set1);
 
                     for (Instance instance : set2) {
 
@@ -223,7 +225,7 @@ public class Tester {
 
                         printWithConditions("", writer, i);
                         printWithConditions("\t\t Testing Naive Bayes:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
+                        printWithConditions("\t\t\t Classified class: " + map.maps.get(classification), writer, i);
                         printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
 
                         if (classification == instance.classification) {
@@ -236,7 +238,7 @@ public class Tester {
                         classification = tan.classify(testInstance);
                         printWithConditions("", writer, i);
                         printWithConditions("\t\t Testing TAN:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
+                        printWithConditions("\t\t\t Classified class: " + map.maps.get(classification), writer, i);
                         printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
 
                         if (classification == instance.classification) {
@@ -248,7 +250,7 @@ public class Tester {
                         classification = kNN.classify(testInstance);
                         printWithConditions("", writer, i);
                         printWithConditions("\t\t Testing kNN:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
+                        printWithConditions("\t\t\t Classified class: " + map.maps.get(classification), writer, i);
                         printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
 
                         if (classification == instance.classification) {
@@ -261,7 +263,7 @@ public class Tester {
                         classification = id3.classify(testInstance);
                         printWithConditions("", writer, i);
                         printWithConditions("\t\t Testing ID3:", writer, i);
-                        printWithConditions("\t\t\t Classified class: " + uniques.get(classification), writer, i);
+                        printWithConditions("\t\t\t Classified class: " + map.maps.get(classification), writer, i);
                         printWithConditions("\t\t\t Actual class: " + instance.className, writer, i);
 
                         if (classification == instance.classification) {
@@ -287,7 +289,6 @@ public class Tester {
                     kNN = new KNearestNeighbor(set2, k);
                     id3 = new ID3(set2);
 
-                    uniques = getUnique(set2);
 
                     //call classifiers for each instance in the test set
                     for (Instance instance : set1) {
@@ -391,6 +392,32 @@ public class Tester {
             }
         } catch (Exception e) {
 
+        }
+    }
+    
+    public class Mapper{
+        ArrayList<String> maps = new ArrayList();
+        
+        public Mapper(ArrayList<Instance> dataSet){
+            int classificationCount = Utilities.getClassificationCount(dataSet);
+            for (int i = 0; i < classificationCount; i++) {
+                for (Instance instance : dataSet) {
+                    if (instance.classification == i) {
+                        maps.add(instance.className);
+                        break;
+                    }
+                }
+            }
+            maps.add("new class");
+        }
+        
+        public class Classification{
+            int classNum;
+            String className;
+            public Classification(int classN, String name){
+                this.classNum = classN;
+                this.className = name;
+            }
         }
     }
 }

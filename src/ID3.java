@@ -134,7 +134,7 @@ public class ID3 implements Classifier {
                 return getClassFromNode(edge.endNode, reduceFeatures(features, node.attrPosition));
             }
         }
-        return -1;
+        return 0;
     }
 
     //Split the dataset on a given attribute position
