@@ -227,7 +227,7 @@ public class KNearestNeighbor implements Classifier {
         for (Instance trainingInstance : trainingData) {
             //trainingInstance.distance = calcDistance(testFeatures, trainingInstance.features);
             //trainingInstance.distance = HVDM(testFeatures, trainingInstance.features);
-            trainingInstance.distance = Math.pow(VDM(trainingInstance, testFeatures), (1 / alpha));
+            trainingInstance.distance = VDM(trainingInstance, testFeatures);
         }
 
 

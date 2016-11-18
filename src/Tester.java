@@ -234,7 +234,7 @@ public class Tester {
             NaiveBayes nb = new NaiveBayes(set1);
             TAN tan = new TAN(set1);
             KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
-            //ID3 id3 = new ID3(set1);
+            ID3 id3 = new ID3(set1);
 
 
             for (Instance instance : set2) {
@@ -253,9 +253,9 @@ public class Tester {
                 if (kNN.classify(testInstance) == instance.classification) {
                     knnAccuracy++;
                 }
-//                if (id3.classify(testInstance) == instance.classification) {
-//                    id3Accuracy++;
-//                }
+                if (id3.classify(testInstance) == instance.classification) {
+                    id3Accuracy++;
+                }
             }
             
             bins.clear();
