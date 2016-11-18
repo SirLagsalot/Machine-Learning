@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Tester {
 
@@ -218,6 +220,8 @@ public class Tester {
                     KNearestNeighbor kNN = new KNearestNeighbor(set1, k);
                     writer.println("\tBuilding classifier ID3 with training set");
                     ID3 id3 = new ID3(set1);
+                    
+                    Map<Integer, String> uniques = getUnique(set1);
 
                     for (Instance instance : set2) {
 
@@ -227,8 +231,8 @@ public class Tester {
 
                         writer.println();
                         writer.println("\t\t Testing Naive Bayes:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -240,8 +244,8 @@ public class Tester {
                         classification = tan.classify(testInstance);
                         writer.println();
                         writer.println("\t\t Testing TAN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -252,8 +256,8 @@ public class Tester {
                         classification = kNN.classify(testInstance);
                         writer.println();
                         writer.println("\t\t Testing kNN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -265,8 +269,8 @@ public class Tester {
                         classification = id3.classify(testInstance);
                         writer.println();
                         writer.println("\t\t Testing ID3:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -296,6 +300,8 @@ public class Tester {
                     kNN = new KNearestNeighbor(set2, k);
                     writer.println("\tBuilding classifier ID3 with training set");
                     id3 = new ID3(set2);
+                    
+                    uniques = getUnique(set2);
 
                     //call classifiers for each instance in the test set
                     for (Instance instance : set1) {
@@ -307,8 +313,8 @@ public class Tester {
 
                         writer.println();
                         writer.println("\t\t Testing Naive Bayes:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -320,8 +326,8 @@ public class Tester {
                         classification = tan.classify(testInstance);
                         writer.println();
                         writer.println("\t\t Testing TAN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -332,8 +338,8 @@ public class Tester {
                         classification = kNN.classify(testInstance);
                         writer.println();
                         writer.println("\t\t Testing kNN:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -345,8 +351,8 @@ public class Tester {
                         classification = id3.classify(testInstance);
                         writer.println();
                         writer.println("\t\t Testing ID3:");
-                        writer.println("\t\t\t Classified class: " + classification);
-                        writer.println("\t\t\t Actual class: " + instance.classification);
+                        writer.println("\t\t\t Classified class: " + uniques.get(classification));
+                        writer.println("\t\t\t Actual class: " + instance.className);
 
                         if (classification == instance.classification) {
                             writer.println("\t\t\t Success!");
@@ -405,5 +411,15 @@ public class Tester {
 
         int attrPosition;
         ArrayList<Double> binWidths = new ArrayList();
+    }
+
+    public Map getUnique(ArrayList<Instance> dataset) {
+        Map<Integer, String> unique = new HashMap();
+        for (Instance inst : dataset) {
+            if (!unique.containsKey(inst.classification)) {
+                unique.put(inst.classification, inst.className);
+            }
+        }
+        return unique;
     }
 }
