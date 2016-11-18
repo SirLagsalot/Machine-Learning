@@ -10,6 +10,7 @@ public class Reader {
 
     public static DataSet readFile(String fileName) {
 
+        //Iterate over each line of the input file and save it as a string
         ArrayList<String> file = new ArrayList<>();
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             stream.forEach(file::add);

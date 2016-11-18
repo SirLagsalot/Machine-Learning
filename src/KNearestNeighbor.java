@@ -18,7 +18,7 @@ public class KNearestNeighbor implements Classifier {
 
     public KNearestNeighbor(ArrayList<Instance> trainingData, int k) {
 
-
+        //Initialization
         this.trainingData = trainingData;
         this.numClasses = Utilities.getClassificationCount(trainingData);
         this.k = k;
@@ -38,6 +38,7 @@ public class KNearestNeighbor implements Classifier {
     }
 
 
+    // 
     private void createNaxc() {
         int maxAttrRange = getMaxAttrRange();
         Naxc = new double[trainingData.get(0).features.size()][maxAttrRange][numClasses];
@@ -107,44 +108,47 @@ public class KNearestNeighbor implements Classifier {
     }
 
 
+    //Gets standard deviation over the dataset
     private void getStdDev(ArrayList<Instance> trainingData) {
 
 
         int size = trainingData.get(0).features.size();
         stdDevs = new double[size];
         int[] values = new int[trainingData.size()];
-        for (int j = 0; j < size; j++) {
+        for (int j = 0; j < size; j++) { //Loops through the features of each instance
             for (int i = 0; i < trainingData.size(); i++) {
-                values[i] = trainingData.get(i).features.get(j);
+                values[i] = trainingData.get(i).features.get(j); // assigns the value of the 
             }
             stdDevs[j] = getStdDev(values);
         }
     }
 
 
+    //Gets the standard deviation of one instance
     private double getStdDev(int[] values) {
 
 
         double mean = getMean(values);
         double temp = 0;
-        for (double val : values) {
+        //Gets Euclidian Distance
+        for (double val : values) { 
             temp += (val - mean) * (val - mean);
         }
         return Math.sqrt(temp / values.length);
     }
 
-
+    // Calculates the mean of an instance
     private double getMean(int[] values) {
 
 
         double sum = 0.0;
-        for (double val : values) {
+        for (double val : values) {// sums all values of the features
             sum += val;
         }
         return sum / values.length;
     }
 
-
+    //These are not used Zach figure out what to do with them
     private double calcDistance(ArrayList<Integer> testFeatures, ArrayList<Integer> trainingFeatures) {
 
 
@@ -170,7 +174,7 @@ public class KNearestNeighbor implements Classifier {
         return Math.sqrt(distance);
     }
 
-
+    //Calculates the Value Distance Metric
     private double VDM(Instance trainingVector, ArrayList<Integer> testVector) {
 
 
@@ -243,6 +247,7 @@ public class KNearestNeighbor implements Classifier {
         });
 
 
+        //Assign values of an instance's classification to a new set
         int[] kNearestClasses = new int[k];
         for (int i = 0; i < k; i++) {
             kNearestClasses[i] = trainingData.get(i).getClassification();
