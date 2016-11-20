@@ -141,6 +141,7 @@ public class KNearestNeighbor implements Classifier {
         int classification = -1, mostFreq = -1;
         for (int i = 0; i < k; i++) {
             if (freq[i] > mostFreq) {
+                mostFreq = freq[i];
                 classification = kNearestClasses[i];
             }
         }
